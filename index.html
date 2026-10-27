@@ -12,6 +12,17 @@
       --bg-desktop: url("./bg-desktop.jpg");
       --pink: #ed4d99;
       --pink-light: #ffeaf5;
+      --pink-deep: #c23a7a;
+      --text: #5a3a4a;
+      --card-bg: rgba(255, 240, 248, 0.42);
+      --card-border: rgba(255, 255, 255, 0.72);
+    }
+
+    [data-theme="dark"] {
+      --pink-light: #2b1b24;
+      --text: #e9c8d8;
+      --card-bg: rgba(48, 30, 40, 0.52);
+      --card-border: rgba(255, 180, 210, 0.32);
     }
 
     * {
@@ -28,9 +39,10 @@
       background-repeat: no-repeat;
       background-size: cover;
       background-attachment: fixed;
-      color: #5a3a4a;
+      color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
+      transition: background 0.4s ease, color 0.4s ease;
     }
 
     body.view-mobile {
@@ -73,7 +85,7 @@
     .brand {
       font-size: 13px;
       letter-spacing: 1.5px;
-      color: #d46b9a;
+      color: var(--pink);
       font-weight: 600;
     }
 
@@ -82,7 +94,8 @@
       gap: 6px;
     }
 
-    .view-switch button {
+    .view-switch button,
+    .tiny-button {
       border: 1px solid rgba(237, 77, 153, 0.35);
       border-radius: 999px;
       padding: 7px 14px;
@@ -93,30 +106,50 @@
       transition: 0.2s;
     }
 
-    .view-switch button.active {
+    .view-switch button.active,
+    [data-theme="dark"] .view-switch button.active {
       background: var(--pink);
       color: white;
     }
 
     .tiny-button {
-      border: 1px solid rgba(237, 77, 153, 0.3);
-      border-radius: 999px;
       padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.7);
-      color: #d46b9a;
       font-size: 12px;
-      cursor: pointer;
     }
 
-    /* 卡片通用 */
+    .view-switch button:hover,
+    .tiny-button:hover {
+      transform: translateY(-1px);
+    }
+
+    /* 卡片通用，强化玻璃效果 */
     .card {
-      background: rgba(255, 240, 248, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-radius: 26px;
       margin-bottom: 20px;
-      box-shadow: 0 8px 28px rgba(220, 130, 180, 0.12);
+      box-shadow: 0 10px 32px rgba(220, 130, 180, 0.12);
+      opacity: 0;
+      transform: translateY(22px);
+      animation: cardFade 0.7s forwards;
+    }
+
+    .card:nth-child(2) { animation-delay: 0.12s; }
+    .card:nth-child(3) { animation-delay: 0.24s; }
+    .card:nth-child(4) { animation-delay: 0.36s; }
+    .card:nth-child(5) { animation-delay: 0.48s; }
+
+    @keyframes cardFade {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card:hover {
+      box-shadow: 0 14px 40px rgba(220, 130, 180, 0.18);
     }
 
     .profile {
@@ -148,19 +181,18 @@
     #profileName {
       font-size: 26px;
       font-weight: 700;
-      color: #c23a7a;
+      color: var(--pink-deep);
       margin-bottom: 4px;
     }
 
     .handle {
-      color: #d46b9a;
+      color: var(--pink);
       font-size: 14px;
       margin-bottom: 12px;
     }
 
     .bio {
       font-size: 15px;
-      color: #6b4a5a;
       margin-bottom: 16px;
       white-space: pre-line;
     }
@@ -173,15 +205,14 @@
     }
 
     .chip {
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.65);
       border: 1px solid rgba(237, 77, 153, 0.25);
       border-radius: 999px;
       padding: 5px 12px;
       font-size: 13px;
-      color: #d46b9a;
+      color: var(--pink);
     }
 
-    /* 区块 */
     .section {
       padding: 24px;
     }
@@ -193,7 +224,7 @@
     .section-title {
       font-size: 16px;
       font-weight: 600;
-      color: #c23a7a;
+      color: var(--pink-deep);
       margin-bottom: 16px;
       display: flex;
       align-items: center;
@@ -206,7 +237,7 @@
       padding: 12px;
       border: 1px solid #f2d6e7;
       border-radius: 20px;
-      background: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.68);
     }
 
     .yui-video {
@@ -236,21 +267,23 @@
     }
 
     .link-button {
+      position: relative;
+      overflow: hidden;
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 14px 16px;
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.65);
       border: 1px solid rgba(237, 77, 153, 0.2);
       border-radius: 16px;
       text-decoration: none;
       color: inherit;
-      transition: 0.2s;
+      transition: 0.25s;
     }
 
     .link-button:hover {
-      background: rgba(255, 255, 255, 0.95);
-      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.88);
+      transform: translateY(-3px);
     }
 
     .link-icon {
@@ -266,7 +299,7 @@
     .link-name {
       display: block;
       font-weight: 600;
-      color: #c23a7a;
+      color: var(--pink-deep);
       font-size: 15px;
     }
 
@@ -278,7 +311,7 @@
     }
 
     .arrow {
-      color: #d46b9a;
+      color: var(--pink);
       font-size: 14px;
     }
 
@@ -288,7 +321,7 @@
       align-items: center;
       gap: 16px;
       padding: 16px;
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.62);
       border-radius: 18px;
       border: 1px solid rgba(237, 77, 153, 0.2);
     }
@@ -306,7 +339,7 @@
 
     .track-title {
       font-weight: 600;
-      color: #c23a7a;
+      color: var(--pink-deep);
       font-size: 15px;
     }
 
@@ -335,12 +368,11 @@
       text-align: center;
       margin-top: 30px;
       font-size: 13px;
-      color: #c48ba8;
       line-height: 1.8;
     }
 
     .heart {
-      color: #ed4d99;
+      color: var(--pink);
     }
 
     /* 回顶部 */
@@ -348,8 +380,8 @@
       position: fixed;
       right: 18px;
       bottom: 22px;
-      width: 42px;
-      height: 42px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       border: none;
       background: var(--pink);
@@ -359,7 +391,7 @@
       opacity: 0;
       pointer-events: none;
       transition: 0.25s;
-      box-shadow: 0 4px 14px rgba(237, 77, 153, 0.4);
+      box-shadow: 0 4px 16px rgba(237, 77, 153, 0.45);
     }
 
     .to-top.visible {
@@ -367,7 +399,7 @@
       pointer-events: auto;
     }
 
-    /* キラキラ */
+    /* 星光粒子 */
     .sparkle-field {
       position: fixed;
       inset: 0;
@@ -378,7 +410,7 @@
 
     .sparkle {
       position: absolute;
-      color: rgba(237, 77, 153, 0.45);
+      color: rgba(237, 77, 153, 0.52);
       animation: float linear infinite;
       user-select: none;
     }
@@ -388,30 +420,46 @@
         transform: translateY(100vh) rotate(0deg);
         opacity: 0;
       }
-      10% {
+      12% {
         opacity: 1;
       }
-      90% {
+      88% {
         opacity: 1;
       }
       100% {
-        transform: translateY(-10vh) rotate(360deg);
+        transform: translateY(-12vh) rotate(360deg);
         opacity: 0;
       }
+    }
+
+    /* 光标微光 */
+    .cursor-glow {
+      position: fixed;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 130, 185, 0.18), transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 0;
     }
   </style>
 </head>
 <body>
   <div class="sparkle-field" id="sparkleField" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
 
   <main class="wrap">
     <div class="topline">
       <div class="brand">✧ MY LITTLE UNIVERSE ✧</div>
       <div class="view-switch">
-        <button type="button" data-view="mobile">📱 手机</button>
-        <button type="button" data-view="desktop">🖥️ 电脑</button>
+        <button type="button" data-view="mobile">📱 </button>
+        <button type="button" data-view="desktop">🖥️ </button>
       </div>
-      <button class="tiny-button" id="sparkleToggle" type="button" aria-pressed="true">✦ キラキラ ON</button>
+      <div style="display:flex;gap:6px;">
+        <button class="tiny-button" id="sparkleToggle" type="button" aria-pressed="true">✦ キラキラ ON</button>
+        <button class="tiny-button" id="themeToggle" type="button">🌙</button>
+      </div>
     </div>
 
     <!-- 个人资料 -->
@@ -443,26 +491,11 @@
       </div>
     </section>
 
-    <!-- SNS -->
+    <!-- SNS 新顺序 -->
     <section class="card section">
       <h2 class="section-title"><span>♡</span> SOCIAL LINKS</h2>
       <div class="link-list">
-        <a class="link-button" href="https://youtube.com/@yuihonoka520" target="_blank" rel="noopener noreferrer">
-          <span class="link-icon">▶</span>
-          <span class="link-copy">
-            <span class="link-name">YouTube</span>
-            <span class="link-desc">動画・好きな音楽</span>
-          </span>
-          <span class="arrow">↗</span>
-        </a>
-        <a class="link-button" href="https://www.instagram.com/yui__honoka" target="_blank" rel="noopener noreferrer">
-          <span class="link-icon">📷</span>
-          <span class="link-copy">
-            <span class="link-name">Instagram</span>
-            <span class="link-desc">日常とお気に入り</span>
-          </span>
-          <span class="arrow">↗</span>
-        </a>
+        <!-- 1. X (Twitter) -->
         <a class="link-button" href="https://x.com/Yui__Honoka" target="_blank" rel="noopener noreferrer">
           <span class="link-icon">𝕏</span>
           <span class="link-copy">
@@ -471,11 +504,39 @@
           </span>
           <span class="arrow">↗</span>
         </a>
+        <!-- 2. Instagram -->
+        <a class="link-button" href="https://www.instagram.com/yui__honoka" target="_blank" rel="noopener noreferrer">
+          <span class="link-icon">📷</span>
+          <span class="link-copy">
+            <span class="link-name">Instagram</span>
+            <span class="link-desc">日常とお気に入り</span>
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+        <!-- 3. Bilibili -->
         <a class="link-button" href="https://b23.tv/iQZ2YTZ" target="_blank" rel="noopener noreferrer">
           <span class="link-icon">📺</span>
           <span class="link-copy">
             <span class="link-name">Bilibili</span>
             <span class="link-desc">動画・ファンコンテンツ</span>
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+        <!-- 4. TikTok -->
+        <a class="link-button" href="https://www.tiktok.com/@your_tiktok_id" target="_blank" rel="noopener noreferrer">
+          <span class="link-icon">♪</span>
+          <span class="link-copy">
+            <span class="link-name">TikTok</span>
+            <span class="link-desc">ショートムービー</span>
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+        <!-- 5. YouTube -->
+        <a class="link-button" href="https://youtube.com/@yuihonoka520" target="_blank" rel="noopener noreferrer">
+          <span class="link-icon">▶</span>
+          <span class="link-copy">
+            <span class="link-name">YouTube</span>
+            <span class="link-desc">動画・好きな音楽</span>
           </span>
           <span class="arrow">↗</span>
         </a>
@@ -496,7 +557,7 @@
       <p class="note">♪ Spotify</p>
     </section>
 
-    <!-- 联系 -->
+    <!-- 联系（可点击发送邮件） -->
     <section class="card section">
       <h2 class="section-title"><span>✉</span> MESSAGE</h2>
       <a class="link-button" href="mailto:czl3464948964@gmail.com">
@@ -519,17 +580,17 @@
   <button class="to-top" id="toTop" aria-label="ページの先頭へ戻る" type="button">↑</button>
 
   <script>
-    // キラキラ
+    // 星光粒子
     const field = document.getElementById('sparkleField');
-    const symbols = ['✦', '✧', '♡', '·', '✩'];
-    for (let i = 0; i < 22; i++) {
+    const symbols = ['✦', '✧', '♡', '·', '✩', '✿', '˚'];
+    for (let i = 0; i < 30; i++) {
       const item = document.createElement('span');
       item.className = 'sparkle';
       item.textContent = symbols[Math.floor(Math.random() * symbols.length)];
       item.style.left = `${Math.random() * 100}%`;
-      item.style.fontSize = `${10 + Math.random() * 16}px`;
-      item.style.animationDuration = `${14 + Math.random() * 18}s`;
-      item.style.animationDelay = `${-Math.random() * 20}s`;
+      item.style.fontSize = `${8 + Math.random() * 18}px`;
+      item.style.animationDuration = `${12 + Math.random() * 20}s`;
+      item.style.animationDelay = `${-Math.random() * 22}s`;
       field.appendChild(item);
     }
 
@@ -542,6 +603,27 @@
       sparkleToggle.setAttribute('aria-pressed', String(sparklesOn));
     });
 
+    // 深色 / 浅色切换
+    const themeToggle = document.getElementById('themeToggle');
+    let dark = false;
+    themeToggle.addEventListener('click', () => {
+      dark = !dark;
+      if (dark) {
+        document.body.setAttribute('data-theme', 'dark');
+        themeToggle.textContent = '☀';
+      } else {
+        document.body.removeAttribute('data-theme');
+        themeToggle.textContent = '🌙';
+      }
+    });
+
+    // 光标微光
+    const glow = document.getElementById('cursorGlow');
+    window.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
     // 年份
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -552,7 +634,7 @@
     }, { passive: true });
     toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    // ===== 手机 / 电脑 视图切换 =====
+    // ===== 自动适配逻辑 =====
     const viewButtons = document.querySelectorAll('.view-switch button');
     const body = document.body;
 
@@ -578,14 +660,13 @@
     });
 
     function setInitialView() {
-      if (body.classList.contains('view-mobile') || body.classList.contains('view-desktop')) {
-        updateActiveButton();
-        return;
-      }
-      if (window.innerWidth <= 600) {
-        body.classList.add('view-mobile');
-      } else {
-        body.classList.add('view-desktop');
+      // 如果没有手动强制，自动判断
+      if (!body.classList.contains('view-mobile') && !body.classList.contains('view-desktop')) {
+        if (window.innerWidth > 600) {
+          body.classList.add('view-desktop');
+        } else {
+          body.classList.add('view-mobile');
+        }
       }
       updateActiveButton();
     }
