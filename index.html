@@ -7,129 +7,157 @@
   <meta name="description" content="好きなもの、音楽、SNSをひとつに。">
   <title>YUI's Little Universe ✧</title>
   <style>
-    :root {
-      --pink: #ff79b7;
-      --pink-deep: #ed4d99;
-      --pink-pale: #fff0f7;
-      --ink: #55364a;
-      --muted: #946d85;
-      --glass: rgba(255,255,255,.76);
-      --line: rgba(255,121,183,.25);
-      --shadow: 0 18px 55px rgba(190, 90, 145, .16);
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--ink);
-      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, system-ui, sans-serif;
-      background:
-        radial-gradient(ellipse at 15% 12%, rgba(255,255,255,.95), transparent 32%),
-        radial-gradient(ellipse at 85% 20%, rgba(255,191,221,.65), transparent 30%),
-        linear-gradient(145deg, #fff4f9 0%, #ffe0ef 48%, #f9e7ff 100%);
-      overflow-x: hidden;
-    }
-    /* 背景画像を使う場合は --bg-image のURLを書き換えてください */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background-image: var(--bg-image, none);
-      background-size: cover;
-      background-position: center;
-      opacity: .20;
-      pointer-events: none;
-    }
-    body.has-background::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: rgba(255, 239, 248, .60);
-      backdrop-filter: blur(2px);
-      pointer-events: none;
-    }
-    .sparkle-field { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
-    .sparkle {
-      position: absolute;
-      color: rgba(237,77,153,.48);
-      animation: floatUp linear infinite;
-      user-select: none;
-      filter: drop-shadow(0 2px 6px rgba(255,255,255,.8));
-    }
-    @keyframes floatUp {
-      from { transform: translateY(105vh) rotate(0deg); opacity: 0; }
-      12% { opacity: .85; }
-      88% { opacity: .65; }
-      to { transform: translateY(-12vh) rotate(180deg); opacity: 0; }
-    }
-    .wrap { width: min(100% - 28px, 620px); margin: 0 auto; padding: 30px 0 24px; }
-    .topline { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
-    .brand { font-size: .8rem; letter-spacing: .12em; color: var(--muted); font-weight: 800; }
-    .tiny-button {
-      border: 1px solid var(--line); background: rgba(255,255,255,.7); color: var(--pink-deep);
-      border-radius: 999px; padding: 8px 12px; font-size: .78rem; cursor: pointer;
-      box-shadow: 0 4px 15px rgba(190,90,145,.08);
-    }
-    .card {
-      background: var(--glass); border: 1px solid rgba(255,255,255,.9); border-radius: 28px;
-      box-shadow: var(--shadow); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    }
-    .profile { text-align: center; padding: 28px 22px 24px; position: relative; overflow: hidden; }
-    .profile::before {
-      content: "♡"; position: absolute; right: 22px; top: 12px; color: #ffb4d6; font-size: 2.2rem; transform: rotate(12deg);
-    }
-    .avatar-ring {
-      width: 116px; height: 116px; margin: 0 auto 15px; padding: 5px; border-radius: 50%;
-      background: linear-gradient(135deg, #ff9bca, #ffd7eb, #dcb7ff);
-      box-shadow: 0 8px 25px rgba(237,77,153,.22);
-    }
-    .avatar {
-      width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;
-      background: #ffe7f2; border: 3px solid white;
-    }
-    h1 { margin: 0; font-size: clamp(1.7rem, 6vw, 2.2rem); letter-spacing: .02em; }
-    .handle { color: var(--pink-deep); font-size: .88rem; margin-top: 5px; font-weight: 700; }
-    .bio { max-width: 420px; margin: 14px auto 0; line-height: 1.9; color: #78566d; font-size: .93rem; white-space: pre-line; }
-    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin-top: 15px; }
-    .chip { background: #fff0f7; border: 1px solid #ffd0e5; color: #c34d8b; border-radius: 999px; padding: 6px 10px; font-size: .73rem; }
-    .section { margin-top: 18px; padding: 20px; }
-    .section-title { display: flex; align-items: center; gap: 9px; margin: 0 0 13px; font-size: 1rem; letter-spacing: .04em; }
-    .section-title .icon { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 11px; background: #ffe4f0; }
-    .link-list { display: grid; gap: 10px; }
-    .link-button {
-      display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink);
-      background: rgba(255,255,255,.84); border: 1px solid #f9d4e6; border-radius: 16px;
-      padding: 13px 14px; min-height: 62px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-    }
-    .link-button:hover, .link-button:focus-visible { transform: translateY(-2px); border-color: #ff9ecb; box-shadow: 0 8px 20px rgba(237,77,153,.13); outline: none; }
-    .link-icon { display: grid; place-items: center; flex: 0 0 38px; height: 38px; border-radius: 13px; background: #fff0f7; font-size: 1.1rem; }
-    .link-copy { flex: 1; min-width: 0; }
-    .link-name { display: block; font-weight: 800; font-size: .92rem; }
-    .link-desc { display: block; color: var(--muted); font-size: .75rem; margin-top: 3px; }
-    .arrow { color: #e88ab8; font-size: 1.1rem; }
-    .music-card { display: flex; align-items: center; gap: 13px; background: rgba(255,255,255,.8); border: 1px solid #f9d4e6; border-radius: 18px; padding: 12px; }
-    .album-art { width: 66px; height: 66px; border-radius: 14px; display: grid; place-items: center; flex: 0 0 66px; font-size: 1.8rem; background: linear-gradient(135deg,#ffc1dd,#e5d1ff); }
-    .track-info { flex: 1; min-width: 0; }
-    .track-title { font-weight: 800; font-size: .9rem; }
-    .track-sub { font-size: .76rem; color: var(--muted); margin-top: 4px; }
-    .listen {
-      display: inline-block; margin-top: 8px; border-radius: 999px; background: #e85a9f; color: white;
-      text-decoration: none; padding: 7px 12px; font-size: .75rem; font-weight: 800;
-    }
-    .note { color: var(--muted); font-size: .76rem; line-height: 1.7; margin: 12px 2px 0; }
-    footer { text-align: center; padding: 23px 10px 8px; color: #a77e98; font-size: .75rem; line-height: 1.8; }
-    .heart { display: inline-block; color: #ef6ca9; animation: heartbeat 1.6s ease-in-out infinite; }
-    @keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.18)} }
-    .to-top { position: fixed; right: 15px; bottom: 16px; width: 42px; height: 42px; border: 0; border-radius: 50%; background: #ec75b0; color: white; font-size: 1.2rem; box-shadow: 0 7px 20px #dc76a555; cursor: pointer; display: none; }
-    .to-top.visible { display: block; }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
-    }
-    @media (min-width: 700px) { .wrap { padding-top: 42px; } .profile { padding: 34px 30px 29px; } .section { padding: 23px; } }
-  </style>
+    
+/* ===== 双端布局与背景适配 ===== */
+
+/* 默认自动适配 */
+:root {
+  --bg-mobile: url("./bg-mobile.jpg");
+  --bg-desktop: url("./bg-desktop.jpg");
+}
+
+/* 背景固定铺满视口 */
+body {
+  background: #ffeaf5;
+  background-image: var(--bg-desktop);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* 背景图层 */
+body::before {
+  background-image: var(--bg-desktop);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 1;
+}
+
+/* 页面整体宽度 */
+.wrap {
+  width: min(100% - 32px, 1100px);
+  margin-inline: auto;
+  padding: 32px 0;
+}
+
+/* 卡片半透明 */
+.card {
+  background: rgba(255, 240, 248, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* 按钮 */
+.view-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.view-switch button {
+  border: 1px solid rgba(255, 121, 183, 0.35);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #ed4d99;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.view-switch button.active {
+  color: white;
+  background: #ed4d99;
+}
+
+/* 默认手机布局 */
+body.view-mobile .wrap {
+  width: min(100% - 24px, 480px);
+}
+
+body.view-mobile .section {
+  padding: 16px;
+}
+
+body.view-mobile .profile {
+  padding: 25px 16px;
+}
+
+body.view-mobile {
+  background-image: var(--bg-mobile);
+}
+
+body.view-mobile::before {
+  background-image: var(--bg-mobile);
+}
+
+/* 电脑布局 */
+body.view-desktop .wrap {
+  width: min(100% - 48px, 1100px);
+}
+
+body.view-desktop .profile {
+  padding: 38px 30px;
+}
+
+body.view-desktop .section {
+  padding: 26px;
+}
+
+/* 电脑端社交链接和内容采用双列布局 */
+body.view-desktop .link-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.view-desktop .music-card {
+  max-width: 760px;
+}
+
+body.view-desktop {
+  background-image: var(--bg-desktop);
+}
+
+body.view-desktop::before {
+  background-image: var(--bg-desktop);
+}
+
+/* 小屏幕自动调整 */
+@media (max-width: 600px) {
+  .topline {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .view-switch button {
+    min-height: 40px;
+  }
+
+  .yui-video {
+    width: 100%;
+    height: auto;
+    max-height: 65vh;
+    object-fit: contain;
+  }
+
+  body:not(.view-desktop) .wrap {
+    width: calc(100% - 20px);
+  }
+
+  body:not(.view-desktop) .link-list {
+    grid-template-columns: 1fr;
+  }
+
+  body {
+    background-attachment: scroll;
+  }
+
+  body::before {
+    background-attachment: scroll;
+  }
+}
+</style>
 </head>
 <body>
   <div class="sparkle-field" id="sparkleField" aria-hidden="true"></div>
