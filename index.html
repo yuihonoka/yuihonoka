@@ -319,38 +319,56 @@
       font-size: 14px;
     }
 
-    /* 网易云播放器区域 */
-    .music-search-wrap {
+    /* 音乐卡片 */
+    .music-card {
       display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .music-search-input {
-      flex: 1;
-      padding: 11px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      background: rgba(255, 255, 255, 0.55);
-      outline: none;
-      font-size: 14px;
-    }
-    .music-search-btn {
-      padding: 11px 16px;
-      border-radius: 14px;
-      border: none;
-      background: var(--pink);
-      color: white;
-      cursor: pointer;
-    }
-    .netease-player {
-      width: 100%;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.62);
       border-radius: 18px;
       border: 1px solid rgba(255, 255, 255, 0.28);
     }
 
-    [data-theme="dark"] .music-search-input {
-      background: rgba(30, 20, 28, 0.6);
-      color: #e9c8d8;
+    [data-theme="dark"] .music-card {
+      border: 1px solid rgba(255, 180, 210, 0.14);
+    }
+
+    .album-art {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #ff9ec7, #ffb6d9);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .track-title {
+      font-weight: 600;
+      color: var(--pink-deep);
+      font-size: 15px;
+    }
+
+    .track-sub {
+      font-size: 12px;
+      color: #a06b88;
+      margin: 2px 0 6px;
+    }
+
+    .listen {
+      font-size: 13px;
+      color: var(--pink);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #b56b98;
+      text-align: center;
     }
 
     footer {
@@ -439,8 +457,8 @@
     <div class="topline">
       <div class="brand">✧ MY LITTLE UNIVERSE ✧</div>
       <div class="view-switch">
-        <button type="button" data-view="mobile">📱 手机</button>
-        <button type="button" data-view="desktop">🖥️ 电脑</button>
+        <button type="button" data-view="mobile">📱 </button>
+        <button type="button" data-view="desktop">🖥️ </button>
       </div>
       <div style="display:flex;gap:6px;">
         <button class="tiny-button" id="sparkleToggle" type="button" aria-pressed="true">✦ キラキラ ON</button>
@@ -521,14 +539,18 @@
       </div>
     </section>
 
-    <!-- 网易云音乐播放器模块 -->
+    <!-- Spotify 音乐模块 -->
     <section class="card section">
       <h2 class="section-title"><span>♫</span> MY MUSIC</h2>
-      <div class="music-search-wrap">
-        <input class="music-search-input" id="musicInput" placeholder="输入网易云歌曲 / 歌单 ID……">
-        <button class="music-search-btn" id="loadMusicBtn">加载</button>
+      <div class="music-card">
+        <div class="album-art">🎼</div>
+        <div class="track-info">
+          <div class="track-title">お気に入りのプレイリスト</div>
+          <div class="track-sub">好きな曲・自作曲・作業用 BGM</div>
+          <a class="listen" href="https://open.spotify.com/artist/1cXxia1Q2VDTjWe8X2Jydm" target="_blank" rel="noopener noreferrer">Spotify で聴く ↗</a>
+        </div>
       </div>
-      <iframe id="musicFrame" class="netease-player" frameborder="no" border="0" marginwidth="0" marginheight="0" width="100%" height="86" src="https://music.163.com/outchain/player?type=2&id=186016&auto=0&height=66"></iframe>
+      <p class="note">♪ Spotify</p>
     </section>
 
     <section class="card section">
@@ -605,23 +627,6 @@
 
     // 页面加载自动判断
     autoDetectDarkMode();
-
-    // ========== 网易云播放器 ==========
-    const musicInput = document.getElementById('musicInput');
-    const loadMusicBtn = document.getElementById('loadMusicBtn');
-    const musicFrame = document.getElementById('musicFrame');
-
-    loadMusicBtn.addEventListener('click', () => {
-      const val = musicInput.value.trim();
-      if (!val) return;
-      // 直接填入歌曲 ID
-      const src = `https://music.163.com/outchain/player?type=2&id=${val}&auto=0&height=66`;
-      musicFrame.src = src;
-    });
-
-    musicInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') loadMusicBtn.click();
-    });
 
     // 光标微光
     const glow = document.getElementById('cursorGlow');
