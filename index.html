@@ -157,6 +157,60 @@
         <span class="chip">🎀 ゆるく交流</span>
       </div>
     </section>
+    
+<!-- YUI 视频播放器 -->
+<section class="card section" id="videoSection">
+  <h2 class="section-title">
+    <span class="icon">🎬</span> MY VIDEO
+  </h2>
+
+  <div class="yui-video-card">
+    <video
+      class="yui-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      controls
+      preload="metadata"
+    >
+      <source src="./yui-video.mp4" type="video/mp4">
+      你的浏览器暂不支持 HTML5 视频播放。
+    </video>
+
+    <p class="yui-video-caption">
+      🎀 YUI's Little Movie
+    </p>
+  </div>
+</section>
+
+<style>
+  .yui-video-card {
+    overflow: hidden;
+    padding: 12px;
+    border: 1px solid #f2d6e7;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 8px 24px rgba(220, 130, 180, 0.10);
+  }
+
+  .yui-video {
+    display: block;
+    width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+    border-radius: 15px;
+    background: #fceaf4;
+  }
+
+  .yui-video-caption {
+    margin: 12px 4px 2px;
+    color: #b56b98;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+</style>
 
     <section class="card section" aria-labelledby="socialTitle">
       <h2 class="section-title" id="socialTitle"><span class="icon">♡</span> SOCIAL LINKS</h2>
