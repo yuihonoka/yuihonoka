@@ -2,12 +2,15 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <!-- 修改视口，修复桌面异常放大 -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#ffe4f0">
   <meta name="description" content="好きなもの、音楽、SNS をひとつに。">
   <title>YUI's Little Universe ✧</title>
   <style>
     :root {
+      --bg-mobile: url("./bg-mobile.jpg");
+      --bg-desktop: url("./bg-desktop.jpg");
       --pink: #ed4d99;
       --pink-light: #ffeaf5;
       --pink-deep: #c23a7a;
@@ -35,35 +38,37 @@
 
     body {
       font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
-      /* 粉色流动渐变背景 */
-      background: linear-gradient(-45deg, #ffeaf5, #ffd6e8, #ffc8dd, #ffb3d1);
-      background-size: 400% 400%;
-      animation: flowBg 12s ease infinite;
+      background: var(--pink-light);
+      background-image: var(--bg-desktop);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
-      transition: color 0.4s ease;
+      transition: background 0.4s ease, color 0.4s ease;
     }
 
-    [data-theme="dark"] body {
-      background: linear-gradient(-45deg, #2b1b24, #3b2433, #44293a, #32202b);
-      background-size: 400% 400%;
-      animation: flowBg 12s ease infinite;
+    body.view-mobile {
+      background-image: var(--bg-mobile);
+      background-attachment: scroll;
     }
 
-    @keyframes flowBg {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
+    body.view-desktop {
+      background-image: var(--bg-desktop);
+      background-attachment: fixed;
+    }
+
+    @media (max-width: 600px) {
+      body:not(.view-desktop) {
+        background-image: var(--bg-mobile);
+        background-attachment: scroll;
       }
     }
 
     .wrap {
+      /* 桌面最大宽度限制，不会无限撑大 */
       width: min(100% - 32px, 1100px);
       margin: 0 auto;
       padding: 28px 0 60px;
@@ -320,6 +325,7 @@
       font-size: 14px;
     }
 
+    /* 音乐卡片 */
     .music-card {
       display: flex;
       align-items: center;
@@ -539,6 +545,7 @@
       </div>
     </section>
 
+    <!-- Spotify 音乐模块 -->
     <section class="card section">
       <h2 class="section-title"><span>♫</span> MY MUSIC</h2>
       <div class="music-card">
@@ -574,6 +581,7 @@
   <button class="to-top" id="toTop" aria-label="ページの先頭へ戻る" type="button">↑</button>
 
   <script>
+    // 星光粒子
     const field = document.getElementById('sparkleField');
     const symbols = ['✦', '✧', '♡', '·', '✩', '✿', '˚'];
     for (let i = 0; i < 30; i++) {
@@ -596,6 +604,7 @@
       sparkleToggle.setAttribute('aria-pressed', String(sparklesOn));
     });
 
+    // ========== 自动夜间模式 ==========
     const themeToggle = document.getElementById('themeToggle');
     let dark = false;
 
@@ -612,30 +621,37 @@
 
     function autoDetectDarkMode() {
       const hour = new Date().getHours();
+      // 晚 20:00 ~ 早 06:00，自动开启夜间
       const isNight = hour >= 20 || hour < 6;
       applyTheme(isNight);
     }
 
+    // 手动切换
     themeToggle.addEventListener('click', () => {
       applyTheme(!dark);
     });
 
+    // 页面加载自动判断
     autoDetectDarkMode();
 
+    // 光标微光
     const glow = document.getElementById('cursorGlow');
     window.addEventListener('mousemove', (e) => {
       glow.style.left = e.clientX + 'px';
       glow.style.top = e.clientY + 'px';
     });
 
+    // 年份
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // 返回顶部
     const toTop = document.getElementById('toTop');
     window.addEventListener('scroll', () => {
       toTop.classList.toggle('visible', window.scrollY > 350);
     }, { passive: true });
     toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
+    // 手机 / 电脑视图
     const viewButtons = document.querySelectorAll('.view-switch button');
     const body = document.body;
 
