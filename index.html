@@ -9,8 +9,6 @@
   <title>YUI's Little Universe ✧</title>
   <style>
     :root {
-      --bg-mobile: url("./bg-mobile.jpg");
-      --bg-desktop: url("./bg-desktop.jpg");
       --pink: #ed4d99;
       --pink-light: #ffeaf5;
       --pink-deep: #c23a7a;
@@ -41,11 +39,12 @@
     body {
       font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
       background: var(--pink-light);
-      background-image: var(--bg-desktop);
-      background-position: center center;
+      /* 背景：原比例，跟随页面滚动，不固定 */
+      background-image: url("./bg.jpg");
+      background-position: center top;
       background-repeat: no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
+      background-size: contain;
+      background-attachment: scroll;
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
@@ -53,35 +52,10 @@
       overflow-x: hidden;
     }
 
-    body.view-mobile {
-      background-image: var(--bg-mobile);
-      background-attachment: scroll;
-      background-size: cover;
-      background-position:center;
-    }
-
-    body.view-desktop {
-      background-image: var(--bg-desktop);
-      background-attachment: fixed;
-    }
-
-    @media (max-width: 600px) {
-      body:not(.view-desktop):not(.view-mobile-manual) {
-        background-image: var(--bg-mobile);
-        background-attachment: scroll;
-        background-size: cover;
-        background-position:center;
-      }
-    }
-
     .wrap {
       width: min(100% - 32px, 1100px);
       margin: 0 auto;
       padding: 28px 0 60px;
-    }
-
-    body.view-mobile .wrap {
-      width: min(100% - 20px, 480px);
     }
 
     .topline {
@@ -100,35 +74,17 @@
       font-weight: 600;
     }
 
-    .view-switch {
-      display: flex;
-      gap: 6px;
-    }
-
-    .view-switch button,
     .tiny-button {
       border: 1px solid rgba(237, 77, 153, 0.35);
       border-radius: 999px;
-      padding: 7px 14px;
+      padding: 6px 12px;
       background: rgba(255, 255, 255, 0.75);
       color: var(--pink);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: 0.2s;
     }
 
-    .view-switch button.active,
-    [data-theme="dark"] .view-switch button.active {
-      background: var(--pink);
-      color: white;
-    }
-
-    .tiny-button {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .view-switch button:hover,
     .tiny-button:hover {
       transform: translateY(-1px);
     }
@@ -169,8 +125,10 @@
       position:relative;
     }
 
-    body.view-mobile .profile {
-      padding: 28px 18px;
+    @media (max-width: 600px) {
+      .profile {
+        padding: 28px 18px;
+      }
     }
 
     .avatar-ring {
@@ -236,8 +194,10 @@
       padding: 24px;
     }
 
-    body.view-mobile .section {
-      padding: 18px;
+    @media (max-width: 600px) {
+      .section {
+        padding: 18px;
+      }
     }
 
     .section-title {
@@ -283,8 +243,10 @@
       gap:10px;
     }
 
-    body.view-desktop .link-list {
-      grid-template-columns: repeat(2,1fr);
+    @media (min-width:768px) {
+      .link-list {
+        grid-template-columns: repeat(2,1fr);
+      }
     }
 
     .link-button {
@@ -461,24 +423,6 @@
       }
     }
 
-    .cursor-glow {
-      position:fixed;
-      width:220px;
-      height:220px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,130,185,0.18), transparent 70%);
-      pointer-events:none;
-      transform:translate(-50%,-50%);
-      z-index:0;
-      display:none;
-    }
-    /* 仅PC端开启光标光晕 */
-    @media (min-width: 768px) {
-      .cursor-glow {
-        display:block;
-      }
-    }
-
     /* 播放弹窗样式 - 手机适配 */
     .audio-popup{
       position:fixed;
@@ -524,15 +468,10 @@
   </div>
 
   <div class="sparkle-field" id="sparkleField" aria-hidden="true"></div>
-  <div class="cursor-glow" id="cursorGlow"></div>
 
   <main class="wrap">
     <div class="topline">
       <div class="brand">✧ MY LITTLE UNIVERSE ✧</div>
-      <div class="view-switch">
-        <button type="button" data-mode="mobile">📱</button>
-        <button type="button" data-mode="desktop">🖥️</button>
-      </div>
       <div style="display:flex;gap:6px;">
         <button class="tiny-button" id="sparkleToggle" type="button">✦ キラキラ ON</button>
         <button class="tiny-button" id="themeToggle" type="button">🌙</button>
@@ -719,15 +658,6 @@
     themeToggle.addEventListener('click',()=> applyTheme(!dark));
     autoDetectTheme();
 
-    // カーソル光（仅PC）
-    const glow = document.getElementById('cursorGlow');
-    if(!isMobile){
-      window.addEventListener('mousemove', e=>{
-        glow.style.left = e.clientX + 'px';
-        glow.style.top = e.clientY + 'px';
-      })
-    }
-
     // 年
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -742,39 +672,6 @@
     })
     toTopBtn.addEventListener('click',()=>{
       window.scrollTo({top:0, behavior:'smooth'});
-    })
-
-    // PC/モバイル表示切替
-    const viewBtns = document.querySelectorAll('.view-switch button');
-    const body = document.body;
-    let manual = false;
-    function updateActive(){
-      viewBtns.forEach(b=>b.classList.remove('active'));
-      if(manual){
-        const mode = body.classList.contains('view-desktop') ? 'desktop' : 'mobile';
-        document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-      }
-    }
-    viewBtns.forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        manual = true;
-        body.classList.remove('view-desktop','view-mobile','view-mobile-manual');
-        const m = btn.dataset.mode;
-        body.classList.add('view-'+m, 'view-mobile-manual');
-        updateActive();
-      })
-    })
-    function initView(){
-      if(window.innerWidth>600){
-        body.classList.add('view-desktop');
-      }else{
-        body.classList.add('view-mobile');
-      }
-      updateActive();
-    }
-    initView();
-    window.addEventListener('resize',()=>{
-      if(!manual) initView();
     })
 
     // ===== 動画再生制御 =====
