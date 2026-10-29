@@ -26,6 +26,14 @@
       --card-border: rgba(255, 180, 210, 0.18);
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -133,24 +141,22 @@
       transform: translateY(-1px);
     }
 
-    .card {
+    /* ========== 堆叠卡片核心 ========== */
+    .stack-card {
+      position: relative;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       border-radius: 26px;
-      margin-bottom: 20px;
       box-shadow: 0 10px 32px rgba(220, 130, 180, 0.12);
       opacity: 0;
       transform: translateY(22px);
       animation: cardFade 0.7s forwards;
     }
-
-    .card:nth-child(2) { animation-delay: 0.12s; }
-    .card:nth-child(3) { animation-delay: 0.24s; }
-    .card:nth-child(4) { animation-delay: 0.36s; }
-    .card:nth-child(5) { animation-delay: 0.48s; }
-    .card:nth-child(6) { animation-delay: 0.60s; }
+    .stack-card:nth-child(2) { animation-delay: 0.12s; z-index:3; margin-top:-14px; }
+    .stack-card:nth-child(3) { animation-delay: 0.24s; z-index:2; margin-top:-14px; }
+    .stack-card:nth-child(4) { animation-delay: 0.36s; z-index:1; margin-top:-14px; }
 
     @keyframes cardFade {
       to {
@@ -159,26 +165,26 @@
       }
     }
 
-    .card:hover {
+    .stack-card:hover {
       box-shadow: 0 14px 40px rgba(220, 130, 180, 0.18);
     }
 
     .profile {
-      padding: 36px 28px;
+      padding: 28px 20px;
       text-align: center;
-      position:relative;
+      z-index:4;
     }
 
     body.view-mobile .profile {
-      padding: 28px 18px;
+      padding: 22px 16px;
     }
 
     .avatar-ring {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 18px;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 14px;
       border-radius: 50%;
-      padding: 4px;
+      padding: 3px;
       background: linear-gradient(135deg, #ff9ec7, #ffb6d9);
     }
 
@@ -191,7 +197,7 @@
     }
 
     #profileName {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: var(--pink-deep);
       margin-bottom: 4px;
@@ -200,26 +206,26 @@
     .handle {
       color: var(--pink);
       font-size: 14px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .access-note {
-      font-size:13px;
+      font-size:12px;
       color:#b56b98;
-      margin:10px 0;
-      line-height:1.5;
+      margin:8px 0;
+      line-height:1.4;
     }
 
     .bio {
-      font-size: 15px;
-      margin-bottom: 16px;
+      font-size: 14px;
+      margin-bottom:12px;
       white-space: pre-line;
     }
 
     .chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       justify-content: center;
     }
 
@@ -227,24 +233,24 @@
       background: rgba(255,255,255,0.65);
       border:1px solid rgba(237,77,153,0.18);
       border-radius:999px;
-      padding:5px 12px;
-      font-size:13px;
+      padding:4px 10px;
+      font-size:12px;
       color:var(--pink);
     }
 
     .section {
-      padding: 24px;
+      padding: 20px;
     }
 
     body.view-mobile .section {
-      padding: 18px;
+      padding: 16px;
     }
 
     .section-title {
       font-size: 16px;
       font-weight: 600;
       color: var(--pink-deep);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -252,7 +258,7 @@
 
     .yui-video-card {
       overflow: hidden;
-      padding: 12px;
+      padding: 10px;
       border:1px solid rgba(255,255,255,0.32);
       border-radius:20px;
       background:rgba(255,255,255,0.68);
@@ -265,22 +271,22 @@
     .yui-video {
       display:block;
       width:100%;
-      max-height: 60vh; /* 手机限制最大高度，不会撑爆屏幕 */
+      max-height: 220px;
       object-fit:contain;
       border-radius:14px;
       background:#fceaf4;
     }
 
     .yui-video-caption {
-      margin-top:10px;
+      margin-top:8px;
       text-align:center;
       color:#b56b98;
-      font-size:14px;
+      font-size:13px;
     }
 
     .link-list {
       display:grid;
-      gap:10px;
+      gap:8px;
     }
 
     body.view-desktop .link-list {
@@ -292,8 +298,8 @@
       overflow:hidden;
       display:flex;
       align-items:center;
-      gap:12px;
-      padding:14px 16px;
+      gap:10px;
+      padding:12px 14px;
       background:rgba(255,255,255,0.65);
       border:1px solid rgba(255,255,255,0.28);
       border-radius:16px;
@@ -312,12 +318,12 @@
 
     .link-button:hover {
       background:rgba(255,255,255,0.88);
-      transform:translateY(-3px);
+      transform:translateY(-2px);
     }
 
     .link-icon {
-      font-size:20px;
-      width:28px;
+      font-size:18px;
+      width:26px;
       text-align:center;
     }
 
@@ -329,26 +335,26 @@
       display:block;
       font-weight:600;
       color:var(--pink-deep);
-      font-size:15px;
+      font-size:14px;
     }
 
     .link-desc {
       display:block;
-      font-size:12px;
+      font-size:11px;
       color:#a07088;
       margin-top:2px;
     }
 
     .arrow {
       color:var(--pink);
-      font-size:14px;
+      font-size:13px;
     }
 
     .music-card {
       display:flex;
       align-items:center;
-      gap:16px;
-      padding:16px;
+      gap:14px;
+      padding:14px;
       background:rgba(255,255,255,0.62);
       border-radius:18px;
       border:1px solid rgba(255,255,255,0.28);
@@ -359,47 +365,47 @@
     }
 
     .album-art {
-      width:56px;
-      height:56px;
+      width:50px;
+      height:50px;
       background:linear-gradient(135deg,#ff9ec7,#ffb6d9);
       border-radius:12px;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:26px;
+      font-size:24px;
     }
 
     .track-title {
       font-weight:600;
       color:var(--pink-deep);
-      font-size:15px;
+      font-size:14px;
     }
 
     .track-sub {
-      font-size:12px;
+      font-size:11px;
       color:#a07088;
-      margin:2px 0 6px;
+      margin:2px 0 4px;
     }
 
     .listen {
-      font-size:13px;
+      font-size:12px;
       color:var(--pink);
       text-decoration:none;
       font-weight:500;
     }
 
     .note {
-      margin-top:10px;
-      font-size:13px;
+      margin-top:8px;
+      font-size:12px;
       color:#b56b98;
       text-align:center;
     }
 
     footer {
       text-align:center;
-      margin-top:30px;
-      font-size:13px;
-      line-height:1.8;
+      margin-top:40px;
+      font-size:12px;
+      line-height:1.7;
     }
 
     .heart {
@@ -539,7 +545,7 @@
       </div>
     </div>
 
-    <section class="card profile">
+    <section class="stack-card profile">
       <!-- 右上角邮箱图标+連絡先文字 -->
       <div style="position:absolute;top:16px;right:18px;text-align:center;">
         <a href="mailto:czl3464948964@gmail.com" target="_blank" style="text-decoration:none;color:var(--pink);font-size:18px;display:block;">💌</a>
@@ -561,7 +567,7 @@
       </div>
     </section>
 
-    <section class="card section">
+    <section class="stack-card section">
       <h2 class="section-title"><span>🎬</span> MY VIDEO</h2>
       <div class="yui-video-card">
         <video class="yui-video" loop playsinline controls preload="metadata" id="myVideo">
@@ -572,7 +578,7 @@
       </div>
     </section>
 
-    <section class="card section">
+    <section class="stack-card section">
       <h2 class="section-title"><span>♡</span> SOCIAL LINKS</h2>
       <div class="link-list">
         <a class="link-button" href="https://x.com/Yui__Honoka" target="_blank" rel="noopener noreferrer">
@@ -634,7 +640,7 @@
       </div>
     </section>
 
-    <section class="card section">
+    <section class="stack-card section">
       <h2 class="section-title"><span>♫</span> MY MUSIC</h2>
       <div class="music-card">
         <div class="album-art">🎼</div>
@@ -645,22 +651,6 @@
         </div>
       </div>
       <p class="note">♪ Spotify</p>
-    </section>
-
-    <!-- ✨【免费动漫站点】Spotify下方 -->
-    <section class="card section">
-      <h2 class="section-title"><span>🎞️</span> FREE ANIME SITE</h2>
-      <div class="link-list">
-        <a class="link-button" href="https://mugenstream.fun/" target="_blank" rel="noopener noreferrer">
-          <span class="link-icon">🎬</span>
-          <div class="link-copy">
-            <span class="link-name">Mugen Stream</span>
-            <span class="link-desc">無料アニメを視聴する</span>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-      </div>
-      <p class="note">✨ Free anime streaming portal</p>
     </section>
 
     <footer>
@@ -777,15 +767,17 @@
       if(!manual) initView();
     })
 
-    // ===== 動画再生制御 =====
+    // ===== 動画再生制御（修复：点击视频本体也关闭弹窗） =====
     const video = document.getElementById('myVideo');
     const popup = document.getElementById('audioPopup');
     const playBtn = document.getElementById('playVideoBtn');
 
-    playBtn.onclick = function(){
+    function playVideoHidePopup(){
       video.play();
       popup.classList.add('hidden');
     }
+    playBtn.onclick = playVideoHidePopup;
+    video.addEventListener('click', playVideoHidePopup);
   </script>
 </body>
 </html>
