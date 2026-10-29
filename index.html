@@ -73,7 +73,7 @@
       grid-template-columns: 1fr;
     }
 
-    /* ===== 电脑端样式（宽度>600px） 独立整套样式 ===== */
+    /* ===== 电脑端样式（宽度>600px） 独立整套样式【重点修改】 ===== */
     @media (min-width: 601px) {
       body:not(.view-mobile):not(.view-mobile-manual) {
         background-image: var(--bg-desktop);
@@ -83,7 +83,14 @@
       .wrap {
         width: min(100% - 32px, 1100px);
         margin: 0 auto;
-        padding: 28px 0 60px;
+        padding: 40px 0 60px;
+      }
+      /* 电脑端：卡片不要撑满wrap，限制最大宽度，居中 */
+      .card {
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 32px;
       }
       .profile {
         padding: 36px 28px;
@@ -91,11 +98,11 @@
         position:relative;
       }
       .section {
-        padding: 24px;
+        padding: 28px;
       }
       .link-list {
         display:grid;
-        gap:10px;
+        gap:14px;
         grid-template-columns: repeat(2,1fr);
       }
     }
@@ -109,14 +116,21 @@
     body.view-desktop .wrap {
       width: min(100% - 32px, 1100px);
     }
+    body.view-desktop .card {
+      max-width:820px;
+      margin-left:auto;
+      margin-right:auto;
+      border-radius:32px;
+    }
     body.view-desktop .profile {
       padding: 36px 28px;
     }
     body.view-desktop .section {
-      padding: 24px;
+      padding: 28px;
     }
     body.view-desktop .link-list {
       grid-template-columns: repeat(2,1fr);
+      gap:14px;
     }
 
     /* ===== 手动强制手机模式 view-mobile ===== */
@@ -127,6 +141,10 @@
     }
     body.view-mobile .wrap {
       width: min(100% - 20px, 480px);
+    }
+    body.view-mobile .card {
+      max-width:unset;
+      border-radius:26px;
     }
     body.view-mobile .profile {
       padding: 28px 18px;
@@ -193,7 +211,7 @@
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       border-radius: 26px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       box-shadow: 0 10px 32px rgba(220, 130, 180, 0.12);
       opacity: 0;
       transform: translateY(22px);
@@ -301,7 +319,7 @@
     .yui-video {
       display:block;
       width:100%;
-      max-height: 60vh; /* 手机限制最大高度，不会撑爆屏幕 */
+      max-height: 60vh;
       object-fit:contain;
       border-radius:14px;
       background:#fceaf4;
