@@ -61,7 +61,7 @@
     }
 
     @media (max-width: 600px) {
-      body:not(.view-desktop) {
+      body:not(.view-desktop):not(.view-mobile-manual) {
         background-image: var(--bg-mobile);
         background-attachment: scroll;
       }
@@ -491,7 +491,7 @@
     <section class="card section">
       <h2 class="section-title"><span>🎬</span> MY VIDEO</h2>
       <div class="yui-video-card">
-        <video class="yui-video" autoplay muted loop playsinline controls preload="metadata">
+        <video class="yui-video" muted loop playsinline controls preload="metadata">
           <source src="./yui-video.mp4" type="video/mp4">
           你的浏览器暂不支持 HTML5 视频播放。
         </video>
@@ -531,6 +531,15 @@
           <span class="link-copy">
             <span class="link-name">TikTok</span>
             <span class="link-desc">ショートムービー</span>
+          </span>
+          <span class="arrow">↗</span>
+        </a>
+        <!-- 网易云音乐播客 TikTok下方 YouTube上方 -->
+        <a class="link-button" href="http://music.163.com/radio?id=1500681020&userid=3959763454&share_app=android" target="_blank" rel="noopener noreferrer">
+          <span class="link-icon">🎙️</span>
+          <span class="link-copy">
+            <span class="link-name">NetEase CloudMusic ポッドキャスト</span>
+            <span class="link-desc">オリジナル播客・トークコンテンツ</span>
           </span>
           <span class="arrow">↗</span>
         </a>
@@ -654,6 +663,7 @@
     // 手机 / 电脑视图
     const viewButtons = document.querySelectorAll('.view-switch button');
     const body = document.body;
+    let manualView = false;
 
     function updateActiveButton() {
       viewButtons.forEach(btn => {
@@ -669,15 +679,17 @@
 
     viewButtons.forEach(btn => {
       btn.addEventListener('click', () => {
+        manualView = true;
         const view = btn.dataset.view;
         body.classList.remove('view-mobile', 'view-desktop');
         body.classList.add(`view-${view}`);
+        body.classList.add('view-mobile-manual');
         updateActiveButton();
       });
     });
 
     function setInitialView() {
-      if (!body.classList.contains('view-mobile') && !body.classList.contains('view-desktop')) {
+      if (!manualView) {
         if (window.innerWidth > 600) {
           body.classList.add('view-desktop');
         } else {
@@ -688,7 +700,9 @@
     }
 
     setInitialView();
-    window.addEventListener('resize', setInitialView);
+    window.addEventListener('resize', () => {
+      if (!manualView) setInitialView();
+    });
   </script>
 </body>
 </html>
