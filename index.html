@@ -42,7 +42,7 @@
       font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
       background: var(--pink-light);
       background-image: var(--bg-desktop);
-      background-position: center;
+      background-position: center center;
       background-repeat: no-repeat;
       background-size: cover;
       background-attachment: fixed;
@@ -56,6 +56,8 @@
     body.view-mobile {
       background-image: var(--bg-mobile);
       background-attachment: scroll;
+      background-size: cover;
+      background-position:center;
     }
 
     body.view-desktop {
@@ -67,6 +69,8 @@
       body:not(.view-desktop):not(.view-mobile-manual) {
         background-image: var(--bg-mobile);
         background-attachment: scroll;
+        background-size: cover;
+        background-position:center;
       }
     }
 
@@ -536,12 +540,11 @@
     </div>
 
     <section class="card profile">
-      <!-- 放在profile卡片内，头像右上角 -->
-<div style="position:absolute;top:16px;right:18px;text-align:center;">
-  <a href="mailto:czl3464948964,czl3464948964@gmail.com" target="_blank" style="text-decoration:none;color:var(--pink);font-size:18px;display:block;">💌</a>
-  <span style="font-size:11px;color:var(--pink);margin-top:2px;display:block;">連絡先</span>
-</div>
-
+      <!-- 右上角邮箱图标+連絡先文字 -->
+      <div style="position:absolute;top:16px;right:18px;text-align:center;">
+        <a href="mailto:czl3464948964@gmail.com" target="_blank" style="text-decoration:none;color:var(--pink);font-size:18px;display:block;">💌</a>
+        <span style="font-size:11px;color:var(--pink);margin-top:2px;display:block;">連絡先</span>
+      </div>
       <div class="avatar-ring">
         <img class="avatar" src="https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/anime_image_1400x1400.jpg" alt="プロフィール画像">
       </div>
