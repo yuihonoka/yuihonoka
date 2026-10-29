@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- 修改视口，修复桌面异常放大 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- 严格移动端适配 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#ffe4f0">
   <meta name="description" content="好きなもの、音楽、SNSをひとつに。">
   <title>YUI's Little Universe ✧</title>
@@ -30,10 +30,12 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent; /* 去除移动端点击黑块 */
     }
 
     html {
       font-size: 16px;
+      scroll-behavior: smooth;
     }
 
     body {
@@ -48,6 +50,7 @@
       min-height: 100vh;
       line-height: 1.6;
       transition: background 0.4s ease, color 0.4s ease;
+      overflow-x: hidden;
     }
 
     body.view-mobile {
@@ -143,6 +146,7 @@
     .card:nth-child(3) { animation-delay: 0.24s; }
     .card:nth-child(4) { animation-delay: 0.36s; }
     .card:nth-child(5) { animation-delay: 0.48s; }
+    .card:nth-child(6) { animation-delay: 0.60s; }
 
     @keyframes cardFade {
       to {
@@ -158,6 +162,7 @@
     .profile {
       padding: 36px 28px;
       text-align: center;
+      position:relative;
     }
 
     body.view-mobile .profile {
@@ -256,7 +261,7 @@
     .yui-video {
       display:block;
       width:100%;
-      max-height:480px;
+      max-height: 60vh; /* 手机限制最大高度，不会撑爆屏幕 */
       object-fit:contain;
       border-radius:14px;
       background:#fceaf4;
@@ -295,6 +300,10 @@
 
     [data-theme="dark"] .link-button {
       border:1px solid rgba(255,180,210,0.14);
+    }
+
+    .link-button:active {
+      transform: translateY(1px);
     }
 
     .link-button:hover {
@@ -457,9 +466,16 @@
       pointer-events:none;
       transform:translate(-50%,-50%);
       z-index:0;
+      display:none;
+    }
+    /* 仅PC端开启光标光晕 */
+    @media (min-width: 768px) {
+      .cursor-glow {
+        display:block;
+      }
     }
 
-    /* 播放弹窗样式 */
+    /* 播放弹窗样式 - 手机适配 */
     .audio-popup{
       position:fixed;
       inset:0;
@@ -468,13 +484,16 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      padding: 16px;
     }
     .audio-popup-box{
       background:rgba(255,240,248,0.95);
-      padding:24px 32px;
+      padding:24px 20px;
       border-radius:22px;
       text-align:center;
       backdrop-filter: blur(12px);
+      width:100%;
+      max-width:340px;
     }
     .audio-popup button{
       margin-top:14px;
@@ -517,6 +536,10 @@
     </div>
 
     <section class="card profile">
+      <!-- 右上角邮箱小图标 -->
+      <div style="position:absolute;top:16px;right:18px;">
+        <a href="mailto:czl3464948964@gmail.com" target="_blank" style="text-decoration:none;color:var(--pink);font-size:18px;">💌</a>
+      </div>
       <div class="avatar-ring">
         <img class="avatar" src="https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/anime_image_1400x1400.jpg" alt="プロフィール画像">
       </div>
@@ -536,7 +559,6 @@
     <section class="card section">
       <h2 class="section-title"><span>🎬</span> MY VIDEO</h2>
       <div class="yui-video-card">
-        <!-- 移除 muted 属性，保留 loop playsinline -->
         <video class="yui-video" loop playsinline controls preload="metadata" id="myVideo">
           <source src="./YouCut_20261029_222309194.mp4" type="video/mp4">
           お使いのブラウザは動画再生に対応していません。
@@ -619,33 +641,21 @@
       </div>
       <p class="note">♪ Spotify</p>
     </section>
-        <!-- ✨ 新增：Mugen Stream 动漫链接，放在MY MUSIC板块之后 -->
+
+    <!-- ✨【免费动漫站点】Spotify下方 -->
     <section class="card section">
       <h2 class="section-title"><span>🎞️</span> FREE ANIME SITE</h2>
       <div class="link-list">
         <a class="link-button" href="https://mugenstream.fun/" target="_blank" rel="noopener noreferrer">
           <span class="link-icon">🎬</span>
           <div class="link-copy">
-            <span class="link-name">Mugen animation</span>
+            <span class="link-name">Mugen Stream</span>
             <span class="link-desc">無料アニメを視聴する</span>
           </div>
           <span class="arrow">↗</span>
         </a>
       </div>
-      <p class="note">✨無料のアニメすべてのリソース</p>
-    </section>
-
-    <section class="card section">
-      <h2 class="section-title"><span>✉</span> MESSAGE</h2>
-      <a class="link-button" href="mailto:czl3464948964@gmail.com">
-        <span class="link-icon">💌</span>
-        <div class="link-copy">
-          <span class="link-name">Contact me</span>
-          <span class="link-desc">メッセージはこちら</span>
-        </div>
-        <span class="arrow">↗</span>
-      </a>
-      <p class="note">好きです</p>
+      <p class="note">✨ Free anime streaming portal</p>
     </section>
 
     <footer>
@@ -657,10 +667,13 @@
   <button class="to-top" id="toTopBtn" aria-label="ページ上部へ戻る">↑</button>
 
   <script>
-    // 星光粒子
+    // 星光粒子：移动端减少粒子数量，提升性能
     const field = document.getElementById('sparkleField');
     const symbols = ['✦', '✧', '♡', '·', '✩', '✿', '˚'];
-    for(let i=0; i<30; i++){
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const sparkleCount = isMobile ? 14 : 30; //手机减少粒子
+
+    for(let i=0; i<sparkleCount; i++){
       const span = document.createElement('span');
       span.className = 'sparkle';
       span.textContent = symbols[Math.floor(Math.random()*symbols.length)];
@@ -701,12 +714,14 @@
     themeToggle.addEventListener('click',()=> applyTheme(!dark));
     autoDetectTheme();
 
-    // カーソル光
+    // カーソル光（仅PC）
     const glow = document.getElementById('cursorGlow');
-    window.addEventListener('mousemove', e=>{
-      glow.style.left = e.clientX + 'px';
-      glow.style.top = e.clientY + 'px';
-    })
+    if(!isMobile){
+      window.addEventListener('mousemove', e=>{
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+      })
+    }
 
     // 年
     document.getElementById('year').textContent = new Date().getFullYear();
