@@ -53,13 +53,14 @@
       overflow-x: hidden;
     }
 
+    /* 手动切换到手机模式 */
     body.view-mobile {
       background-image: var(--bg-mobile);
       background-size: contain;
       background-position: center top;
       background-attachment: scroll;
     }
-
+    /* 手动切换到电脑模式，使用桌面背景 */
     body.view-desktop {
       background-image: var(--bg-desktop);
       background-size: contain;
@@ -67,9 +68,19 @@
       background-attachment: scroll;
     }
 
+    /* 自动响应式：手机宽度自动加载手机背景 */
     @media (max-width: 600px) {
       body:not(.view-desktop):not(.view-mobile-manual) {
         background-image: var(--bg-mobile);
+        background-size: contain;
+        background-position: center top;
+        background-attachment: scroll;
+      }
+    }
+    /* 自动响应式：电脑大屏自动加载桌面背景 */
+    @media (min-width: 601px) {
+      body:not(.view-mobile):not(.view-mobile-manual) {
+        background-image: var(--bg-desktop);
         background-size: contain;
         background-position: center top;
         background-attachment: scroll;
