@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- 修复桌面放大问题 -->
+  <!-- 修改视口，修复桌面异常放大 -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="theme-color" content="#ffe4f0">
   <meta name="description" content="好きなもの、音楽、SNSをひとつに。">
@@ -34,7 +34,6 @@
 
     html {
       font-size: 16px;
-      scroll-behavior: smooth;
     }
 
     body {
@@ -140,6 +139,11 @@
       animation: cardFade 0.7s forwards;
     }
 
+    .card:nth-child(2) { animation-delay: 0.12s; }
+    .card:nth-child(3) { animation-delay: 0.24s; }
+    .card:nth-child(4) { animation-delay: 0.36s; }
+    .card:nth-child(5) { animation-delay: 0.48s; }
+
     @keyframes cardFade {
       to {
         opacity: 1;
@@ -175,9 +179,6 @@
       border-radius: 50%;
       object-fit: cover;
       display: block;
-    }
-    .avatar[loading="lazy"] {
-      background:#ffd7e8;
     }
 
     #profileName {
@@ -454,56 +455,31 @@
       border-radius:50%;
       background:radial-gradient(circle, rgba(255,130,185,0.18), transparent 70%);
       pointer-events:none;
-      will-change: transform;
       transform:translate(-50%,-50%);
       z-index:0;
-      opacity:0;
-      transition: opacity 0.2s;
-    }
-    .cursor-glow.active{
-      opacity:1;
-    }
-    .copy-toast{
-      position:fixed;
-      left:50%;
-      bottom:80px;
-      transform:translateX(-50%);
-      background:rgba(0,0,0,0.65);
-      color:#fff;
-      padding:8px 16px;
-      border-radius:99px;
-      font-size:13px;
-      opacity:0;
-      pointer-events:none;
-      transition:0.25s;
-    }
-    .copy-toast.show{
-      opacity:1;
     }
   </style>
 </head>
 <body>
   <div class="sparkle-field" id="sparkleField" aria-hidden="true"></div>
   <div class="cursor-glow" id="cursorGlow"></div>
-  <div class="copy-toast" id="copyToast">コピー完了 ✔</div>
 
   <main class="wrap">
     <div class="topline">
       <div class="brand">✧ MY LITTLE UNIVERSE ✧</div>
       <div class="view-switch">
-        <button type="button" data-mode="mobile" aria-label="モバイル表示">📱</button>
-        <button type="button" data-mode="desktop" aria-label="デスクトップ表示">🖥️</button>
-        <button type="button" data-mode="auto" aria-label="自動レスポンシブに戻す">🔄</button>
+        <button type="button" data-mode="mobile">📱</button>
+        <button type="button" data-mode="desktop">🖥️</button>
       </div>
       <div style="display:flex;gap:6px;">
-        <button class="tiny-button" id="sparkleToggle" type="button" aria-label="キラキラエフェクト切替">✦ キラキラ ON</button>
-        <button class="tiny-button" id="themeToggle" type="button" aria-label="テーマ切替">🌙</button>
+        <button class="tiny-button" id="sparkleToggle" type="button">✦ キラキラ ON</button>
+        <button class="tiny-button" id="themeToggle" type="button">🌙</button>
       </div>
     </div>
 
     <section class="card profile">
       <div class="avatar-ring">
-        <img class="avatar" loading="lazy" src="https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/anime_image_1400x1400.jpg" alt="プロフィール画像">
+        <img class="avatar" src="https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/anime_image_1400x1400.jpg" alt="プロフィール画像">
       </div>
       <h1 id="profileName">京アニ唯</h1>
       <div class="handle">@yuihonoka</div>
@@ -521,7 +497,7 @@
     <section class="card section">
       <h2 class="section-title"><span>🎬</span> MY VIDEO</h2>
       <div class="yui-video-card">
-        <video class="yui-video" poster="./poster.jpg" muted loop playsinline controls preload="metadata">
+        <video class="yui-video" muted loop playsinline controls preload="metadata">
           <source src="./yui-video.mp4" type="video/mp4">
           お使いのブラウザは動画再生に対応していません。
         </video>
@@ -606,14 +582,14 @@
 
     <section class="card section">
       <h2 class="section-title"><span>✉</span> MESSAGE</h2>
-      <button class="link-button" id="copyMailBtn">
+      <a class="link-button" href="mailto:czl3464948964@gmail.com">
         <span class="link-icon">💌</span>
         <div class="link-copy">
           <span class="link-name">Contact me</span>
-          <span class="link-desc">メールアドレスをコピー</span>
+          <span class="link-desc">メッセージはこちら</span>
         </div>
-        <span class="arrow">📋</span>
-      </button>
+        <span class="arrow">↗</span>
+      </a>
       <p class="note">好きです</p>
     </section>
 
@@ -626,43 +602,31 @@
   <button class="to-top" id="toTopBtn" aria-label="ページ上部へ戻る">↑</button>
 
   <script>
+    // 星光粒子
     const field = document.getElementById('sparkleField');
     const symbols = ['✦', '✧', '♡', '·', '✩', '✿', '˚'];
-    const isMobileDevice = window.innerWidth <= 600;
-
-    // カードアニメーション自動遅延（任意枚数対応）
-    const cards = document.querySelectorAll('.card');
-    cards.forEach((card, idx)=>{
-      card.style.animationDelay = (0.12 * idx) + 's';
-    })
-
-    // スパークル：モバイル初期OFF
-    let sparklesOn = !isMobileDevice;
-    function renderSparkles(){
-      field.innerHTML = '';
-      if(!sparklesOn) return;
-      for(let i=0; i<30; i++){
-        const span = document.createElement('span');
-        span.className = 'sparkle';
-        span.textContent = symbols[Math.floor(Math.random()*symbols.length)];
-        span.style.left = Math.random()*100 + '%';
-        span.style.fontSize = (8 + Math.random()*10)+'px';
-        const dur = 12 + Math.random()*10;
-        span.style.animationDuration = dur+'s';
-        span.style.animationDelay = -Math.random()*dur+'s';
-        field.appendChild(span);
-      }
+    for(let i=0; i<30; i++){
+      const span = document.createElement('span');
+      span.className = 'sparkle';
+      span.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+      span.style.left = Math.random()*100 + '%';
+      span.style.fontSize = (8 + Math.random()*10)+'px';
+      const dur = 12 + Math.random()*10;
+      span.style.animationDuration = dur+'s';
+      span.style.animationDelay = -Math.random()*dur+'s';
+      field.appendChild(span);
     }
-    renderSparkles();
 
+    // 星光开关
     const sparkleToggle = document.getElementById('sparkleToggle');
+    let sparklesOn = true;
     sparkleToggle.addEventListener('click',()=>{
       sparklesOn = !sparklesOn;
-      renderSparkles();
+      field.style.display = sparklesOn ? 'block' : 'none';
       sparkleToggle.textContent = sparklesOn ? '✦ キラキラ ON' : '✧ キラキラ OFF';
     })
 
-    // テーマ
+    // 夜间モード
     const themeToggle = document.getElementById('themeToggle');
     let dark = false;
     function applyTheme(isDark){
@@ -679,22 +643,15 @@
       const hour = new Date().getHours();
       applyTheme(hour >= 20 || hour <6);
     }
-    autoDetectTheme();
-    // 一定間隔で自動更新
-    setInterval(autoDetectTheme, 1000 * 60 * 10);
     themeToggle.addEventListener('click',()=> applyTheme(!dark));
+    autoDetectTheme();
 
-    // カーソル光 GPU加速
+    // カーソル光
     const glow = document.getElementById('cursorGlow');
-    if(!isMobileDevice){
-      window.addEventListener('mousemove', e=>{
-        glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
-        glow.classList.add('active');
-      })
-      document.body.addEventListener('mouseleave', ()=>{
-        glow.classList.remove('active');
-      })
-    }
+    window.addEventListener('mousemove', e=>{
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    })
 
     // 年
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -712,7 +669,7 @@
       window.scrollTo({top:0, behavior:'smooth'});
     })
 
-    // PC/モバイル/自動切替
+    // PC/モバイル表示切替
     const viewBtns = document.querySelectorAll('.view-switch button');
     const body = document.body;
     let manual = false;
@@ -720,20 +677,15 @@
       viewBtns.forEach(b=>b.classList.remove('active'));
       if(manual){
         const mode = body.classList.contains('view-desktop') ? 'desktop' : 'mobile';
-        document.querySelector(`[data-mode="${mode}"]`)?.classList.add('active');
+        document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
       }
     }
     viewBtns.forEach(btn=>{
       btn.addEventListener('click',()=>{
-        const m = btn.dataset.mode;
+        manual = true;
         body.classList.remove('view-desktop','view-mobile','view-mobile-manual');
-        if(m === "auto"){
-          manual = false;
-          initView();
-        }else{
-          manual = true;
-          body.classList.add('view-'+m, 'view-mobile-manual');
-        }
+        const m = btn.dataset.mode;
+        body.classList.add('view-'+m, 'view-mobile-manual');
         updateActive();
       })
     })
@@ -749,20 +701,6 @@
     window.addEventListener('resize',()=>{
       if(!manual) initView();
     })
-
-    // メールコピー機能
-    const copyMailBtn = document.getElementById('copyMailBtn');
-    const copyToast = document.getElementById('copyToast');
-    const mailAddr = "czl3464948964@gmail.com";
-    copyMailBtn.addEventListener('click', async ()=>{
-      try{
-        await navigator.clipboard.writeText(mailAddr);
-        copyToast.classList.add('show');
-        setTimeout(()=>copyToast.classList.remove('show'),1500);
-       }catch(err){
-         alert(mailAddr);
-       }
-     })
-   </script>
- </body>
- </html>
+  </script>
+</body>
+</html>
