@@ -42,10 +42,10 @@
       font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
       background: var(--pink-light);
       background-image: var(--bg-desktop);
-      background-position: center center;
+      background-position: center top;
       background-repeat: no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
+      background-size: contain;
+      background-attachment: scroll;
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
@@ -55,22 +55,24 @@
 
     body.view-mobile {
       background-image: var(--bg-mobile);
+      background-size: contain;
+      background-position: center top;
       background-attachment: scroll;
-      background-size: cover;
-      background-position:center;
     }
 
     body.view-desktop {
       background-image: var(--bg-desktop);
-      background-attachment: fixed;
+      background-size: contain;
+      background-position: center top;
+      background-attachment: scroll;
     }
 
     @media (max-width: 600px) {
       body:not(.view-desktop):not(.view-mobile-manual) {
         background-image: var(--bg-mobile);
+        background-size: contain;
+        background-position: center top;
         background-attachment: scroll;
-        background-size: cover;
-        background-position:center;
       }
     }
 
