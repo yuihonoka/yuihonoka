@@ -458,9 +458,48 @@
       transform:translate(-50%,-50%);
       z-index:0;
     }
+
+    /* 播放弹窗样式 */
+    .audio-popup{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.45);
+      z-index:999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .audio-popup-box{
+      background:rgba(255,240,248,0.95);
+      padding:24px 32px;
+      border-radius:22px;
+      text-align:center;
+      backdrop-filter: blur(12px);
+    }
+    .audio-popup button{
+      margin-top:14px;
+      padding:10px 22px;
+      border-radius:999px;
+      border:none;
+      background:#ed4d99;
+      color:white;
+      font-size:15px;
+      cursor:pointer;
+    }
+    .audio-popup.hidden{
+      display:none;
+    }
   </style>
 </head>
 <body>
+  <!-- 音频解锁弹窗 -->
+  <div class="audio-popup" id="audioPopup">
+    <div class="audio-popup-box">
+      <p>🔊 クリックして動画音声を再生</p>
+      <button id="playVideoBtn">再生を開始 ✧</button>
+    </div>
+  </div>
+
   <div class="sparkle-field" id="sparkleField" aria-hidden="true"></div>
   <div class="cursor-glow" id="cursorGlow"></div>
 
@@ -497,7 +536,8 @@
     <section class="card section">
       <h2 class="section-title"><span>🎬</span> MY VIDEO</h2>
       <div class="yui-video-card">
-        <video class="yui-video" muted loop playsinline controls preload="metadata">
+        <!-- 移除 muted 属性，保留 loop playsinline -->
+        <video class="yui-video" loop playsinline controls preload="metadata" id="myVideo">
           <source src="./yui-video.mp4" type="video/mp4">
           お使いのブラウザは動画再生に対応していません。
         </video>
@@ -701,6 +741,16 @@
     window.addEventListener('resize',()=>{
       if(!manual) initView();
     })
+
+    // ===== 動画再生制御 =====
+    const video = document.getElementById('myVideo');
+    const popup = document.getElementById('audioPopup');
+    const playBtn = document.getElementById('playVideoBtn');
+
+    playBtn.onclick = function(){
+      video.play();
+      popup.classList.add('hidden');
+    }
   </script>
 </body>
 </html>
