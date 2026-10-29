@@ -41,7 +41,7 @@
     body {
       font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
       background: var(--pink-light);
-      background-image: var(--bg-desktop);
+      background-image: var(--bg-mobile);
       background-position: center top;
       background-repeat: no-repeat;
       background-size: contain;
@@ -53,48 +53,89 @@
       overflow-x: hidden;
     }
 
-    /* 手动切换到手机模式 */
-    body.view-mobile {
-      background-image: var(--bg-mobile);
-      background-size: contain;
-      background-position: center top;
-      background-attachment: scroll;
+    /* ===== 手机默认样式（宽度≤600px）===== */
+    .wrap {
+      width: min(100% - 20px, 480px);
+      margin: 0 auto;
+      padding: 28px 0 60px;
     }
-    /* 手动切换到电脑模式，使用桌面背景 */
-    body.view-desktop {
-      background-image: var(--bg-desktop);
-      background-size: contain;
-      background-position: center top;
-      background-attachment: scroll;
+    .profile {
+      padding: 28px 18px;
+      text-align: center;
+      position:relative;
+    }
+    .section {
+      padding: 18px;
+    }
+    .link-list {
+      display:grid;
+      gap:10px;
+      grid-template-columns: 1fr;
     }
 
-    /* 自动响应式：手机宽度自动加载手机背景 */
-    @media (max-width: 600px) {
-      body:not(.view-desktop):not(.view-mobile-manual) {
-        background-image: var(--bg-mobile);
-        background-size: contain;
-        background-position: center top;
-        background-attachment: scroll;
-      }
-    }
-    /* 自动响应式：电脑大屏自动加载桌面背景 */
+    /* ===== 电脑端样式（宽度>600px） 独立整套样式 ===== */
     @media (min-width: 601px) {
       body:not(.view-mobile):not(.view-mobile-manual) {
         background-image: var(--bg-desktop);
         background-size: contain;
         background-position: center top;
-        background-attachment: scroll;
+      }
+      .wrap {
+        width: min(100% - 32px, 1100px);
+        margin: 0 auto;
+        padding: 28px 0 60px;
+      }
+      .profile {
+        padding: 36px 28px;
+        text-align: center;
+        position:relative;
+      }
+      .section {
+        padding: 24px;
+      }
+      .link-list {
+        display:grid;
+        gap:10px;
+        grid-template-columns: repeat(2,1fr);
       }
     }
 
-    .wrap {
+    /* ===== 手动强制电脑模式 view-desktop ===== */
+    body.view-desktop {
+      background-image: var(--bg-desktop);
+      background-size: contain;
+      background-position: center top;
+    }
+    body.view-desktop .wrap {
       width: min(100% - 32px, 1100px);
-      margin: 0 auto;
-      padding: 28px 0 60px;
+    }
+    body.view-desktop .profile {
+      padding: 36px 28px;
+    }
+    body.view-desktop .section {
+      padding: 24px;
+    }
+    body.view-desktop .link-list {
+      grid-template-columns: repeat(2,1fr);
     }
 
+    /* ===== 手动强制手机模式 view-mobile ===== */
+    body.view-mobile {
+      background-image: var(--bg-mobile);
+      background-size: contain;
+      background-position: center top;
+    }
     body.view-mobile .wrap {
       width: min(100% - 20px, 480px);
+    }
+    body.view-mobile .profile {
+      padding: 28px 18px;
+    }
+    body.view-mobile .section {
+      padding: 18px;
+    }
+    body.view-mobile .link-list {
+      grid-template-columns: 1fr;
     }
 
     .topline {
@@ -176,16 +217,6 @@
       box-shadow: 0 14px 40px rgba(220, 130, 180, 0.18);
     }
 
-    .profile {
-      padding: 36px 28px;
-      text-align: center;
-      position:relative;
-    }
-
-    body.view-mobile .profile {
-      padding: 28px 18px;
-    }
-
     .avatar-ring {
       width: 120px;
       height: 120px;
@@ -245,14 +276,6 @@
       color:var(--pink);
     }
 
-    .section {
-      padding: 24px;
-    }
-
-    body.view-mobile .section {
-      padding: 18px;
-    }
-
     .section-title {
       font-size: 16px;
       font-weight: 600;
@@ -289,15 +312,6 @@
       text-align:center;
       color:#b56b98;
       font-size:14px;
-    }
-
-    .link-list {
-      display:grid;
-      gap:10px;
-    }
-
-    body.view-desktop .link-list {
-      grid-template-columns: repeat(2,1fr);
     }
 
     .link-button {
@@ -771,9 +785,9 @@
     viewBtns.forEach(btn=>{
       btn.addEventListener('click',()=>{
         manual = true;
-        body.classList.remove('view-desktop','view-mobile','view-mobile-manual');
+        body.classList.remove('view-desktop','view-mobile');
         const m = btn.dataset.mode;
-        body.classList.add('view-'+m, 'view-mobile-manual');
+        body.classList.add('view-'+m);
         updateActive();
       })
     })
