@@ -99,8 +99,7 @@
     }
 
     .view-switch button,
-    .tiny-button,
-    select.tiny-button {
+    .tiny-button {
       border: 1px solid rgba(237, 77, 153, 0.35);
       border-radius: 999px;
       padding: 7px 14px;
@@ -109,15 +108,6 @@
       font-size: 13px;
       cursor: pointer;
       transition: 0.2s;
-    }
-
-    select.tiny-button {
-      appearance: none;
-      padding-right:26px;
-      background-image: linear-gradient(45deg, transparent 50%,var(--pink) 50%),linear-gradient(135deg,var(--pink) 50%,transparent 50%);
-      background-position: calc(100% - 12px) calc(1em + 2px),calc(100% - 8px) calc(1em + 2px);
-      background-size: 4px 4px,4px 4px;
-      background-repeat: no-repeat;
     }
 
     .view-switch button.active,
@@ -481,13 +471,7 @@
         <button type="button" data-mode="mobile">📱</button>
         <button type="button" data-mode="desktop">🖥️</button>
       </div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <select id="langSelect" class="tiny-button">
-          <option value="ja">日本語</option>
-          <option value="zh-CN">简体中文</option>
-          <option value="zh-TW">繁體中文</option>
-          <option value="en">English</option>
-        </select>
+      <div style="display:flex;gap:6px;">
         <button class="tiny-button" id="sparkleToggle" type="button">✦ キラキラ ON</button>
         <button class="tiny-button" id="themeToggle" type="button">🌙</button>
       </div>
@@ -499,34 +483,36 @@
       </div>
       <h1 id="profileName">京アニ唯</h1>
       <div class="handle">@yuihonoka</div>
-      <div class="access-note" data-i18n="accessNote"></div>
-      <p class="bio" data-i18n="bio"></p>
+      <div class="access-note">海外サイトへのアクセスには、地域によって制限があります。Bilibiliは国内から直接閲覧可能です。</div>
+      <p class="bio">こんにちは、YUIです！ ♡
+音楽とアニメが大好き。
+ここから私の SNS や作品をチェックしてね ✨</p>
       <div class="chips">
-        <span class="chip" data-i18n="chip1">🎧 音楽</span>
-        <span class="chip" data-i18n="chip2">🌸 アニメ</span>
-        <span class="chip" data-i18n="chip3">🎀 ゆるく交流</span>
+        <span class="chip">🎧 音楽</span>
+        <span class="chip">🌸 アニメ</span>
+        <span class="chip">🎀 ゆるく交流</span>
       </div>
     </section>
 
     <section class="card section">
-      <h2 class="section-title"><span>🎬</span> <span data-i18n="videoTitle">MY VIDEO</span></h2>
+      <h2 class="section-title"><span>🎬</span> MY VIDEO</h2>
       <div class="yui-video-card">
         <video class="yui-video" muted loop playsinline controls preload="metadata">
           <source src="./yui-video.mp4" type="video/mp4">
-          <span data-i18n="videoNoSupport">お使いのブラウザは動画再生に対応していません。</span>
+          お使いのブラウザは動画再生に対応していません。
         </video>
-        <p class="yui-video-caption" data-i18n="videoCaption">🎀 YUI's Little Movie</p>
+        <p class="yui-video-caption">🎀 YUI's Little Movie</p>
       </div>
     </section>
 
     <section class="card section">
-      <h2 class="section-title"><span>♡</span> <span data-i18n="linkTitle">SOCIAL LINKS</span></h2>
+      <h2 class="section-title"><span>♡</span> SOCIAL LINKS</h2>
       <div class="link-list">
         <a class="link-button" href="https://x.com/Yui__Honoka" target="_blank" rel="noopener noreferrer">
           <span class="link-icon">𝕏</span>
           <div class="link-copy">
             <span class="link-name">X (Twitter)</span>
-            <span class="link-desc" data-i18n="descX">気ままにつぶやき中</span>
+            <span class="link-desc">気ままにつぶやき中</span>
           </div>
           <span class="arrow">↗</span>
         </a>
@@ -534,7 +520,7 @@
           <span class="link-icon">📷</span>
           <div class="link-copy">
             <span class="link-name">Instagram</span>
-            <span class="link-desc" data-i18n="descIg">日常と写真を投稿</span>
+            <span class="link-desc">日常と写真を投稿</span>
           </div>
           <span class="arrow">↗</span>
         </a>
@@ -542,7 +528,7 @@
           <span class="link-icon">📺</span>
           <div class="link-copy">
             <span class="link-name">Bilibili</span>
-            <span class="link-desc" data-i18n="descBili">動画・MADを公開</span>
+            <span class="link-desc">動画・MADを公開</span>
           </div>
           <span class="arrow">↗</span>
         </a>
@@ -550,15 +536,15 @@
           <span class="link-icon">♪</span>
           <div class="link-copy">
             <span class="link-name">TikTok</span>
-            <span class="link-desc" data-i18n="descTiktok">ショート動画</span>
+            <span class="link-desc">ショート動画</span>
           </div>
           <span class="arrow">↗</span>
         </a>
         <a class="link-button" href="https://music.163.com/djradio?id=1500681020" target="_blank" rel="noopener noreferrer">
           <span class="link-icon">🎙️</span>
           <div class="link-copy">
-            <span class="link-name" data-i18n="nameNetease">NetEase Cloud ポッドキャスト</span>
-            <span class="link-desc" data-i18n="descNetease">オリジナル配信</span>
+            <span class="link-name">NetEase Cloud ポッドキャスト</span>
+            <span class="link-desc">オリジナル配信</span>
           </div>
           <span class="arrow">↗</span>
         </a>
@@ -566,7 +552,7 @@
           <span class="link-icon">▶</span>
           <div class="link-copy">
             <span class="link-name">YouTube</span>
-            <span class="link-desc" data-i18n="descYt">長編動画アップロード</span>
+            <span class="link-desc">長編動画アップロード</span>
           </div>
           <span class="arrow">↗</span>
         </a>
@@ -574,7 +560,7 @@
           <span class="link-icon">🎵</span>
           <div class="link-copy">
             <span class="link-name">Bandcamp</span>
-            <span class="link-desc" data-i18n="descBandcamp">オリジナル音源販売・高音質DL</span>
+            <span class="link-desc">オリジナル音源販売・高音質DL</span>
           </div>
           <span class="arrow">↗</span>
         </a>
@@ -582,33 +568,33 @@
     </section>
 
     <section class="card section">
-      <h2 class="section-title"><span>♫</span> <span data-i18n="musicTitle">MY MUSIC</span></h2>
+      <h2 class="section-title"><span>♫</span> MY MUSIC</h2>
       <div class="music-card">
         <div class="album-art">🎼</div>
         <div class="track-info">
-          <div class="track-title" data-i18n="playlistTitle">お気に入りのプレイリスト</div>
-          <div class="track-sub" data-i18n="playlistSub">好きな曲・自作曲・作業用BGM</div>
-          <a class="listen" href="https://open.spotify.com/artist/1cXxia1Q2VDTjWe8X2Jydm" target="_blank" rel="noopener noreferrer"><span data-i18n="listenSpotify">Spotify で聴く</span> ↗</a>
+          <div class="track-title">お気に入りのプレイリスト</div>
+          <div class="track-sub">好きな曲・自作曲・作業用BGM</div>
+          <a class="listen" href="https://open.spotify.com/artist/1cXxia1Q2VDTjWe8X2Jydm" target="_blank" rel="noopener noreferrer">Spotify で聴く ↗</a>
         </div>
       </div>
       <p class="note">♪ Spotify</p>
     </section>
 
     <section class="card section">
-      <h2 class="section-title"><span>✉</span> <span data-i18n="msgTitle">MESSAGE</span></h2>
+      <h2 class="section-title"><span>✉</span> MESSAGE</h2>
       <a class="link-button" href="mailto:czl3464948964@gmail.com">
         <span class="link-icon">💌</span>
         <div class="link-copy">
-          <span class="link-name" data-i18n="contactName">Contact me</span>
-          <span class="link-desc" data-i18n="contactDesc">メッセージはこちら</span>
+          <span class="link-name">Contact me</span>
+          <span class="link-desc">メッセージはこちら</span>
         </div>
         <span class="arrow">↗</span>
       </a>
-      <p class="note" data-i18n="noteLove">好きです</p>
+      <p class="note">好きです</p>
     </section>
 
     <footer>
-      <div data-i18n="footerText">今日もあなたに、ちいさな幸せが届きますように <span class="heart">♥</span></div>
+      <div>今日もあなたに、ちいさな幸せが届きますように <span class="heart">♥</span></div>
       <div>© <span id="year"></span> YUI's Little Universe</div>
     </footer>
   </main>
@@ -616,110 +602,105 @@
   <button class="to-top" id="toTopBtn" aria-label="ページ上部へ戻る">↑</button>
 
   <script>
-    // ===== 多语言字典 =====
-    const i18nTexts = {
-      ja:{
-        accessNote:"海外サイトへのアクセスには、地域によって制限があります。Bilibiliは国内から直接閲覧可能です。",
-        bio:"こんにちは、YUIです！ ♡\n音楽とアニメが大好き。\nここから私の SNS や作品をチェックしてね ✨",
-        chip1:"🎧 音楽",
-        chip2:"🌸 アニメ",
-        chip3:"🎀 ゆるく交流",
-        videoTitle:"MY VIDEO",
-        videoNoSupport:"お使いのブラウザは動画再生に対応していません。",
-        videoCaption:"🎀 YUI's Little Movie",
-        linkTitle:"SOCIAL LINKS",
-        descX:"気ままにつぶやき中",
-        descIg:"日常と写真を投稿",
-        descBili:"動画・MADを公開",
-        descTiktok:"ショート動画",
-        nameNetease:"NetEase Cloud ポッドキャスト",
-        descNetease:"オリジナル配信",
-        descYt:"長編動画アップロード",
-        descBandcamp:"オリジナル音源販売・高音質DL",
-        musicTitle:"MY MUSIC",
-        playlistTitle:"お気に入りのプレイリスト",
-        playlistSub:"好きな曲・自作曲・作業用BGM",
-        listenSpotify:"Spotify で聴く",
-        msgTitle:"MESSAGE",
-        contactName:"Contact me",
-        contactDesc:"メッセージはこちら",
-        noteLove:"好きです",
-        footerText:"今日もあなたに、ちいさな幸せが届きますように <span class='heart'>♥</span>"
-      },
-      "zh-CN":{
-        accessNote:"海外网站会存在地区访问限制，哔哩哔哩国内可以直接访问。",
-        bio:"你好，我是YUI！ ♡\n热爱音乐与动画。\n在这里查看我的社交账号与作品 ✨",
-        chip1:"🎧 音乐",
-        chip2:"🌸 动画",
-        chip3:"🎀 轻松交流",
-        videoTitle:"我的视频",
-        videoNoSupport:"你的浏览器不支持视频播放。",
-        videoCaption:"🎀 YUI的小短片",
-        linkTitle:"社交链接",
-        descX:"随心分享动态",
-        descIg:"分享日常与照片",
-        descBili:"发布视频与MAD",
-        descTiktok:"短视频作品",
-        nameNetease:"网易云播客",
-        descNetease:"原创节目",
-        descYt:"上传长视频",
-        descBandcamp:"原创音源售卖·高音质下载",
-        musicTitle:"我的音乐",
-        playlistTitle:"收藏歌单",
-        playlistSub:"喜欢的曲子、原创曲、工作BGM",
-        listenSpotify:"在Spotify收听",
-        msgTitle:"留言",
-        contactName:"联系我",
-        contactDesc:"在此发送消息",
-        noteLove:"喜欢你",
-        footerText:"愿小小的幸福，今日也抵达你身边 <span class='heart'>♥</span>"
-      },
-      "zh-TW":{
-        accessNote:"海外網站存在地區存取限制，嗶哩嗶哩可於國內直接瀏覽。",
-        bio:"你好，我是YUI！ ♡\n熱愛音樂與動畫。\n在這裡查看我的社群帳號與作品 ✨",
-        chip1:"🎧 音樂",
-        chip2:"🌸 動畫",
-        chip3:"🎀 輕鬆交流",
-        videoTitle:"我的影片",
-        videoNoSupport:"您的瀏覽器不支援影片播放。",
-        videoCaption:"🎀 YUI的小短片",
-        linkTitle:"社群連結",
-        descX:"隨心分享動態",
-        descIg:"分享日常與照片",
-        descBili:"發布影片與MAD",
-        descTiktok:"短影片作品",
-        nameNetease:"網易雲播客",
-        descNetease:"原創節目",
-        descYt:"上傳長影片",
-        descBandcamp:"原創音源販售·高音質下載",
-        musicTitle:"我的音樂",
-        playlistTitle:"收藏歌單",
-        playlistSub:"喜愛的樂曲、原創曲、工作BGM",
-        listenSpotify:"於Spotify收聽",
-        msgTitle:"留言",
-        contactName:"聯絡我",
-        contactDesc:"於此傳送訊息",
-        noteLove:"喜歡你",
-        footerText:"願小小的幸福，今日也抵達你的身旁 <span class='heart'>♥</span>"
-      },
-      en:{
-        accessNote:"Overseas websites have regional access restrictions. Bilibili is available directly in mainland China.",
-        bio:"Hello, I'm YUI! ♡\nLove music and anime.\nCheck out my socials and works here ✨",
-        chip1:"🎧 Music",
-        chip2:"🌸 Anime",
-        chip3:"🎀 Casual chat",
-        videoTitle:"MY VIDEO",
-        videoNoSupport:"Your browser cannot play video.",
-        videoCaption:"🎀 YUI's Little Movie",
-        linkTitle:"SOCIAL LINKS",
-        descX:"Random daily posts",
-        descIg:"Daily life & photos",
-        descBili:"Videos & MAD works",
-        descTiktok:"Short videos",
-        nameNetease:"NetEase Cloud Podcast",
-        descNetease:"Original episodes",
-        descYt:"Long video uploads",
-        descBandcamp:"Original audio sales · Hi-Res download",
-        musicTitle:"MY MUSIC",
-        playlistTitle:"Favorite Playlist",
-        playlistSub:"Favourite songs, original
+    // 星光粒子
+    const field = document.getElementById('sparkleField');
+    const symbols = ['✦', '✧', '♡', '·', '✩', '✿', '˚'];
+    for(let i=0; i<30; i++){
+      const span = document.createElement('span');
+      span.className = 'sparkle';
+      span.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+      span.style.left = Math.random()*100 + '%';
+      span.style.fontSize = (8 + Math.random()*10)+'px';
+      const dur = 12 + Math.random()*10;
+      span.style.animationDuration = dur+'s';
+      span.style.animationDelay = -Math.random()*dur+'s';
+      field.appendChild(span);
+    }
+
+    // 星光开关
+    const sparkleToggle = document.getElementById('sparkleToggle');
+    let sparklesOn = true;
+    sparkleToggle.addEventListener('click',()=>{
+      sparklesOn = !sparklesOn;
+      field.style.display = sparklesOn ? 'block' : 'none';
+      sparkleToggle.textContent = sparklesOn ? '✦ キラキラ ON' : '✧ キラキラ OFF';
+    })
+
+    // 夜间モード
+    const themeToggle = document.getElementById('themeToggle');
+    let dark = false;
+    function applyTheme(isDark){
+      dark = isDark;
+      if(dark){
+        document.body.setAttribute('data-theme','dark');
+        themeToggle.textContent = '☀';
+      }else{
+        document.body.removeAttribute('data-theme');
+        themeToggle.textContent = '🌙';
+      }
+    }
+    function autoDetectTheme(){
+      const hour = new Date().getHours();
+      applyTheme(hour >= 20 || hour <6);
+    }
+    themeToggle.addEventListener('click',()=> applyTheme(!dark));
+    autoDetectTheme();
+
+    // カーソル光
+    const glow = document.getElementById('cursorGlow');
+    window.addEventListener('mousemove', e=>{
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    })
+
+    // 年
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // トップボタン
+    const toTopBtn = document.getElementById('toTopBtn');
+    window.addEventListener('scroll',()=>{
+      if(window.scrollY>350){
+        toTopBtn.classList.add('visible');
+      }else{
+        toTopBtn.classList.remove('visible');
+      }
+    })
+    toTopBtn.addEventListener('click',()=>{
+      window.scrollTo({top:0, behavior:'smooth'});
+    })
+
+    // PC/モバイル表示切替
+    const viewBtns = document.querySelectorAll('.view-switch button');
+    const body = document.body;
+    let manual = false;
+    function updateActive(){
+      viewBtns.forEach(b=>b.classList.remove('active'));
+      if(manual){
+        const mode = body.classList.contains('view-desktop') ? 'desktop' : 'mobile';
+        document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+      }
+    }
+    viewBtns.forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        manual = true;
+        body.classList.remove('view-desktop','view-mobile','view-mobile-manual');
+        const m = btn.dataset.mode;
+        body.classList.add('view-'+m, 'view-mobile-manual');
+        updateActive();
+      })
+    })
+    function initView(){
+      if(window.innerWidth>600){
+        body.classList.add('view-desktop');
+      }else{
+        body.classList.add('view-mobile');
+      }
+      updateActive();
+    }
+    initView();
+    window.addEventListener('resize',()=>{
+      if(!manual) initView();
+    })
+  </script>
+</body>
+</html>
