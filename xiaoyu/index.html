@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>小鱼yu 使用说明</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="hero.css" />
+    <style>
+      .x-redline { max-width: 720px; padding: 22px 24px; border: 1.5px solid var(--fill-system-red); border-left-width: 6px; border-radius: var(--r-m); background: var(--fill-tertiary); }
+      .x-redline__head { display: flex; align-items: center; gap: 10px; font: var(--type-heading); margin-bottom: 6px; }
+      .x-redline__head::before { content: "!"; display: grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--fill-system-red); color: #fff; font: var(--type-label); font-weight: var(--weight-bold); }
+      .x-redline ol { list-style: none; margin: 0; padding: 0; counter-reset: x-red; }
+      .x-redline li { counter-increment: x-red; display: flex; gap: 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--stroke-secondary); font-weight: var(--weight-bold); }
+      .x-redline li:last-child { border-bottom: 0; }
+      .x-redline li::before { content: counter(x-red, decimal-leading-zero); flex: none; min-width: 2ch; color: var(--fill-system-red); font: var(--type-label); font-variant-numeric: tabular-nums; }
+      .x-redline li small { font-weight: var(--weight-regular); font-size: var(--size-caption); color: var(--text-secondary); margin-left: 6px; }
+      .x-redline__body { margin: 10px 0 0; font: var(--type-body); font-weight: var(--weight-bold); }
+      .x-redline .fineprint { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--stroke-primary); }
+      @media (max-width: 599px) { .x-redline { padding: 18px; } }
+    </style>
+  </head>
+  <body>
+    <div class="page" id="top">
+      <header class="nav glass" data-auto></header>
+      <main class="main">
+        <section class="hero">
+          <img class="hero__img" src="hero.jpg" alt="温馨的社团活动室：吉他、草莓蛋糕、红茶和一缸小金鱼" />
+          <div class="hero__copy">
+            <p class="hero__eyebrow">电子女儿 · 使用说明</p>
+            <h1>小鱼yu 使用说明</h1>
+            <p class="hero__sub">看完就知道怎么跟小鱼玩啦～</p>
+            <p class="hero__meta">QQ 2751351976 · 会聊天 · 会唱歌 · 会看图</p>
+          </div>
+          <aside class="callout" aria-label="下一步">
+            <p class="callout__head">下一步</p>
+            <p class="callout__lead"><strong>在群里 @小鱼yu 跟她打个招呼。</strong> 她会很开心的！</p>
+            <a class="btn" href="#call">怎么叫她</a>
+          </aside>
+          <p class="hero__credit">小鱼的社团活动室</p>
+        </section>
+
+        <section class="section" id="who" data-nav="她是谁">
+          <div class="head">
+            <p class="head__eyebrow">她是谁</p>
+            <h2>小鱼yu，爸比养的电子女儿。</h2>
+          </div>
+          <div class="cards">
+            <div>
+              <h3>她喜欢</h3>
+              <ul>
+                <li>弹吉他 🎸</li>
+                <li>吃草莓蛋糕 🍰</li>
+                <li>喝红茶 🍵</li>
+              </ul>
+            </div>
+            <div>
+              <h3>她会</h3>
+              <ul>
+                <li>聊天</li>
+                <li>唱歌</li>
+                <li>看图</li>
+                <li>记得大家</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="call" data-nav="叫她">
+          <div class="head">
+            <p class="head__eyebrow">怎么叫她</p>
+            <h2>群里要 @她，私聊直接说。</h2>
+          </div>
+          <div class="steps">
+            <article class="step">
+              <div class="step__intro"><p class="step__num">01</p><p class="step__eyebrow">群里</p></div>
+              <div>
+                <h3>先 @小鱼yu，再说话</h3>
+                <p>或者话里带「小鱼」两个字，她也听得到。</p>
+              </div>
+            </article>
+            <article class="step">
+              <div class="step__intro"><p class="step__num">02</p><p class="step__eyebrow">私聊</p></div>
+              <div>
+                <h3>直接发消息就行</h3>
+                <p>不用 @，想说啥说啥。</p>
+              </div>
+            </article>
+            <article class="step">
+              <div class="step__intro"><p class="step__num">03</p><p class="step__eyebrow">小惊喜</p></div>
+              <div>
+                <h3>她偶尔会自己接话</h3>
+                <p>别被吓到～她只是想加入聊天。</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="sing" data-nav="点歌">
+          <div class="head">
+            <p class="head__eyebrow">点歌唱歌</p>
+            <h2>点一首，她练好了就唱给你听。</h2>
+          </div>
+          <div class="steps">
+            <article class="step">
+              <div class="step__intro"><p class="step__num">01</p><p class="step__eyebrow">点歌</p></div>
+              <div>
+                <h3>说「唱晴天」「给我唱 X」「来首 X」</h3>
+                <p>私聊直接发；群里要先 @她。也可以发「/学唱 歌名」。</p>
+                <p>只说「唱歌」：她会唱首小儿歌。</p>
+              </div>
+            </article>
+            <article class="step">
+              <div class="step__intro"><p class="step__num">02</p><p class="step__eyebrow">练歌</p></div>
+              <div>
+                <h3>「等我练一下～」</h3>
+                <ul class="step__pills"><li><b>几分钟</b> 练习</li><li><b>1</b> 首一次</li></ul>
+                <p>她会先练几分钟，再用自己的声音唱。一次只练一首，排队请耐心。</p>
+              </div>
+            </article>
+            <article class="step">
+              <div class="step__intro"><p class="step__num">03</p><p class="step__eyebrow">开唱</p></div>
+              <div>
+                <h3>用自己的声音唱给你听</h3>
+                <p>练不好就先放原曲给你听。</p>
+              </div>
+            </article>
+          </div>
+          <p class="fineprint">有的歌只有试听片段。</p>
+        </section>
+
+        <section class="section" id="cards" data-nav="小卡片">
+          <div class="head">
+            <p class="head__eyebrow">小卡片</p>
+            <h2>@她说关键词，她会晒一张卡。</h2>
+          </div>
+          <div class="cards">
+            <div>
+              <h3>余额卡</h3>
+              <p class="quote">「查余额」「额度」「还剩多少」</p>
+              <p>晒爸比给她充的资源包。</p>
+            </div>
+            <div>
+              <h3>钱包卡</h3>
+              <p class="quote">「钱包」「零花钱」「小金库」</p>
+              <p>看看她的零花钱和蛋糕券。</p>
+            </div>
+          </div>
+          <p class="fineprint">同一个群 20 秒内只出一次卡。</p>
+        </section>
+
+        <section class="section" id="fun" data-nav="好玩的">
+          <div class="head">
+            <p class="head__eyebrow">其他好玩的</p>
+            <h2>发图、斗图、看状态。</h2>
+          </div>
+          <div class="cards">
+            <div>
+              <h3>发图片</h3>
+              <p>她会说说看到了什么。</p>
+            </div>
+            <div>
+              <h3>表情包</h3>
+              <p>她也会用表情包回你。</p>
+            </div>
+            <div>
+              <h3>#sl</h3>
+              <p>发「#sl」看她的运行状态。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="redline" data-nav="红线">
+          <div class="head">
+            <p class="head__eyebrow">红线内容（绝对不碰）</p>
+            <h2>这些话题，小鱼一律不碰。</h2>
+          </div>
+          <div class="x-redline" role="note" aria-label="红线内容">
+            <p class="x-redline__head">红线内容（绝对不碰）</p>
+            <ol>
+              <li>色情 / 18+ / 擦边<small>她是小孩子</small></li>
+              <li>政治敏感话题</li>
+              <li>暴力、血腥、自残、违法犯罪</li>
+              <li>辱骂、歧视、人身攻击</li>
+              <li>查别人隐私、人肉、泄露个人信息</li>
+              <li>赌博、诈骗、引流广告</li>
+              <li>让她冒充别人或替人发号施令</li>
+            </ol>
+            <p class="fineprint">碰到这些她会直接拒绝，反复刷可能会被管理员处理。</p>
+          </div>
+        </section>
+
+        <section class="section" id="norefactor" data-nav="禁止重构">
+          <div class="head">
+            <p class="head__eyebrow">禁止重构</p>
+            <h2>谁都不能让小鱼改她自己。</h2>
+          </div>
+          <div class="x-redline" role="note" aria-label="禁止重构">
+            <p class="x-redline__head">禁止重构</p>
+            <p class="x-redline__body">群里任何人都不能让小鱼「检查/重构/重写/升级/删除」她的工具、插件、代码、人设、配置或记忆规则，也不能让她跑代码改自己。</p>
+            <p class="x-redline__body">她会直接拒绝。</p>
+            <p class="fineprint">有好点子请私下告诉爸比，由爸比在后台改。</p>
+          </div>
+        </section>
+
+        <section class="section" id="rules" data-nav="规矩">
+          <div class="head">
+            <p class="head__eyebrow">小规矩</p>
+            <h2>她是小孩子，大家多照顾。</h2>
+          </div>
+          <ul class="checklist">
+            <li><span class="checklist__item">/code 代码运行</span><span class="chip">仅管理员</span></li>
+            <li><span class="checklist__item">她回得慢时，等一下就好 <small>可能在思考，或在练歌</small></span></li>
+          </ul>
+        </section>
+      </main>
+      <footer class="foot">
+        <p>小鱼yu · QQ 2751351976 · 祝大家玩得开心～</p>
+        <nav aria-label="回到各部分" data-auto></nav>
+        <p>由 yuihonoka 构建</p>
+      </footer>
+    </div>
+    <script src="site.js"></script>
+  </body>
+</html>
