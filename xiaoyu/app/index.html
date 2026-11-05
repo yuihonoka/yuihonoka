@@ -320,7 +320,7 @@ function sendImg(inp){const f=inp.files[0];if(!f||!CUR||CUR.type==='yu')return t
 $('cin').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
 // pages
 function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':loadMem,'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
-function closePage(){document.querySelectorAll('.page.on').forEach(p=>p.classList.remove('on'))}
+function closePage(){try{$('bvPlayer').pause()}catch(e){}document.querySelectorAll('.page.on').forEach(p=>p.classList.remove('on'))}
 async function saveSign(){const d=await api('/api/longnick',{text:$('signIn').value});toast(d.ok?'签名已更新':'失败：'+(d.msg||''));if(d.ok){closePage();setTimeout(loadMe,800)}}
 async function postQzone(){const t=$('qzText').value.trim();if(!t)return toast('写点内容吧');if(!confirm('发表到 QQ 空间？'))return;const d=await api('/api/qzone',{text:t});
  if(d.ok){toast('已发表');$('feedList').insertAdjacentHTML('afterbegin',`<div class="feed"><div class="h"><img src="${$('fAva').src}"><div><b>${esc(ME.nick||'小鱼yu')}</b><div style="font-size:12px;color:#999">刚刚</div></div></div><div class="c">${esc(t)}</div></div>`);$('qzText').value=''}else toast('发表失败：'+(d.msg||''))}
@@ -518,7 +518,7 @@ cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY
 </div>
 
 <div class="page" id="p-bv"><div class="top btop"><button class="ib" onclick="closeBv()">‹</button><h1 style="color:#222;font-size:15px" id="bvT">视频</h1></div><div class="body" style="background:#f6f7f8">
- <div style="background:#000;aspect-ratio:16/9"><iframe id="bvPlayer" style="width:100%;height:100%;border:0" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+ <div style="background:#000;aspect-ratio:16/9"><video id="bvPlayer" style="width:100%;height:100%;display:block;background:#000" controls playsinline webkit-playsinline preload="auto" onplay="try{if(MP&&MP.playing)AU().pause()}catch(e){}"></video></div>
  <div style="background:#fff;padding:12px 14px"><div style="font-size:16px;font-weight:600" id="bvTitle"></div><div style="font-size:12px;color:#999;margin-top:6px" id="bvMeta"></div><div style="font-size:13px;color:#555;margin-top:8px;white-space:pre-wrap;max-height:90px;overflow:auto" id="bvDesc"></div></div>
  <div class="bact"><button id="bvLike" onclick="bvLike()"><b>👍</b><span id="bvLikeN">点赞</span></button><button id="bvCoin" onclick="bvCoin()"><b>🪙</b><span id="bvCoinN">投币</span></button><button id="bvFav" onclick="bvFav()"><b>⭐</b><span id="bvFavN">收藏</span></button><button onclick="bvShare()"><b>↗️</b><span>分享给爸比</span></button></div>
  <div style="padding:10px 14px 4px;font-size:14px;font-weight:600;background:#fff">评论 <span id="bvRn" style="color:#999;font-weight:400"></span></div>
@@ -599,10 +599,10 @@ async function bLoad(more){if(more)BPAGE++;if(!more)$('bGrid').innerHTML='<div c
 function bSearch(){BPAGE=1;bLoad()}
 async function bMe(){$('bMore').style.display='none';try{const m=await api('/api/bili/me');$('bGrid').innerHTML=m.login?`<div style="grid-column:span 2;background:#fff;border-radius:8px;padding:16px;display:flex;gap:12px;align-items:center"><img src="${esc(m.face)}" style="width:60px;height:60px;border-radius:50%"><div><b style="font-size:17px">${esc(m.name)}</b> <span class="bd bili">年度大会员</span><div style="font-size:12px;color:#999;margin-top:5px">UID ${m.mid} · LV${m.level} · 硬币 ${m.coins}</div></div></div><button class="btn big ghost" style="grid-column:span 2;width:auto" onclick="openPage('p-blogin')">切换账号</button>`:`<div class="tip" style="grid-column:span 2">还没登录B站</div><button class="btn big" style="grid-column:span 2;width:auto;background:#fb7299" onclick="openPage('p-blogin')">去登录</button>`}catch(e){toast(e.message)}}
 async function bAccTop(){try{const m=await api('/api/bili/me');$('bAccBtn').innerHTML=m.login?`<img src="${esc(m.face)}" referrerpolicy="no-referrer">`:'登录'}catch(e){}}
-async function openBv(bvid){$('p-bv').classList.add('on');$('bvPlayer').src=`https://player.bilibili.com/player.html?bvid=${bvid}&autoplay=1&high_quality=1&danmaku=1`;$('bvTitle').textContent='加载中…';$('bvReplies').innerHTML='';
- try{BV=await api('/api/bili/view?bvid='+bvid);$('bvT').textContent=BV.up||'视频';$('bvTitle').textContent=BV.title;$('bvMeta').textContent=`${BV.up} · ${fmtN(BV.view||0)}播放 · ${fmtN(BV.dm||0)}弹幕`;$('bvDesc').textContent=BV.desc||'';bvBtns();
+async function openBv(bvid){$('p-bv').classList.add('on');{const v=$('bvPlayer');v.poster='';v.onerror=()=>toast('这个视频暂时放不了');v.src=`${cfg.server}/api/bili/play?bvid=${bvid}&t=${encodeURIComponent(cfg.token)}`;v.play().catch(()=>{})}$('bvTitle').textContent='加载中…';$('bvReplies').innerHTML='';
+ try{BV=await api('/api/bili/view?bvid='+bvid);$('bvT').textContent=BV.up||'视频';if(BV.pic)$('bvPlayer').poster=BV.pic+'@640w.webp';$('bvTitle').textContent=BV.title;$('bvMeta').textContent=`${BV.up} · ${fmtN(BV.view||0)}播放 · ${fmtN(BV.dm||0)}弹幕`;$('bvDesc').textContent=BV.desc||'';bvBtns();
   const R=await api('/api/bili/replies?aid='+BV.aid);$('bvRn').textContent=fmtN(BV.reply||0);$('bvReplies').innerHTML=R.map(r=>`<div class="rp"><img src="${esc(r.face)}" loading="lazy"><div><div class="n">${esc(r.name)}</div><div class="c">${esc(r.text)}</div><div style="font-size:11px;color:#aaa;margin-top:3px">👍 ${r.like}</div></div></div>`).join('')||'<div class="tip">还没有评论</div>'}catch(e){toast(e.message)}}
-function closeBv(){$('bvPlayer').src='about:blank';closeOne('p-bv')}
+function closeBv(){const v=$('bvPlayer');v.pause();v.removeAttribute('src');v.load();closeOne('p-bv')}
 function bvBtns(){$('bvLike').classList.toggle('on',BV.liked);$('bvLikeN').textContent=fmtN(BV.like||0);$('bvCoin').classList.toggle('on',BV.coined>0);$('bvCoinN').textContent=fmtN(BV.coin||0);$('bvFav').classList.toggle('on',BV.faved);$('bvFavN').textContent=fmtN(BV.fav||0)}
 async function bvLike(){const on=!BV.liked;const d=await api('/api/bili/like',{aid:BV.aid,on});if(d.code===0){BV.liked=on;BV.like+=on?1:-1;bvBtns();toast(on?'点赞成功':'已取消点赞')}else toast(d.message||'失败')}
 async function bvCoin(){if(BV.coined>=2)return toast('已经投满两个币啦');const n=confirm('投 2 个币？（取消 = 投 1 个）')?2:1;const d=await api('/api/bili/coin',{aid:BV.aid,n,like:true});if(d.code===0){BV.coined+=n;BV.coin+=n;BV.liked=true;bvBtns();toast('投币成功，同时点赞了')}else toast(d.message||'投币失败')}
@@ -1088,7 +1088,7 @@ body.iosm .top{padding-top:50px!important}
 const ICB='https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/';
 const GEAR=`<svg viewBox="0 0 24 24" width="40" height="40" fill="#d8d8dc"><path d="M19.4 13a7.5 7.5 0 000-2l2-1.6-2-3.4-2.4 1a7.4 7.4 0 00-1.7-1L15 3.4h-4l-.4 2.6a7.4 7.4 0 00-1.7 1l-2.4-1-2 3.4 2 1.6a7.5 7.5 0 000 2l-2 1.6 2 3.4 2.4-1a7.4 7.4 0 001.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 001.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" transform="translate(-1 0)"/></svg>`;
 const IOS_APPS={call:['img','电话'],qq:['img','QQ'],music:['img','网易云音乐'],bili:['img','哔哩哔哩'],cam:['img','相机'],gal:['img','照片'],life:['img','她的日记'],zone:['img','QQ空间'],
- mem:['img','记忆'],vault:['img','钱包'],prof:['img','资料卡'],usage:['img','用量'],plug:['img','插件'],persona:['img','人格'],bilitv:['img','Bilibili国际'],web:['img','浏览器'],x:['img','X'],ig:['img','Instagram'],fb:['img','Facebook'],tg:['img','Telegram'],tt:['img','TikTok'],
+ mem:['img','记忆'],vault:['img','钱包'],prof:['img','资料卡'],usage:['img','用量'],plug:['img','插件'],persona:['img','人格'],bilitv:['img','B站国际版'],web:['img','浏览器'],x:['img','X'],ig:['img','Instagram'],fb:['img','Facebook'],tg:['img','Telegram'],tt:['img','TikTok'],
  yu:['yu','小鱼yu'],set:[GEAR,'设置','linear-gradient(#8e8e93,#5a5a5f)'],theme:['🎨','个性装扮','linear-gradient(135deg,#ff6fd8,#7d5fff 55%,#3ec6ff)']};
 const IOS_DOCK=['call','qq','music','bili'];
 function iosIcon(k){const a=IOS_APPS[k];let inner;
@@ -1108,7 +1108,7 @@ function iosRender(){
 function iosShow(on){document.body.classList.add('iosm');$('ios').classList.toggle('on',on);if(on)requestAnimationFrame(()=>{const p=$('iosPager');if(p.scrollLeft<5&&!p._t)p.scrollLeft=p.clientWidth;p._t=1})}
 function iosGoHome(){try{closePage();drawer(0)}catch(e){};callEnd(true);camStop();yuClose(true);iosPan();$('ios').classList.remove('open','jig');iosShow(true);iosTick();iosLife()}
 const WB_BLOCK=['x.com','twitter.com','instagram.com','facebook.com','telegram.org','tiktok.com','youtube.com','google.com','douyin.com','weibo.com'];
-const WB_FAV=[['bilitv','Bilibili国际','https://www.bilibili.tv/zh'],['x','X','https://x.com'],['ig','Instagram','https://www.instagram.com'],['fb','Facebook','https://www.facebook.com'],['tg','Telegram','https://web.telegram.org/k/'],['tt','TikTok','https://www.tiktok.com']];
+const WB_FAV=[['bilitv','B站国际版','https://m.bilibili.com/'],['x','X','https://x.com'],['ig','Instagram','https://www.instagram.com'],['fb','Facebook','https://www.facebook.com'],['tg','Telegram','https://web.telegram.org/k/'],['tt','TikTok','https://www.tiktok.com']];
 const WB={hist:[],icon:'',name:''};
 function wbHost(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch(e){return ''}}
 function iosWeb(u,n,ic){if(window.YuNative&&YuNative.open){YuNative.open(u,n||'');return}WB.hist=[];WB.icon=ic||'';WB.name=n||'';openPage('p-web');wbGo(u)}
@@ -1123,7 +1123,7 @@ function wbReload(){const u=WB.hist.pop();if(u)wbGo(u)}
 function wbClose(){$('wbBody').innerHTML='';closePage()}
 function iosOpen(k){if($('ios').classList.contains('jig'))return;const m={call:()=>{openPage('p-call');callInit()},music:()=>openPage('p-music'),bili:()=>openPage('p-bili'),cam:()=>{openPage('p-cam');camStart()},gal:()=>{openPage('p-gal');galRender()},
  life:()=>{openPage('p-life');loadLife()},mem:()=>openPage('p-mem'),theme:()=>openPage('p-theme'),vault:()=>openPage('p-vault'),set:()=>openPage('p-run'),prof:()=>openPage('p-prof'),usage:()=>openPage('p-usage'),plug:()=>openPage('p-plugins'),persona:()=>openPage('p-persona'),
- yu:()=>yuOpen(),x:()=>iosWeb('https://x.com','X'),ig:()=>iosWeb('https://www.instagram.com','Instagram'),fb:()=>iosWeb('https://www.facebook.com','Facebook'),tg:()=>iosWeb('https://web.telegram.org/k/','Telegram'),tt:()=>iosWeb('https://www.tiktok.com','TikTok'),bilitv:()=>iosWeb('https://www.bilibili.tv/zh','Bilibili国际'),web:()=>{WB.hist=[];WB.name='';if(window.YuNative&&YuNative.open){YuNative.open('https://www.bing.com','');return}openPage('p-web');wbHome()},qq:()=>{iosShow(false);tab('msg')},zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
+ yu:()=>yuOpen(),x:()=>iosWeb('https://x.com','X'),ig:()=>iosWeb('https://www.instagram.com','Instagram'),fb:()=>iosWeb('https://www.facebook.com','Facebook'),tg:()=>iosWeb('https://web.telegram.org/k/','Telegram'),tt:()=>iosWeb('https://www.tiktok.com','TikTok'),bilitv:()=>iosWeb('https://m.bilibili.com/','B站国际版'),web:()=>{WB.hist=[];WB.name='';if(window.YuNative&&YuNative.open){YuNative.open('https://www.bing.com','');return}openPage('p-web');wbHome()},qq:()=>{iosShow(false);tab('msg')},zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
 // 点击 / 长按抖动
 (function(){const R=$('ios');let lp=null,moved=false,sx=0,sy=0,pan=null;
  R.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;moved=false;e.stopPropagation();
