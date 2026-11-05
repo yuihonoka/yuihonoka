@@ -138,8 +138,17 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
     <div id="clist"></div>
   </div>
 
+  <!-- 联系人 -->
+  <div class="view" id="v-ct">
+    <div class="search"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="cq" placeholder="搜索" oninput="renderCt()"></div>
+    <div class="ctnav"><div onclick="openPage('p-reqs');loadReqs()"><span>新朋友</span><b>›</b></div><div onclick="openYu()"><span>小鱼yu（AI）</span><b>›</b></div></div>
+    <div class="ctseg"><button id="cs-f" class="on" onclick="CT_SEG='f';renderCt()">好友</button><button id="cs-g" onclick="CT_SEG='g';renderCt()">群聊</button></div>
+    <div id="ctList"></div>
+  </div>
+
   <!-- 动态 -->
   <div class="view" id="v-feed">
+    <div class="qdyn"><div onclick="$('qzText').focus()"><img src="https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/zone.webp" alt=""><span>好友动态</span><b>›</b></div><div onclick="iosOpen('life')"><img src="https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/life.webp" alt=""><span>她的日记</span><b>›</b></div><div onclick="iosOpen('bili')"><img src="https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/bili.webp" alt=""><span>哔哩哔哩</span><b>›</b></div></div>
     <div class="feed"><div class="h"><img id="fAva" alt=""><div><b id="fName">小鱼yu</b><div style="font-size:12px;color:#999">发表说说到 QQ 空间</div></div></div>
       <textarea class="ta" id="qzText" placeholder="分享新鲜事…" style="margin:12px 0 0;width:100%"></textarea>
       <button class="btn big" style="margin:12px 0 0;width:100%" onclick="postQzone()">发表</button>
@@ -170,8 +179,9 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
 
   <div class="tabs">
     <button class="on" id="t-msg" onclick="tab('msg')"><i><svg viewBox="0 0 24 24"><path d="M12 3.2c-5 0-9 3.4-9 7.7 0 2.4 1.3 4.6 3.4 6l-.6 3.1 3.4-1.8c.9.2 1.8.3 2.8.3 5 0 9-3.4 9-7.6S17 3.2 12 3.2z"/></svg></i>消息</button>
+    <button id="t-ct" onclick="tab('ct')"><i><svg viewBox="0 0 24 24"><path d="M9.5 11.5a3.8 3.8 0 1 0 0-7.6 3.8 3.8 0 0 0 0 7.6zM2.5 19.8c.4-3.6 3.3-5.8 7-5.8s6.6 2.2 7 5.8zM16 4.2a3.6 3.6 0 0 1 0 7M18.2 14.4c2 .7 3.2 2.6 3.4 5.4h-2.8"/></svg></i>联系人</button>
     <button id="t-feed" onclick="tab('feed')"><i><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg></i>动态</button>
-    <button id="t-me" onclick="tab('me')"><i><svg viewBox="0 0 24 24"><path d="M12 12.2a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8zM3.8 20.6c.5-4 4-6.4 8.2-6.4s7.7 2.4 8.2 6.4z"/></svg></i>我的</button>
+    <button id="t-me" style="display:none" onclick="tab('me')"><i><svg viewBox="0 0 24 24"><path d="M12 12.2a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8zM3.8 20.6c.5-4 4-6.4 8.2-6.4s7.7 2.4 8.2 6.4z"/></svg></i>我的</button>
   </div>
 </div>
 
@@ -287,10 +297,17 @@ function ava(id,g){return g?`https://p.qlogo.cn/gh/${id}/${id}/100`:`https://q1.
 function ftime(t){if(!t)return'';const d=new Date(t*1000),n=new Date();return d.toDateString()===n.toDateString()?d.toTimeString().slice(0,5):(d.getMonth()+1)+'/'+d.getDate()}
 // tabs
 let TAB='msg';
-function tab(t){TAB=t;['msg','feed','me'].forEach(x=>{$('v-'+x).classList.toggle('on',x===t);$('t-'+x).classList.toggle('on',x===t)});
- $('title').firstChild.textContent=t==='msg'?(ME.nick||'小鱼yu'):{feed:'动态',me:'我的'}[t];document.body.classList.toggle('qmsg',t==='msg');$('topBtn').innerHTML=t==='msg'?PLUS:'';if(t==='me')loadMe();if(t==='msg')loadContacts()}
+function tab(t){TAB=t;['msg','ct','feed','me'].forEach(x=>{$('v-'+x).classList.toggle('on',x===t);$('t-'+x).classList.toggle('on',x===t)});
+ $('title').firstChild.textContent=t==='msg'?(ME.nick||'小鱼yu'):{ct:'联系人',feed:'动态',me:'设置'}[t];document.body.classList.toggle('qmsg',t==='msg');$('topBtn').innerHTML=t==='msg'?PLUS:t==='ct'?ADDF:'';if(t==='ct')loadCt();if(t==='me')loadMe();if(t==='msg')loadContacts()}
+let CT_SEG='f',BUD=null;
+const ADDF='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10" cy="8" r="3.8"/><path d="M3 19.5c.4-3.4 3.2-5.5 7-5.5 1.3 0 2.5.3 3.5.8M18 13.5v6M15 16.5h6"/></svg>';
+async function loadCt(){if(!BUD)$('ctList').innerHTML='<div class="tip">加载中…</div>';try{BUD=await api('/api/buddies');renderCt()}catch(e){$('ctList').innerHTML=`<div class="tip">${esc(e.message)}</div>`}}
+function renderCt(){$('cs-f').classList.toggle('on',CT_SEG==='f');$('cs-g').classList.toggle('on',CT_SEG==='g');if(!BUD)return;const q=$('cq').value.trim();const m=x=>!q||x.name.includes(q)||String(x.id).includes(q);
+ if(CT_SEG==='g'){const g=BUD.groups.filter(m);$('ctList').innerHTML=g.map(x=>`<div class="item" onclick='openChat("group",${x.id},${JSON.stringify(x.name)})'><img src="${ava(x.id,1)}" loading="lazy" alt=""><div class="mid"><div class="nm">${esc(x.name)}</div><div class="ls">${x.count} 人</div></div></div>`).join('')||'<div class="tip">没有群聊</div>';return}
+ const cats={};BUD.friends.filter(m).forEach(f=>(cats[f.cat]=cats[f.cat]||[]).push(f));
+ $('ctList').innerHTML=Object.keys(cats).map(c=>`<details class="cat" open><summary>${esc(c)}<small>${cats[c].length}</small></summary>${cats[c].map(f=>`<div class="item" onclick='openChat("private",${f.id},${JSON.stringify(f.name)})'><img src="${ava(f.id)}" loading="lazy" alt=""><div class="mid"><div class="nm">${esc(f.name)}</div><div class="ls">${f.nick&&f.nick!==f.name?esc(f.nick):'QQ '+f.id}</div></div></div>`).join('')}</details>`).join('')||'<div class="tip">没有好友</div>'}
 const PLUS='<svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.8v8.4M7.8 12h8.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
-function topAction(){if(TAB!=='msg')return;let m=$('qMenu');if(m){m.remove();return}m=document.createElement('div');m.id='qMenu';m.className='qmenu';
+function topAction(){if(TAB==='ct')return openPage('p-find');if(TAB!=='msg')return;let m=$('qMenu');if(m){m.remove();return}m=document.createElement('div');m.id='qMenu';m.className='qmenu';
  m.innerHTML=[['👥','加好友/群',"openPage('p-find')"],['🔔','好友与群通知',"openPage('p-reqs');loadReqs()"],['📷','扫一扫登录',"openPage('p-login')"],['⟳','刷新消息',"loadContacts();toast('已刷新')"]].map(x=>`<div onclick="$('qMenu').remove();${x[2]}"><span>${x[0]}</span>${x[1]}</div>`).join('');
  document.body.appendChild(m);setTimeout(()=>document.addEventListener('click',function f(e){if(!m.contains(e.target)&&!e.target.closest('#topBtn')){m.remove()}document.removeEventListener('click',f)},{once:false}),0)}
 // me
@@ -504,6 +521,7 @@ cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY
   <div class="ditem" onclick="drawer(0);openPage('p-mem')"><i>🌌</i>记忆星图</div>
   <div class="ditem" onclick="drawer(0);openPage('p-vault')"><i>🔐</i>密码保险箱</div>
   <div class="ditem" onclick="drawer(0);openPage('p-set')"><i>🔗</i>连接设置</div>
+  <div class="ditem" onclick="drawer(0);iosShow(false);tab('me')"><i>⚙️</i>设置</div>
 </div>
 <div class="rec" id="recBox"><b>🎤</b><span id="recT">正在录音…松开发送</span></div>
 
@@ -1389,6 +1407,22 @@ if(window.speechSynthesis)speechSynthesis.getVoices();
 .prof{background:linear-gradient(160deg,#9fd3ff,#4fb5ff 55%,#1a8fff)}
 #v-me .sec{border-radius:12px;margin:10px 12px;overflow:hidden}
 #v-me .row,#v-me .sec{border-color:#f2f2f2}
+#v-ct .item,#v-feed .item{background:transparent;border:0;padding:10px 16px}
+#v-ct .item img{width:46px;height:46px}
+.ctnav,.qdyn{background:#fff;margin:0 12px 10px;border-radius:12px;overflow:hidden}
+.ctnav div,.qdyn div{display:flex;align-items:center;gap:12px;padding:14px 16px;font-size:16px;border-bottom:.5px solid #f0f0f0}
+.ctnav div:last-child,.qdyn div:last-child{border:0}
+.ctnav span,.qdyn span{flex:1}.ctnav b,.qdyn b{color:#c4c4c4;font-weight:400;font-size:20px}
+.qdyn{margin-top:8px}.qdyn img{width:30px;height:30px;border-radius:8px}
+.ctseg{display:flex;gap:26px;padding:6px 20px 8px;font-size:15px}
+.ctseg button{border:0;background:none;color:#888;padding:4px 0;position:relative}
+.ctseg button.on{color:#1a1a1a;font-weight:600}
+.ctseg button.on::after{content:"";position:absolute;left:25%;right:25%;bottom:-2px;height:3px;border-radius:2px;background:#0099ff}
+.cat summary{list-style:none;padding:10px 18px;font-size:14px;color:#333;display:flex;gap:6px;align-items:center}
+.cat summary::before{content:"›";color:#999;transition:.2s;display:inline-block}
+.cat[open] summary::before{transform:rotate(90deg)}
+.cat summary small{margin-left:auto;color:#aaa}
+.cat summary::-webkit-details-marker{display:none}
 </style>
 </body>
 </html>
