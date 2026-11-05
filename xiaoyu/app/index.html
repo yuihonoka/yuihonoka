@@ -126,14 +126,14 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
 <body>
 <div class="app">
   <div class="top" id="top">
-    <img class="ava" id="topAva" alt="">
+    <div class="avw"><img class="ava" id="topAva" alt=""><i class="od"></i></div>
     <h1 id="title">消息<span class="sub" id="tsub"></span></h1>
     <button class="ib" id="topBtn" onclick="topAction()">＋</button>
   </div>
 
   <!-- 消息 -->
   <div class="view on" id="v-msg">
-    <div class="search">🔍<input id="q" placeholder="搜索" oninput="renderContacts()"></div>
+    <div class="search"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="q" placeholder="搜索" oninput="renderContacts()"></div>
     <div class="item" onclick="openYu()"><img src="" id="yuAva" alt=""><div class="mid"><div class="nm">小鱼yu<span class="tag c">AI</span></div><div class="ls">直接跟小鱼聊天</div></div></div>
     <div id="clist"></div>
   </div>
@@ -169,9 +169,9 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   </div>
 
   <div class="tabs">
-    <button class="on" id="t-msg" onclick="tab('msg')"><i>💬</i>消息</button>
-    <button id="t-feed" onclick="tab('feed')"><i>⭐</i>动态</button>
-    <button id="t-me" onclick="tab('me')"><i>👤</i>我的</button>
+    <button class="on" id="t-msg" onclick="tab('msg')"><i><svg viewBox="0 0 24 24"><path d="M12 3.2c-5 0-9 3.4-9 7.7 0 2.4 1.3 4.6 3.4 6l-.6 3.1 3.4-1.8c.9.2 1.8.3 2.8.3 5 0 9-3.4 9-7.6S17 3.2 12 3.2z"/></svg></i>消息</button>
+    <button id="t-feed" onclick="tab('feed')"><i><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg></i>动态</button>
+    <button id="t-me" onclick="tab('me')"><i><svg viewBox="0 0 24 24"><path d="M12 12.2a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8zM3.8 20.6c.5-4 4-6.4 8.2-6.4s7.7 2.4 8.2 6.4z"/></svg></i>我的</button>
   </div>
 </div>
 
@@ -180,10 +180,11 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   <div class="top"><button class="ib" onclick="closeChat()">‹</button><h1 id="cTitle"></h1><button class="ib" onclick="loadHistory()">⟳</button></div>
   <div class="msgs" id="msgs"></div>
   <div class="inbar">
-    <label class="ib">🖼️<input type="file" accept="image/*" hidden onchange="sendImg(this)"></label>
     <input type="text" id="cin" placeholder="" enterkeyhint="send">
     <button class="send" id="csend" onclick="sendMsg()">发送</button>
   </div>
+  <div class="qtools"><label title="图片"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3 3-2.5L20 17"/></svg><input type="file" accept="image/*" hidden onchange="sendImg(this)"></label><label title="拍照"><svg viewBox="0 0 24 24"><path d="M4 8h3.2l1.6-2.5h6.4L16.8 8H20v11H4z"/><circle cx="12" cy="13" r="3.3"/></svg><input type="file" accept="image/*" capture="environment" hidden onchange="sendImg(this)"></label><span title="表情" onclick="qEmo()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14.2c1.8 2.2 5.2 2.2 7 0"/><circle cx="9.2" cy="10" r=".9"/><circle cx="14.8" cy="10" r=".9"/></svg></span></div>
+  <div class="qemo" id="qEmo"></div>
 </div>
 
 <!-- 子页面 -->
@@ -287,13 +288,16 @@ function ftime(t){if(!t)return'';const d=new Date(t*1000),n=new Date();return d.
 // tabs
 let TAB='msg';
 function tab(t){TAB=t;['msg','feed','me'].forEach(x=>{$('v-'+x).classList.toggle('on',x===t);$('t-'+x).classList.toggle('on',x===t)});
- $('title').firstChild.textContent={msg:'消息',feed:'动态',me:'我的'}[t];$('topBtn').textContent=t==='msg'?'⟳':'';if(t==='me')loadMe();if(t==='msg')loadContacts()}
-function topAction(){if(TAB==='msg'){loadContacts();toast('已刷新')}}
+ $('title').firstChild.textContent=t==='msg'?(ME.nick||'小鱼yu'):{feed:'动态',me:'我的'}[t];document.body.classList.toggle('qmsg',t==='msg');$('topBtn').innerHTML=t==='msg'?PLUS:'';if(t==='me')loadMe();if(t==='msg')loadContacts()}
+const PLUS='<svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.8v8.4M7.8 12h8.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+function topAction(){if(TAB!=='msg')return;let m=$('qMenu');if(m){m.remove();return}m=document.createElement('div');m.id='qMenu';m.className='qmenu';
+ m.innerHTML=[['👥','加好友/群',"openPage('p-find')"],['🔔','好友与群通知',"openPage('p-reqs');loadReqs()"],['📷','扫一扫登录',"openPage('p-login')"],['⟳','刷新消息',"loadContacts();toast('已刷新')"]].map(x=>`<div onclick="$('qMenu').remove();${x[2]}"><span>${x[0]}</span>${x[1]}</div>`).join('');
+ document.body.appendChild(m);setTimeout(()=>document.addEventListener('click',function f(e){if(!m.contains(e.target)&&!e.target.closest('#topBtn')){m.remove()}document.removeEventListener('click',f)},{once:false}),0)}
 // me
 async function loadMe(){try{const s=await api('/api/status');ME=s.qq||{};
  const a=ME.avatar||ava(ME.id||2751351976);['topAva','meAva','fAva','yuAva'].forEach(i=>$(i).src=a);
  $('meName').textContent=ME.nick||'未登录';$('fName').textContent=ME.nick||'小鱼yu';$('meId').textContent='QQ '+(ME.id||'—')+(ME.online?' · 在线':' · 离线');
- $('meSign').textContent=ME.longnick||'';$('vSign').textContent=ME.longnick||'未设置';$('tsub').textContent=ME.online?'在线':'离线';
+ $('meSign').textContent=ME.longnick||'';$('vSign').textContent=ME.longnick||'未设置';$('tsub').textContent=ME.online?'在线':'离线';document.body.classList.toggle('qoff',!ME.online);if(TAB==='msg')$('title').firstChild.textContent=ME.nick||'小鱼yu';
  const u=s.usage||{};$('vUsage').textContent=(u.tokens_24h!=null?fmtN(u.tokens_24h):'—')+' / 24h';
  $('vLogin').innerHTML=`<i class="dot ${ME.online?'ok':'bad'}"></i>${ME.online?'在线':'离线'}`;
  const up=(s.containers||[]).filter(c=>/^Up/.test(c.status)).length;$('vSys').textContent=up+'/'+(s.containers||[]).length+' 运行中';window.STATUS=s}
@@ -303,7 +307,7 @@ function up(s){const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.flo
 // contacts
 async function loadContacts(){try{CONTACTS=await api('/api/contacts');renderContacts()}catch(e){$('clist').innerHTML=`<div class="empty">连不上服务器：${esc(e.message)}<br><br>去「我的 → 连接设置」粘贴链接</div>`}}
 function renderContacts(){const q=$('q').value.trim();$('clist').innerHTML=CONTACTS.filter(c=>!q||c.name.includes(q)||String(c.id).includes(q)).map(c=>
- `<div class="item" onclick='openChat(${JSON.stringify(c.type)},${c.id},${JSON.stringify(c.name)})'><img src="${c.avatar}" loading="lazy" alt=""><div class="mid"><div class="nm">${esc(c.name)}${c.type==='group'?'<span class="tag g">群</span>':''}</div><div class="ls">${esc(c.last||'')}</div></div><div class="tm">${ftime(c.time)}</div></div>`).join('')}
+ `<div class="item" onclick='openChat(${JSON.stringify(c.type)},${c.id},${JSON.stringify(c.name)})'><img src="${c.avatar}" loading="lazy" alt=""><div class="mid"><div class="nm">${esc(c.name)}</div><div class="ls">${esc(c.last||'')}</div></div><div class="tm">${ftime(c.time)}</div></div>`).join('')}
 // chat
 function openChat(type,id,name){CUR={type,id,name};$('cTitle').textContent=name;$('chat').classList.add('on');$('cin').placeholder='发消息给 '+name;$('msgs').innerHTML='<div class="tip">加载中…</div>';loadHistory();clearInterval(timer);timer=setInterval(loadHistory,5000)}
 function openYu(){CUR={type:'yu',id:0,name:'小鱼yu'};$('cTitle').textContent='小鱼yu';$('chat').classList.add('on');$('cin').placeholder='跟小鱼说点什么…';renderYu()}
@@ -317,6 +321,7 @@ async function sendMsg(){const t=$('cin').value.trim();if(!t||!CUR)return;$('cin
    const d=await api('/api/chat',{message:t});yuHist.push({r:'yu',t:(d.reply||d.error||'……')});yuHist=yuHist.slice(-200);localStorage.setItem('yq_yu',JSON.stringify(yuHist));renderYu()}
   else{const d=await api('/api/send',{type:CUR.type,id:CUR.id,text:t});if(!d.ok)toast('发送失败：'+(d.msg||''));setTimeout(loadHistory,800)}}
  catch(e){toast(e.message)}$('csend').disabled=false}
+function qEmo(){const b=$('qEmo');if(!b.innerHTML)b.innerHTML='😀😁😂🤣😊😍🥰😘😜🤗🤔😴😭😡😳🥺👍👌🙏👏💪🎉❤️🌹🐟✨🔥😎🤤😇'.match(/\p{Extended_Pictographic}\uFE0F?/gu).map(e=>`<span onclick="$('cin').value+='${e}';$('cin').focus()">${e}</span>`).join('');b.classList.toggle('on')}
 function sendImg(inp){const f=inp.files[0];if(!f||!CUR||CUR.type==='yu')return toast('小鱼聊天暂不支持发图');const r=new FileReader();r.onload=async()=>{const d=await api('/api/send',{type:CUR.type,id:CUR.id,image:r.result});toast(d.ok?'已发送':'发送失败');setTimeout(loadHistory,1000)};r.readAsDataURL(f);inp.value=''}
 $('cin').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
 // pages
@@ -1327,5 +1332,63 @@ iosRender();iosTick();setInterval(iosTick,15000);
 if(cfg.token){iosShow(true);$('iosHome').classList.add('on');iosLife();setInterval(iosLife,120000)}
 if(window.speechSynthesis)speechSynthesis.getVoices();
 </script>
+<style id="qq9">
+/* ===== QQ 9 风格 ===== */
+:root{--qq:#0099ff;--qq2:#0099ff;--me:#0099ff;--bg:#f5f6fa}
+.app{background:linear-gradient(180deg,#d6e9ff 0,#e9f3ff 150px,#f5f6fa 300px)}
+.app>.top{background:transparent;color:#1a1a1a;padding:calc(env(safe-area-inset-top) + 12px) 16px 8px;min-height:60px}
+.app>.top h1{font-size:18px;font-weight:700;letter-spacing:.2px}
+.app>.top .sub{font-size:11.5px;color:#666;opacity:1;display:flex;align-items:center;gap:4px;margin-top:2px;font-weight:400}
+.app>.top .sub::before{content:"";width:7px;height:7px;border-radius:50%;background:#2bd06c}
+.qoff .app>.top .sub::before{background:#b5b5b5}
+.app>.top .ib{color:#1a1a1a}
+.avw{position:relative;flex:none}
+.app>.top .ava{width:40px;height:40px;border:1.5px solid #fff;box-shadow:0 1px 4px #0001}
+.avw .od{position:absolute;right:-1px;bottom:0;width:11px;height:11px;border-radius:50%;background:#2bd06c;border:2px solid #eaf4ff}
+.qoff .avw .od{background:#b5b5b5}
+.search{margin:6px 14px 10px;background:#fff;border-radius:10px;height:36px;padding:0 12px;justify-content:center;align-items:center;color:#a3a6ad;box-shadow:0 1px 2px #0000000a}
+.search input{flex:0 1 60px;text-align:left}.search input:focus{flex:1}
+#v-msg .item{background:transparent;border:0;padding:11px 16px;gap:13px}
+#v-msg .item:active{background:#0000000a}
+#v-msg .item img{width:52px;height:52px}
+#v-msg .item .nm{font-size:16.5px;color:#1a1a1a;font-weight:500}
+#v-msg .item .ls{font-size:13.5px;color:#999;margin-top:4px}
+#v-msg .item .tm{font-size:11.5px;color:#b3b3b3;margin-top:3px}
+.tag.c{background:linear-gradient(90deg,#4facfe,#0099ff);border-radius:4px;font-weight:600}
+.tabs{background:#ffffffeb;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:.5px solid #e6e6e6}
+.tabs button{color:#8c8f96;font-size:10.5px;padding:6px 0 4px}
+.tabs button i{filter:none;opacity:1;height:28px;display:flex;justify-content:center;align-items:center}
+.tabs button svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.tabs button.on{color:#0099ff}
+.tabs button.on svg{fill:#0099ff;stroke:#0099ff}
+.qmenu{position:fixed;right:12px;top:calc(env(safe-area-inset-top) + 62px);background:#fff;border-radius:12px;box-shadow:0 6px 28px #0002;z-index:60;padding:6px 0;min-width:160px;animation:qm .15s ease-out}
+.qmenu div{display:flex;align-items:center;gap:12px;padding:11px 18px;font-size:15px;color:#1a1a1a}
+.qmenu div:active{background:#f2f2f2}
+.qmenu span{width:22px;text-align:center}
+@keyframes qm{from{opacity:0;transform:scale(.92) translateY(-6px)}}
+/* 子页面与聊天：白色标题栏 */
+.top{background:#fff;color:#1a1a1a;border-bottom:.5px solid #eee}
+.top .ib{color:#1a1a1a}
+.top[style*="background"]{color:#fff}.top[style*="background"] .ib{color:#fff}
+.page .top h1,.chat .top h1{text-align:center;font-size:17px;font-weight:600}
+.page .top h1:first-child,.chat .top h1:first-child{text-align:left}
+.chat{background:#f2f3f5}
+.chat .top{background:#f7f7f9ee;backdrop-filter:blur(14px)}
+.bb{border-radius:16px;padding:10px 13px;font-size:15.5px;box-shadow:0 .5px 1px #0000000d}
+.mr.me .bb{background:linear-gradient(135deg,#1aa7ff,#0090ff);border-radius:16px}
+.mr img.a{width:40px;height:40px}
+.inbar{background:#f7f7f9;border-top:.5px solid #e5e5e5;padding:8px 10px 4px}
+.inbar input[type=text]{background:#fff;border-radius:9px;padding:10px 12px}
+.inbar .send{border-radius:9px;background:#0099ff;font-weight:500}
+.qtools{display:flex;justify-content:space-around;background:#f7f7f9;padding:4px 30% calc(env(safe-area-inset-bottom) + 8px) 6px;gap:6px}
+.qtools label,.qtools span{display:flex;padding:6px}
+.qtools svg{width:26px;height:26px;fill:none;stroke:#555;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.qemo{display:none;flex-wrap:wrap;background:#f7f7f9;padding:6px 10px 12px;max-height:200px;overflow:auto}
+.qemo.on{display:flex}
+.qemo span{width:12.5%;text-align:center;font-size:26px;padding:6px 0}
+.prof{background:linear-gradient(160deg,#9fd3ff,#4fb5ff 55%,#1a8fff)}
+#v-me .sec{border-radius:12px;margin:10px 12px;overflow:hidden}
+#v-me .row,#v-me .sec{border-color:#f2f2f2}
+</style>
 </body>
 </html>
