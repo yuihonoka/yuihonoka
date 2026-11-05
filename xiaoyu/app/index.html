@@ -533,7 +533,7 @@ async function fillDrawer(){try{PROF=await api('/api/profile')}catch(e){PROF=PRO
  const q=PROF.qq||ME;$('dAva').src=q.avatar||ava(q.id||2751351976);$('dName').textContent=q.nick||'小鱼yu';$('dSign').textContent=q.longnick||'';$('dBadges').innerHTML=badgeHtml(PROF.badges);const dh=document.querySelector('.dhead');if(dh&&PROF.bg)dh.style.cssText+=`;background:linear-gradient(#0003,#0006),center/cover url("${PROF.bg.replace(/"/g,'')}")!important`}
 $('topAva').onclick=()=>drawer(1);
 // 左滑边缘打开侧边栏
-(function(){let sx=null;document.addEventListener('touchstart',e=>{const t=e.touches[0];sx=(t.clientX<24&&!document.querySelector('.page.on,.chat.on'))?t.clientX:null},{passive:true});
+(function(){let sx=null;document.addEventListener('touchstart',e=>{const t=e.touches[0];sx=(t.clientX<24&&!document.querySelector('.page.on,.chat.on,#ios.on'))?t.clientX:null},{passive:true});
  document.addEventListener('touchmove',e=>{if(sx!=null&&e.touches[0].clientX-sx>60){drawer(1);sx=null}},{passive:true})})();
 // 下拉出现小程序
 (function(){const v=$('v-msg');const m=document.createElement('div');m.className='mini';m.id='mini';
@@ -759,39 +759,88 @@ async function loadLife(){lfApps();$('lfClock').textContent=new Date().toTimeStr
 <style>
 #ios{position:fixed;inset:0;z-index:25;display:none;flex-direction:column;font-family:-apple-system,"SF Pro Display","PingFang SC","Helvetica Neue",sans-serif;color:#fff;background:#0b1530 url(https://yuihonoka.github.io/yuihonoka/xiaoyu/app/lockbg.webp) center 25%/cover no-repeat;overflow:hidden}
 #ios.on{display:flex}
-#ios:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 60%,rgba(0,0,0,.35));pointer-events:none}
+#ios:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.32),rgba(0,0,0,.16) 30%,rgba(0,0,0,.16) 65%,rgba(0,0,0,.35));pointer-events:none}
 .ios-sb{position:relative;height:50px;display:flex;align-items:center;justify-content:space-between;padding:6px 26px 0;font-size:15px;font-weight:600;z-index:2}
 .ios-isl{position:absolute;left:50%;top:10px;transform:translateX(-50%);width:118px;height:32px;border-radius:20px;background:#000;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;gap:6px;transition:width .3s}
 .ios-isl.wide{width:210px}
 .ios-sb .r{display:flex;gap:6px;align-items:center;font-size:13px}
 .ios-bat{width:24px;height:12px;border:1.5px solid #fff;border-radius:4px;position:relative;opacity:.95}.ios-bat i{position:absolute;left:1.5px;top:1.5px;bottom:1.5px;background:#fff;border-radius:2px}
-.ios-main{flex:1;position:relative;z-index:1;padding:10px 22px 0;overflow-y:auto}
-.ios-wg{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
-.ios-w{border-radius:22px;background:rgba(255,255,255,.18);backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);padding:14px;height:150px;box-sizing:border-box;position:relative;overflow:hidden}
-.ios-w.big{grid-column:span 2;height:auto;min-height:150px;display:flex;gap:12px;align-items:center}
-.ios-w small{font-size:12px;opacity:.85;font-weight:600;text-transform:uppercase}
-.ios-w .clk{font-size:46px;font-weight:300;line-height:1.1;margin-top:8px}
-.ios-w img{width:76px;height:76px;border-radius:16px;object-fit:cover;flex:none}
-.ios-w .nm{font-size:15px;font-weight:600;margin:3px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ios-w .th{font-size:12px;opacity:.9;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ios-grid{display:grid;grid-template-columns:repeat(4,1fr);row-gap:20px;text-align:center}
-.ios-app{font-size:11.5px;text-shadow:0 1px 3px rgba(0,0,0,.4);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ios-app .i{width:60px;height:60px;margin:0 auto 6px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 2px 8px rgba(0,0,0,.18);position:relative;transition:transform .15s}
-.ios-app:active .i{transform:scale(.88);filter:brightness(.85)}
-.ios-app .b{position:absolute;right:-6px;top:-6px;min-width:20px;height:20px;border-radius:10px;background:#ff3b30;font-size:12px;font-weight:600;line-height:20px;padding:0 5px;box-sizing:border-box;text-shadow:none}
-.ios-dots{display:flex;justify-content:center;gap:7px;margin:14px 0 10px;position:relative;z-index:1}.ios-dots i{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.4}.ios-dots i.on{opacity:1}
-.ios-search{margin:0 auto 10px;background:rgba(255,255,255,.22);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:14px;padding:5px 12px;font-size:12.5px;width:max-content;position:relative;z-index:1}
-.ios-dock{position:relative;z-index:1;margin:0 12px 26px;padding:14px 12px;border-radius:32px;background:rgba(255,255,255,.22);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);display:grid;grid-template-columns:repeat(4,1fr)}
-.ios-dock .ios-app{font-size:0}.ios-dock .i{margin-bottom:0}
 #iosHome{position:fixed;left:50%;bottom:7px;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:rgba(0,0,0,.55);z-index:99;display:none;box-shadow:0 0 0 1px rgba(255,255,255,.5)}
 #iosHome:after{content:"";position:absolute;left:-30px;right:-30px;top:-18px;bottom:-8px}
 #iosHome.on{display:block}
-#ios.open .ios-main,#ios.open .ios-dock{transform:scale(.92);opacity:.0;transition:.25s}
-.ios-main,.ios-dock{transition:.25s}
+.ios-pager{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;position:relative;z-index:1;touch-action:pan-x}
+.ios-pager::-webkit-scrollbar{display:none}
+.ios-pg{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;box-sizing:border-box;padding:14px 22px 0;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:88px;row-gap:14px;column-gap:10px;align-content:start;overflow:hidden}
+.ios-today{display:block;overflow-y:auto;touch-action:pan-x pan-y;padding:14px 16px 20px;background:rgba(0,0,0,.18);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+.ios-today .tsrch{background:rgba(255,255,255,.2);border-radius:12px;padding:9px 12px;font-size:16px;opacity:.9;margin-bottom:14px;display:flex;gap:6px;align-items:center}
+.ios-today .ios-w{margin-bottom:14px;height:auto;min-height:0}
+.ios-app{font-size:12px;letter-spacing:-.1px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.6);cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;overflow:visible;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.ios-app .i{width:62px;height:62px;margin:0 auto 5px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;transition:transform .15s,filter .15s;background-size:cover;background-position:center;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.ios-app .i img{width:100%;height:100%;border-radius:14px;display:block;pointer-events:none}
+.ios-app:active .i{filter:brightness(.7)}
+.ios-app .b{position:absolute;right:-7px;top:-7px;min-width:22px;height:22px;border-radius:11px;background:#ff3b30;font-size:13px;font-weight:500;line-height:22px;padding:0 6px;box-sizing:border-box;text-shadow:none;color:#fff}
+.ios-w{border-radius:22px;background:rgba(255,255,255,.22);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);padding:14px;box-sizing:border-box;position:relative;overflow:hidden;color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ios-w.s{grid-column:span 2;grid-row:span 2}
+.ios-w.l{grid-column:span 4;grid-row:span 2}
+.ios-w small{font-size:13px;font-weight:600;opacity:.8}
+.wcal{background:#fff;color:#111;backdrop-filter:none}
+.wcal .wd{color:#ff3b30;font-size:13px;font-weight:600}.wcal .dn{font-size:48px;font-weight:300;line-height:1;margin:2px 0 8px}
+.wcal .ev{border-left:3px solid #5856d6;padding-left:6px;font-size:12px;line-height:1.35;color:#333;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.wyu{background:#123 url(https://yuihonoka.github.io/yuihonoka/xiaoyu/app/yu.webp) 74% 30%/auto 140% no-repeat;display:flex;flex-direction:column;justify-content:flex-end}
+.wyu:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.55))}
+.wyu>*{position:relative}.wyu b{font-size:14px;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wtl .it{display:flex;gap:10px;align-items:center;margin-top:9px;font-size:13px}.wtl .it i{font-style:normal;font-size:20px;width:26px;text-align:center}.wtl .it span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wtl .it em{font-style:normal;opacity:.7;font-size:12px}
+.ios-foot{height:30px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+.ios-search{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.25);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:14px;padding:4px 11px;font-size:12px;font-weight:500;transition:opacity .2s}
+.ios-dots{position:absolute;display:flex;gap:8px;opacity:0;transition:opacity .2s;background:rgba(255,255,255,.18);padding:6px 9px;border-radius:12px}.ios-dots i{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.4}.ios-dots i.on{opacity:1}
+.ios-foot.sc .ios-search{opacity:0}.ios-foot.sc .ios-dots{opacity:1}
+.ios-dock{position:relative;z-index:1;margin:8px 10px 24px;padding:15px 14px;border-radius:34px;background:rgba(255,255,255,.25);backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);display:grid;grid-template-columns:repeat(4,1fr)}
+.ios-dock .ios-app{font-size:0}.ios-dock .i{margin-bottom:0}
+#ios.jig .ios-pg .ios-app .i,#ios.jig .ios-dock .i{animation:jig .28s infinite alternate}#ios.jig .ios-app:nth-child(2n) .i{animation-delay:-.14s}
+@keyframes jig{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+#ios.open .ios-pager,#ios.open .ios-dock,#ios.open .ios-foot{transform:scale(.9);opacity:0;transition:.25s}
+.ios-pager,.ios-dock,.ios-foot{transition:.25s}
+.ios-pan{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.3);backdrop-filter:blur(30px) saturate(1.4);-webkit-backdrop-filter:blur(30px) saturate(1.4);transform:translateY(-100%);transition:transform .32s cubic-bezier(.2,.8,.2,1);padding:56px 18px 30px;box-sizing:border-box;overflow-y:auto}
+.ios-pan.on{transform:none}
+.cc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;grid-auto-rows:70px}
+.cc>div{background:rgba(255,255,255,.18);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative}
+.cc .g4{grid-column:span 2;grid-row:span 2;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;box-sizing:border-box}
+.cc .g4 b{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:24px;margin:auto;font-weight:400}
+.cc .g4 b.on{background:#0a84ff}.cc .g4 b.on.o{background:#ff9f0a}.cc .g4 b.on.g{background:#30d158}
+.cc .np{grid-column:span 2;grid-row:span 2;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:14px;box-sizing:border-box;font-size:14px}
+.cc .np b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cc .sl{grid-row:span 2;padding:0;overflow:hidden;align-items:flex-end}.cc .sl i{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:0 0 20px 20px}.cc .sl span{position:relative;margin-bottom:12px;filter:grayscale(1);mix-blend-mode:difference}
+.cc .w2{grid-column:span 2;font-size:15px;gap:8px}
+.cc>div.on{background:#fff;color:#111}
+.nc .tm{text-align:center;font-size:84px;font-weight:600;line-height:1}.nc .dt{text-align:center;font-size:18px;font-weight:500;margin:6px 0 26px}
+.nc .n{display:flex;gap:10px;background:rgba(255,255,255,.55);color:#111;border-radius:20px;padding:12px;margin-bottom:8px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nc .n img{width:38px;height:38px;border-radius:9px;flex:none}.nc .n div{flex:1;min-width:0;font-size:14px;line-height:1.35}.nc .n b{display:flex;justify-content:space-between;font-size:14px}.nc .n b em{font-style:normal;font-weight:400;color:#666;font-size:12px}
+.ios-grab{width:40px;height:5px;border-radius:3px;background:rgba(255,255,255,.6);margin:22px auto 0}
+/* 小鱼yu 模型 */
+#p-yu{background:#06142b;color:#fff;font-family:-apple-system,"PingFang SC",sans-serif;overflow:hidden}
+.yu-bg{position:absolute;inset:-4%;background:url(https://yuihonoka.github.io/yuihonoka/xiaoyu/app/yu.webp) 73% 35%/cover no-repeat;animation:yub 4.2s ease-in-out infinite;transform-origin:72% 70%;transition:filter 1s}
+@keyframes yub{0%,100%{transform:translate(var(--px,0),var(--py,0)) scale(1)}50%{transform:translate(var(--px,0),calc(var(--py,0px) - 4px)) scale(1.015)}}
+#p-yu.sleep .yu-bg{filter:brightness(.45) saturate(.7) hue-rotate(10deg)}
+.yu-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden}.yu-fx i{position:absolute;bottom:-20px;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.7);box-shadow:0 0 8px #bfe6ff;animation:yuf linear infinite}
+@keyframes yuf{to{transform:translateY(-110vh) translateX(20px);opacity:0}}
+.yu-top{position:absolute;top:0;left:0;right:0;padding:54px 18px 0;display:flex;align-items:center;gap:10px;z-index:2}
+.yu-top button{width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.3);color:#fff;font-size:20px;backdrop-filter:blur(10px)}
+.yu-top .nm{font-size:17px;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.5)}.yu-top .st{font-size:12px;opacity:.9;display:flex;align-items:center;gap:5px}.yu-top .st:before{content:"";width:8px;height:8px;border-radius:50%;background:#30d158}
+#p-yu.sleep .yu-top .st:before{background:#8e8e93}
+.yu-bub{position:absolute;left:18px;right:40%;top:21%;z-index:2;background:rgba(255,255,255,.92);color:#123;border-radius:18px 18px 18px 4px;padding:11px 14px;font-size:14px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:yupop .4s}
+.yu-bub b{display:block;font-size:12px;color:#0a84ff;margin-bottom:2px}
+@keyframes yupop{from{transform:scale(.8);opacity:0}}
+.yu-zz{position:absolute;right:8%;top:17%;font-size:30px;z-index:2;display:none;animation:yuz 2.4s infinite}#p-yu.sleep .yu-zz{display:block}
+@keyframes yuz{0%{opacity:0;transform:translate(0,10px)}50%{opacity:1}100%{opacity:0;transform:translate(16px,-30px)}}
+.yu-tap{position:absolute;left:40%;right:0;top:15%;bottom:40%;z-index:1}
+.yu-sheet{position:absolute;left:0;right:0;bottom:0;z-index:3;max-height:38%;overflow-y:auto;background:rgba(10,20,45,.55);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:24px 24px 0 0;padding:10px 18px 34px}
+.yu-sheet h3{font-size:15px;margin:8px 0 6px;display:flex;justify-content:space-between}.yu-sheet h3 small{font-weight:400;opacity:.7}
+.yu-it{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13.5px}.yu-it>i{font-style:normal;font-size:20px}.yu-it div{flex:1;min-width:0}.yu-it em{display:block;font-style:normal;opacity:.75;font-size:12.5px;margin-top:2px}.yu-it time{opacity:.6;font-size:12px}
+
 /* 电话 */
 #p-call .body{background:linear-gradient(180deg,#2c3e66,#0d1428);color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;padding:40px 20px;font-family:-apple-system,"PingFang SC",sans-serif}
 .call-av{width:120px;height:120px;border-radius:50%;object-fit:cover;margin-top:30px;box-shadow:0 0 0 0 rgba(124,200,255,.6)}
-.call-av.talk{animation:pulse 1.2s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(124,200,255,.6)}100%{box-shadow:0 0 0 28px rgba(124,200,255,0)}}
+.call-av.hear{box-shadow:0 0 0 6px rgba(52,199,89,.7)}.call-av.talk{animation:pulse 1.2s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(124,200,255,.6)}100%{box-shadow:0 0 0 28px rgba(124,200,255,0)}}
 .call-nm{font-size:30px;font-weight:400;margin-top:18px}.call-st{opacity:.75;margin-top:6px;font-size:16px}
 .call-sub{min-height:72px;margin:28px 0 10px;font-size:15px;line-height:1.5;max-width:320px;opacity:.95}
 .call-btns{display:grid;grid-template-columns:repeat(3,76px);gap:22px 28px;margin-top:auto;margin-bottom:30px}
@@ -807,17 +856,23 @@ async function loadLife(){lfApps();$('lfClock').textContent=new Date().toTimeStr
 .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}.gal img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
 </style>
 <div id="ios">
- <div class="ios-sb"><span id="iosT">06:00</span><div class="ios-isl" id="iosIsl"></div><span class="r">📶 <span style="font-size:12px">5G</span> <span class="ios-bat"><i id="iosBat" style="right:30%"></i></span></span></div>
- <div class="ios-main">
-  <div class="ios-wg">
-   <div class="ios-w"><small id="iosWd">星期五</small><div class="clk" id="iosClk">06:00</div><div style="font-size:13px;opacity:.9;margin-top:4px" id="iosDt"></div></div>
-   <div class="ios-w" onclick="iosOpen('call')" style="background:rgba(52,199,89,.35)"><small>小鱼yu</small><div style="font-size:42px;margin-top:6px">🐳</div><div style="font-size:13px;margin-top:4px">点我打电话</div></div>
-   <div class="ios-w big" id="iosNow" onclick="iosOpen('life')"><div style="font-size:40px">💤</div><div><small>她正在</small><div class="nm">…</div></div></div>
-  </div>
-  <div class="ios-grid" id="iosGrid"></div>
+ <div class="ios-sb" id="iosSb"><span id="iosT">06:00</span><div class="ios-isl" id="iosIsl"></div><span class="r"><svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span style="font-size:13px;font-weight:600">5G</span><span class="ios-bat"><i id="iosBat" style="right:30%"></i></span></span></div>
+ <div class="ios-pager" id="iosPager">
+  <div class="ios-pg ios-today" id="iosToday"></div>
+  <div class="ios-pg" id="iosP1"></div>
+  <div class="ios-pg" id="iosP2"></div>
  </div>
- <div class="ios-search">🔍 搜索</div>
+ <div class="ios-foot" id="iosFoot"><div class="ios-search"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="5" cy="5" r="4"/><path d="M8 8l3 3"/></svg>搜索</div><div class="ios-dots" id="iosDots"><i></i><i></i></div></div>
  <div class="ios-dock" id="iosDock"></div>
+ <div class="ios-pan" id="iosCC" onclick="if(event.target===this)iosPan()"></div>
+ <div class="ios-pan nc" id="iosNC" onclick="if(event.target===this)iosPan()"></div>
+</div>
+<div class="page" id="p-yu">
+ <div class="yu-bg" id="yuBg"></div><div class="yu-fx" id="yuFx"></div>
+ <div class="yu-top"><button onclick="yuClose()">‹</button><div><div class="nm">小鱼yu</div><div class="st" id="yuSt">在线</div></div></div>
+ <div class="yu-bub" id="yuBub"><b>她正在</b>…</div><div class="yu-zz">💤</div>
+ <div class="yu-tap" onclick="yuPoke()"></div>
+ <div class="yu-sheet"><h3>她今天<small id="yuCnt"></small></h3><div id="yuTl"></div></div>
 </div>
 <div id="iosHome" onclick="iosGoHome()"></div>
 <div class="page" id="p-call"><div class="body">
@@ -835,45 +890,131 @@ async function loadLife(){lfApps();$('lfClock').textContent=new Date().toTimeStr
 </div></div>
 <div class="page" id="p-gal"><div class="top"><button class="ib" onclick="closeOne('p-gal')">‹</button><h1>相册</h1><label class="ib">＋<input type="file" accept="image/*" hidden onchange="galAddFile(this)"></label></div><div class="body"><div class="gal" id="galG"></div></div></div>
 <script>
-const IOS_APPS={
- call:['📞','电话','linear-gradient(#5bf675,#28c840)'],qq:['🐧','QQ','linear-gradient(#4fc3ff,#1e88e5)'],music:['🎵','网易云','linear-gradient(#ff5b5b,#d81e1e)'],bili:['📺','哔哩哔哩','linear-gradient(#ff9ec0,#fb7299)'],
- cam:['📷','相机','linear-gradient(#e5e5ea,#9b9ba1)'],gal:['🌸','相册','linear-gradient(#fff,#f0f0f5)'],life:['📔','她的日常','linear-gradient(#ffd66b,#ffb340)'],zone:['⭐','QQ空间','linear-gradient(#ffcf4a,#ff9f0a)'],
- mem:['🌌','记忆','linear-gradient(#5e5ce6,#1c1a6b)'],theme:['🎨','个性装扮','linear-gradient(#bf5af2,#7d2ae8)'],vault:['🔐','保险箱','linear-gradient(#636366,#2c2c2e)'],set:['⚙️','设置','linear-gradient(#8e8e93,#48484a)'],
- prof:['🪪','资料卡','linear-gradient(#64d2ff,#0a84ff)'],usage:['📊','用量','linear-gradient(#30d158,#0b8f3c)'],plug:['🧩','插件','linear-gradient(#ff9f0a,#ff6b00)'],persona:['💗','人格','linear-gradient(#ff6fa5,#ff2d55)']};
-const IOS_GRID=['cam','gal','life','zone','mem','theme','vault','prof','usage','plug','persona','set'],IOS_DOCK=['call','qq','music','bili'];
-function iosIcon(k){const a=IOS_APPS[k];return `<div class="ios-app" onclick="iosOpen('${k}')"><div class="i" style="background:${a[2]}">${a[0]}${k==='qq'?'<span class="b" id="iosQQb" style="display:none"></span>':''}</div>${a[1]}</div>`}
-function iosRender(){$('iosGrid').innerHTML=IOS_GRID.map(iosIcon).join('');$('iosDock').innerHTML=IOS_DOCK.map(iosIcon).join('')}
-function iosShow(on){$('ios').classList.toggle('on',on)}
-function iosGoHome(){try{closePage();drawer(0)}catch(e){};callEnd(true);camStop();$('ios').classList.remove('open');iosShow(true);iosTick();iosLife()}
-function iosOpen(k){const m={call:()=>{openPage('p-call');callInit()},music:()=>openPage('p-music'),bili:()=>openPage('p-bili'),cam:()=>{openPage('p-cam');camStart()},gal:()=>{openPage('p-gal');galRender()},
+const ICB='https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/';
+const GEAR=`<svg viewBox="0 0 24 24" width="40" height="40" fill="#d8d8dc"><path d="M19.4 13a7.5 7.5 0 000-2l2-1.6-2-3.4-2.4 1a7.4 7.4 0 00-1.7-1L15 3.4h-4l-.4 2.6a7.4 7.4 0 00-1.7 1l-2.4-1-2 3.4 2 1.6a7.5 7.5 0 000 2l-2 1.6 2 3.4 2.4-1a7.4 7.4 0 001.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 001.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" transform="translate(-1 0)"/></svg>`;
+const IOS_APPS={call:['img','电话'],qq:['img','QQ'],music:['img','网易云音乐'],bili:['img','哔哩哔哩'],cam:['img','相机'],gal:['img','照片'],life:['img','她的日记'],zone:['img','QQ空间'],
+ mem:['img','记忆'],vault:['img','钱包'],prof:['img','资料卡'],usage:['img','用量'],plug:['img','插件'],persona:['img','人格'],
+ yu:['yu','小鱼yu'],set:[GEAR,'设置','linear-gradient(#8e8e93,#5a5a5f)'],theme:['🎨','个性装扮','linear-gradient(135deg,#ff6fd8,#7d5fff 55%,#3ec6ff)']};
+const IOS_DOCK=['call','qq','music','bili'];
+function iosIcon(k){const a=IOS_APPS[k];let inner;
+ if(a[0]==='img')inner=`<img src="${ICB}${k}.webp" alt="">`;else if(a[0]==='yu')inner='';else inner=a[0];
+ const st=a[0]==='yu'?`background-image:url(https://yuihonoka.github.io/yuihonoka/xiaoyu/app/yu.webp);background-size:auto 210%;background-position:69% 22%`:(a[2]?`background:${a[2]}`:'');
+ return `<div class="ios-app" data-k="${k}"><div class="i" style="${st}">${inner}${k==='qq'?'<span class="b" id="iosQQb" style="display:none"></span>':''}</div>${a[1]}</div>`}
+function iosRender(){
+ $('iosP1').innerHTML=`<div class="ios-w s wcal" data-k="life"><div class="wd" id="iosWd">星期五</div><div class="dn" id="iosDn">6</div><div class="ev" id="iosEv">她今天还没有动态</div></div>
+  <div class="ios-w s wyu" data-k="yu"><small id="iosNowK">她正在</small><b id="iosNowT">…</b></div>`+['yu','cam','gal','life','zone','prof','theme','set'].map(iosIcon).join('');
+ $('iosP2').innerHTML=`<div class="ios-w l wtl" data-k="life"><small>她最近</small><div id="iosTl"></div></div>`+['mem','vault','usage','plug','persona'].map(iosIcon).join('');
+ $('iosToday').innerHTML=`<div class="tsrch"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="5" cy="5" r="4"/><path d="M8 8l3 3"/></svg>搜索</div>
+  <div class="ios-w wyu" data-k="yu" style="height:170px"><small id="iosTdK">她正在</small><b id="iosTdT">…</b></div>
+  <div class="ios-w" data-k="call" style="display:flex;align-items:center;gap:12px"><img src="${ICB}call.webp" style="width:44px;height:44px;border-radius:11px"><div><small>快速拨号</small><div style="font-size:16px;font-weight:600">给小鱼yu打电话</div></div></div>
+  <div class="ios-w"><small>电池</small><div style="display:flex;align-items:center;gap:10px;margin-top:8px"><div style="font-size:30px">📱</div><div style="font-size:26px;font-weight:600" id="iosBatT">--%</div></div></div>`;
+ $('iosDock').innerHTML=IOS_DOCK.map(iosIcon).join('');
+ requestAnimationFrame(()=>{const p=$('iosPager');p.scrollLeft=p.clientWidth})}
+function iosShow(on){$('ios').classList.toggle('on',on);if(on)requestAnimationFrame(()=>{const p=$('iosPager');if(p.scrollLeft<5&&!p._t)p.scrollLeft=p.clientWidth;p._t=1})}
+function iosGoHome(){try{closePage();drawer(0)}catch(e){};callEnd(true);camStop();yuClose(true);iosPan();$('ios').classList.remove('open','jig');iosShow(true);iosTick();iosLife()}
+function iosOpen(k){if($('ios').classList.contains('jig'))return;const m={call:()=>{openPage('p-call');callInit()},music:()=>openPage('p-music'),bili:()=>openPage('p-bili'),cam:()=>{openPage('p-cam');camStart()},gal:()=>{openPage('p-gal');galRender()},
  life:()=>{openPage('p-life');loadLife()},mem:()=>openPage('p-mem'),theme:()=>openPage('p-theme'),vault:()=>openPage('p-vault'),set:()=>openPage('p-run'),prof:()=>openPage('p-prof'),usage:()=>openPage('p-usage'),plug:()=>openPage('p-plugins'),persona:()=>openPage('p-persona'),
- qq:()=>{iosShow(false);tab('msg')},zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
-function iosTick(){const d=new Date(),t=d.toTimeString().slice(0,5);$('iosT').textContent=t;$('iosClk').textContent=t;$('iosWd').textContent='星期'+'日一二三四五六'[d.getDay()];$('iosDt').textContent=`${d.getMonth()+1}月${d.getDate()}日`}
-async function iosLife(){try{const d=await api('/api/life?n=1');const n=d.now;if(!n)return;const a=(typeof LF_APPS!=='undefined'&&LF_APPS[n.app])||['🐳','',''];
- $('iosNow').innerHTML=(n.pic?`<img src="${esc(n.pic)}" referrerpolicy="no-referrer">`:`<div style="font-size:44px;width:76px;text-align:center">${a[0]}</div>`)+`<div style="min-width:0"><small>她${a[2]||'正在'}</small><div class="nm">${esc(n.title)}</div><div class="th">${esc(n.thought||n.sub||'')}</div></div>`;
+ yu:()=>yuOpen(),qq:()=>{iosShow(false);tab('msg')},zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
+// 点击 / 长按抖动
+(function(){const R=$('ios');let lp=null,moved=false,sx=0,sy=0,pan=null;
+ R.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;moved=false;e.stopPropagation();
+  pan=(sy<48&&!$('iosCC').classList.contains('on')&&!$('iosNC').classList.contains('on'))?(sx>innerWidth*.6?'cc':'nc'):null;
+  const el=e.target.closest('.ios-app');if(el)lp=setTimeout(()=>{R.classList.add('jig');navigator.vibrate&&navigator.vibrate(15)},550)},{passive:true});
+ R.addEventListener('touchmove',e=>{const t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>8||Math.abs(dy)>8){moved=true;clearTimeout(lp)}
+  if(pan&&dy>40){iosPan(pan);pan=null}
+  if(dy<-50&&(sy>innerHeight-60)){}
+  const op=document.querySelector('.ios-pan.on');if(op&&dy<-60&&!op.contains(e.target.closest('.cc>div')))iosPan()},{passive:true});
+ R.addEventListener('touchend',()=>clearTimeout(lp),{passive:true});
+ R.addEventListener('click',e=>{if(moved)return;const el=e.target.closest('[data-k]');if(R.classList.contains('jig')){if(!el)R.classList.remove('jig');return}if(el)iosOpen(el.dataset.k)});
+ const P=$('iosPager'),F=$('iosFoot');let st;P.addEventListener('scroll',()=>{const i=Math.round(P.scrollLeft/P.clientWidth);
+  [...$('iosDots').children].forEach((d,j)=>d.classList.toggle('on',j===i-1));F.style.visibility=i===0?'hidden':'';F.classList.add('sc');clearTimeout(st);st=setTimeout(()=>F.classList.remove('sc'),900)},{passive:true});
+ // Home 条上滑回桌面
+ const H=$('iosHome');let hy=null;H.addEventListener('touchstart',e=>{hy=e.touches[0].clientY},{passive:true});H.addEventListener('touchmove',e=>{if(hy!=null&&hy-e.touches[0].clientY>30){hy=null;iosGoHome()}},{passive:true})})();
+const CC_ST={air:0,cell:1,wifi:1,bt:1,lock:0,dnd:0,torch:0};
+function iosPan(k){$('iosCC').classList.toggle('on',k==='cc');$('iosNC').classList.toggle('on',k==='nc');if(k==='cc')ccRender();if(k==='nc')ncRender()}
+function ccT(k){CC_ST[k]=CC_ST[k]?0:1;if(k==='air'&&CC_ST.air){CC_ST.wifi=0;CC_ST.cell=0;CC_ST.bt=0}ccRender()}
+function ccRender(){const s=CC_ST,n=window._yuNow||{};const mu=n.app==='music'?n.title:'未在播放';
+ $('iosCC').innerHTML=`<div class="cc">
+ <div class="g4"><b class="${s.air?'on o':''}" onclick="ccT('air')">✈️</b><b class="${s.cell?'on g':''}" onclick="ccT('cell')">📶</b><b class="${s.wifi?'on':''}" onclick="ccT('wifi')">🛜</b><b class="${s.bt?'on':''}" onclick="ccT('bt')">ᛒ</b></div>
+ <div class="np" onclick="iosPan();iosOpen('music')"><small style="opacity:.7">${n.app==='music'?'她正在听':'音乐'}</small><b>${esc(mu)}</b><div style="font-size:22px;letter-spacing:14px">⏮⏯⏭</div></div>
+ <div class="${s.lock?'on':''}" onclick="ccT('lock')">🔒</div><div onclick="toast('屏幕镜像：没有可用设备')">⧉</div>
+ <div class="sl" onclick="ccSl(this)"><i style="height:60%"></i><span>☀️</span></div><div class="sl" onclick="ccSl(this)"><i style="height:45%"></i><span>🔊</span></div>
+ <div class="w2 ${s.dnd?'on':''}" onclick="ccT('dnd')">🌙 勿扰模式</div>
+ <div class="${s.torch?'on':''}" onclick="ccT('torch')">🔦</div><div onclick="toast('计时器')">⏱️</div><div onclick="toast('计算器')">🧮</div><div onclick="iosPan();iosOpen('cam')">📷</div>
+ </div><div class="ios-grab"></div>`}
+function ccSl(el){const r=el.getBoundingClientRect(),y=(event.clientY-r.top)/r.height;el.firstElementChild.style.height=Math.round((1-y)*100)+'%'}
+async function ncRender(){const d=new Date();$('iosNC').innerHTML=`<div class="tm">${d.toTimeString().slice(0,5)}</div><div class="dt">${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}</div><div id="ncL"></div><div class="ios-grab"></div>`;
+ try{const r=await api('/api/life?n=12');$('ncL').innerHTML=(r.items||[]).map(x=>{const a=LF_APPS[x.app]||['🐳','小鱼yu'];const ic={bili:'bili',music:'music',diary:'life',qq:'qq'}[x.app];
+  return `<div class="n" onclick="iosPan();iosOpen('${ic==='life'?'life':ic||'yu'}')">${ic?`<img src="${ICB}${ic}.webp">`:`<div style="flex:none;width:38px;height:38px;border-radius:9px;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:22px">${a[0]}</div>`}<div><b>${esc(a[1])}<em>${lfAgo(x.ts)}</em></b>${esc(x.title)}${x.thought?`<div style="color:#444;font-size:13px">${esc(x.thought)}</div>`:''}</div></div>`}).join('')||'<div style="text-align:center;opacity:.7">没有通知</div>'}catch(e){}}
+function lfAgo(ts){const s=Date.now()/1000-ts;return s<60?'现在':s<3600?Math.floor(s/60)+'分钟前':s<86400?Math.floor(s/3600)+'小时前':Math.floor(s/86400)+'天前'}
+function iosTick(){const d=new Date(),t=d.toTimeString().slice(0,5);$('iosT').textContent=t;const w='星期'+'日一二三四五六'[d.getDay()];if($('iosWd')){$('iosWd').textContent=w;$('iosDn').textContent=d.getDate()}}
+async function iosLife(){try{const d=await api('/api/life?n=4');const n=d.now;window._yuNow=n;if(!n)return;const a=LF_APPS[n.app]||['🐳','',''];
+ const k='她'+(a[2]||'正在'),t=n.title+(n.thought?' · '+n.thought:'');
+ [['iosNowK','iosNowT'],['iosTdK','iosTdT']].forEach(([x,y])=>{if($(x)){$(x).textContent=k;$(y).textContent=t}});
+ if($('iosEv'))$('iosEv').textContent=(d.items||[]).filter(x=>x.app!=='sleep').slice(0,2).map(x=>x.title).join('\n')||'她今天还没有动态';
+ if($('iosTl'))$('iosTl').innerHTML=(d.items||[]).slice(0,3).map(x=>`<div class="it"><i>${(LF_APPS[x.app]||['🐳'])[0]}</i><span>${esc(x.title)}</span><em>${lfAgo(x.ts)}</em></div>`).join('');
  $('iosIsl').innerHTML=n.app==='music'?'🎵 '+esc(n.title).slice(0,10):'';$('iosIsl').classList.toggle('wide',n.app==='music')}catch(e){}}
-if(navigator.getBattery)navigator.getBattery().then(b=>{const f=()=>$('iosBat').style.right=(Math.round((1-b.level)*18)+1.5)+'px';f();b.onlevelchange=f});
+if(navigator.getBattery)navigator.getBattery().then(b=>{const f=()=>{$('iosBat').style.right=(Math.round((1-b.level)*18)+1.5)+'px';const t=$('iosBatT');if(t)t.textContent=Math.round(b.level*100)+'%'};f();b.onlevelchange=f});
+// ---- 小鱼yu 模型 ----
+let YU={tm:null,au:null,busy:false};
+function yuOpen(){openPage('p-yu');const fx=$('yuFx');if(!fx.children.length)fx.innerHTML=Array.from({length:14},(_,i)=>`<i style="left:${Math.random()*100}%;width:${4+Math.random()*8}px;height:${4+Math.random()*8}px;animation-duration:${7+Math.random()*9}s;animation-delay:-${Math.random()*12}s"></i>`).join('');
+ yuLoad();clearInterval(YU.tm);YU.tm=setInterval(yuLoad,60000);
+ if(!YU.or){YU.or=1;window.addEventListener('deviceorientation',e=>{if(!$('p-yu').classList.contains('on'))return;const x=Math.max(-12,Math.min(12,(e.gamma||0)/3)),y=Math.max(-12,Math.min(12,((e.beta||45)-45)/4));$('yuBg').style.setProperty('--px',-x+'px');$('yuBg').style.setProperty('--py',-y+'px')})}}
+function yuClose(q){clearInterval(YU.tm);try{YU.au&&YU.au.pause()}catch(e){};if(!q)closeOne('p-yu');else $('p-yu').classList.remove('on')}
+async function yuLoad(){try{const d=await api('/api/life?n=30');const n=d.now||{};const a=LF_APPS[n.app]||['🐳','',''];window._yuNow=n;
+ const sleep=n.app==='sleep';$('p-yu').classList.toggle('sleep',sleep);$('yuSt').textContent=sleep?'睡着了':'在线 · '+(a[2]||'在玩手机');
+ if(!YU.busy)$('yuBub').innerHTML=`<b>${a[0]} 她${esc(a[2]||'正在')}</b>${esc(sleep?(n.sub||'嘘，小声点'):(n.title||''))}${n.thought?`<div style="margin-top:4px;color:#456">「${esc(n.thought)}」</div>`:''}`;
+ const td=new Date();td.setHours(0,0,0,0);const it=(d.items||[]).filter(x=>x.ts*1000>=td.getTime());$('yuCnt').textContent=it.length+' 件事';
+ $('yuTl').innerHTML=it.map(x=>`<div class="yu-it"><i>${(LF_APPS[x.app]||['🐳'])[0]}</i><div>${esc(x.title)}${x.thought?`<em>${esc(x.thought)}</em>`:''}</div><time>${new Date(x.ts*1000).toTimeString().slice(0,5)}</time></div>`).join('')||'<div style="opacity:.7;padding:10px 0">今天还没做什么</div>'}catch(e){$('yuSt').textContent='连不上'}}
+async function yuPoke(){if(YU.busy)return;YU.busy=true;const sleep=$('p-yu').classList.contains('sleep');$('yuBub').innerHTML='<b>小鱼yu</b>…';
+ try{const d=await api('/api/chat',{message:sleep?'（你在睡觉，爸比在手机里戳了戳你，你迷迷糊糊用一句很短的口语回应，不要表情符号）':'（爸比在手机里戳了戳你，用一句很短的口语回应他，可以说说你正在做的事，不要表情符号）',session:'baba-yu'});
+  const t=(d.reply||'').trim();$('yuBub').innerHTML=`<b>小鱼yu</b>${esc(t)}`;const s=t.replace(/[（(][^）)]*[）)]/g,'').trim();
+  if(s){YU.au=YU.au||new Audio();YU.au.src=`${cfg.server}/api/tts?t=${encodeURIComponent(cfg.token)}&text=${encodeURIComponent(s.slice(0,200))}`;YU.au.play().catch(()=>{})}}catch(e){$('yuBub').innerHTML='<b>小鱼yu</b>信号不好…'}
+ setTimeout(()=>{YU.busy=false},8000)}
 // ---- 电话：语音识别 → 小鱼yu → 朗读 ----
 let CALL={on:false,t0:0,tm:null,rec:null,mute:false,spk:true,busy:false};
 function callInit(){if(ME&&ME.avatar)$('callAv').src=ME.avatar;if(!CALL.on){$('callSt').textContent='手机';$('callSub').textContent='';$('cMain').className='go';$('cMainT').textContent='呼叫'}}
 function callMain(){CALL.on?callEnd():callStart()}
-function callStart(){CALL.on=true;$('cMain').className='end';$('cMainT').textContent='挂断';$('callSt').textContent='正在呼叫…';
+function callStart(){CALL.on=true;if(!CALL.el){CALL.el=new Audio();CALL.el.setAttribute('playsinline','')}try{CALL.el.src='data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqpAAAAAAAAAAAAAAAAAAAA';CALL.el.play().catch(()=>{})}catch(e){};callMic().catch(()=>{});$('cMain').className='end';$('cMainT').textContent='挂断';$('callSt').textContent='正在呼叫…';
  setTimeout(async()=>{if(!CALL.on)return;CALL.t0=Date.now();CALL.tm=setInterval(()=>{const s=Math.floor((Date.now()-CALL.t0)/1000);$('callSt').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
   await callSay('（爸比给你打来了电话，你接起来了。用一句很短的口语打招呼，不要表情符号）');callListen()},1600)}
-function callEnd(silent){if(!CALL.on)return;CALL.on=false;clearInterval(CALL.tm);try{CALL.rec&&CALL.rec.abort()}catch(e){};speechSynthesis&&speechSynthesis.cancel();try{CALL.au&&CALL.au.pause()}catch(e){};$('callAv').classList.remove('talk');
+function callEnd(silent){if(!CALL.on)return;CALL.on=false;clearInterval(CALL.tm);callRelease();window.speechSynthesis&&speechSynthesis.cancel();try{CALL.au&&CALL.au.pause()}catch(e){};$('callAv').classList.remove('talk');
  $('cMain').className='go';$('cMainT').textContent='呼叫';$('callSt').textContent='通话结束';if(!silent)setTimeout(()=>{if(!CALL.on)$('callSt').textContent='手机'},2000)}
 function callSpeak(t){return new Promise(r=>{if(!CALL.spk)return r();const txt=t.replace(/[（(][^）)]*[）)]/g,'').trim();if(!txt)return r();
- const a=new Audio(`${cfg.server}/api/tts?t=${encodeURIComponent(cfg.token)}&text=${encodeURIComponent(txt.slice(0,300))}`);CALL.au=a;$('callAv').classList.add('talk');
+ const a=CALL.el||new Audio();a.src=(`${cfg.server}/api/tts?t=${encodeURIComponent(cfg.token)}&text=${encodeURIComponent(txt.slice(0,300))}`);CALL.au=a;$('callAv').classList.add('talk');
  const done=()=>{$('callAv').classList.remove('talk');r()};a.onended=done;a.onerror=()=>{if(!window.speechSynthesis)return done();const u=new SpeechSynthesisUtterance(txt);u.lang='zh-CN';u.pitch=1.5;u.rate=1.08;u.onend=u.onerror=done;speechSynthesis.speak(u)};a.play().catch(a.onerror)})}
 async function callSay(msg){CALL.busy=true;$('callSub').textContent='…';try{const d=await api('/api/chat',{message:msg,session:'baba-call'});const t=(d.reply||'').trim();$('callSub').textContent=t;if(CALL.on)await callSpeak(t)}catch(e){$('callSub').textContent='信号不好…'}CALL.busy=false}
-function callListen(){if(!CALL.on||CALL.mute||CALL.busy)return;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('callSub').textContent+='\n（这个浏览器不能语音识别，点「打字」说话）';return}
- const r=new SR();CALL.rec=r;r.lang='zh-CN';r.interimResults=true;r.continuous=false;let fin='';
- r.onresult=e=>{let s='';for(const x of e.results){s+=x[0].transcript;if(x.isFinal)fin=s}$('callSub').textContent='你：'+s};
- r.onend=async()=>{if(!CALL.on)return;if(fin.trim()){await callSay(`（电话里，爸比说：）${fin}（请用口语简短回答，一两句话，不要表情符号）`)}setTimeout(callListen,300)};
- r.onerror=()=>{};try{r.start()}catch(e){}}
-function callMute(){CALL.mute=!CALL.mute;$('cMute').classList.toggle('on',CALL.mute);if(CALL.mute){try{CALL.rec&&CALL.rec.abort()}catch(e){}}else callListen()}
+async function callMic(){if(CALL.ms)return;CALL.ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+ const ac=new(window.AudioContext||window.webkitAudioContext)();CALL.ac=ac;const an=ac.createAnalyser();an.fftSize=1024;ac.createMediaStreamSource(CALL.ms).connect(an);CALL.an=an;CALL.floor=.01}
+function callLevel(){const a=new Uint8Array(CALL.an.fftSize);CALL.an.getByteTimeDomainData(a);let s=0;for(const v of a){const d=(v-128)/128;s+=d*d}return Math.sqrt(s/a.length)}
+function callStopListen(){clearInterval(CALL.vt);CALL.vt=null;CALL.lis=false;try{CALL.mr&&CALL.mr.state!=='inactive'&&(CALL.mr.onstop=null,CALL.mr.stop())}catch(e){}$('callAv').classList.remove('hear')}
+function callRelease(){callStopListen();try{CALL.ms&&CALL.ms.getTracks().forEach(t=>t.stop())}catch(e){};try{CALL.ac&&CALL.ac.close()}catch(e){};CALL.ms=null;CALL.ac=null}
+async function callListen(){if(!CALL.on||CALL.mute||CALL.busy||CALL.lis)return;
+ try{await callMic()}catch(e){$('callSub').textContent='麦克风没打开。请允许麦克风后再打一次，或者点「打字」';return}
+ if(CALL.ac.state==='suspended')try{await CALL.ac.resume()}catch(e){}
+ if(!window.MediaRecorder){$('callSub').textContent='这个浏览器不能录音，点「打字」说话';return}
+ const mime=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'].find(m=>MediaRecorder.isTypeSupported(m))||'';
+ CALL.lis=true;if(!$('callSub').dataset.keep)$('callSub').textContent='在听你说…';
+ let chunks=[],speaking=false,sil=0,spk=0,t0=Date.now(),mr;
+ const start=()=>{chunks=[];mr=new MediaRecorder(CALL.ms,mime?{mimeType:mime}:{});CALL.mr=mr;mr.ondataavailable=e=>e.data.size&&chunks.push(e.data);mr.start(200);t0=Date.now()};
+ start();
+ CALL.vt=setInterval(()=>{if(!CALL.on||CALL.mute){callStopListen();return}
+  const l=callLevel(),th=Math.max(.025,CALL.floor*3);
+  if(l>th){if(!speaking){speaking=true;$('callAv').classList.add('hear')}spk+=60;sil=0}
+  else{if(!speaking)CALL.floor=CALL.floor*.95+l*.05;else{sil+=60;
+   if(sil>850){if(spk<250){speaking=false;spk=0;sil=0;$('callAv').classList.remove('hear');return}
+    clearInterval(CALL.vt);CALL.vt=null;$('callAv').classList.remove('hear');
+    mr.onstop=async()=>{CALL.lis=false;const blob=new Blob(chunks,{type:mr.mimeType||mime||'audio/webm'});$('callSub').textContent='…';
+     let text='';try{const r=await fetch(cfg.server+'/api/asr',{method:'POST',headers:{'X-App-Token':cfg.token,'Content-Type':blob.type},body:blob});text=((await r.json()).text||'').trim()}catch(e){$('callSub').textContent='信号不好，再说一遍？'}
+     if(!CALL.on)return;
+     if(text){$('callSub').textContent='你：'+text;await callSay(`（电话里，爸比说：）${text}（请用口语简短回答，一两句话，不要表情符号，不要括号动作）`)}
+     setTimeout(callListen,150)};
+    mr.stop()}}}
+  if(!speaking&&Date.now()-t0>15000){mr.onstop=null;mr.stop();start()}
+ },60)}
+function callMute(){CALL.mute=!CALL.mute;$('cMute').classList.toggle('on',CALL.mute);if(CALL.mute)callStopListen();else callListen()}
 function callSpk(){CALL.spk=!CALL.spk;$('cSpk').classList.toggle('on',CALL.spk)}
-async function callType(){if(!CALL.on)return toast('先打通电话');const t=prompt('想跟小鱼yu说什么');if(!t)return;try{CALL.rec&&CALL.rec.abort()}catch(e){};await callSay(`（电话里，爸比说：）${t}（请用口语简短回答，不要表情符号）`);callListen()}
+async function callType(){if(!CALL.on)return toast('先打通电话');callStopListen();const t=prompt('想跟小鱼yu说什么');if(t)await callSay(`（电话里，爸比说：）${t}（请用口语简短回答，不要表情符号）`);callListen()}
 // ---- 相机 / 相册（照片存在这台设备上）----
 let CAM={s:null,face:'environment'};
 async function camStart(){try{CAM.s=await navigator.mediaDevices.getUserMedia({video:{facingMode:CAM.face},audio:false});$('camV').srcObject=CAM.s}catch(e){toast('没有相机权限')}galThumb()}
