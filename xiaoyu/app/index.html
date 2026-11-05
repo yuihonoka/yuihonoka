@@ -109,6 +109,18 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
 .range{display:flex;align-items:center;gap:10px;padding:6px 14px;background:#fff}
 .range input{flex:1}
 .empty{padding:40px 20px;text-align:center;color:var(--mute)}
+
+#p-web{background:#fff;display:none;flex-direction:column}#p-web.on{display:flex}
+.wb-top{display:flex;align-items:center;gap:6px;padding:48px 8px 6px;background:#f6f6f6;border-bottom:1px solid #e5e5e5;font-family:-apple-system,"PingFang SC",sans-serif}
+.wb-top button{border:0;background:none;font-size:20px;color:#007aff;padding:4px 8px;flex:none}
+.wb-url{flex:1;min-width:0;height:34px;border-radius:10px;background:#e9e9eb;border:0;padding:0 10px;font-size:14px;outline:0;color:#222}
+.wb-body{flex:1;position:relative;background:#fff}.wb-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.wb-blk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:30px;text-align:center;color:#444;font-size:14px;line-height:1.6}
+.wb-blk img{width:72px;height:72px;border-radius:16px}.wb-blk b{font-size:18px;color:#111}
+.wb-blk a{display:block;padding:10px 22px;border-radius:20px;background:#007aff;color:#fff;text-decoration:none;font-size:15px}
+.wb-blk small{color:#999;font-size:12px}
+.wb-home{position:absolute;inset:0;padding:30px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-content:start}
+.wb-home div{text-align:center;font-size:12px;color:#333}.wb-home img{width:54px;height:54px;border-radius:13px;display:block;margin:0 auto 5px}
 </style>
 </head>
 <body>
@@ -489,6 +501,7 @@ cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY
 </div>
 <div class="rec" id="recBox"><b>🎤</b><span id="recT">正在录音…松开发送</span></div>
 
+<div class="page" id="p-web"><div class="wb-top"><button onclick="wbClose()">✕</button><button onclick="wbBack()">‹</button><input class="wb-url" id="wbUrl" enterkeyhint="go" placeholder="搜索或输入网址" onkeydown="if(event.key==='Enter'){wbGo(this.value);this.blur()}"><button onclick="wbReload()">↻</button></div><div class="wb-body" id="wbBody"></div></div>
 <div class="page" id="p-bili">
  <div class="bh"><button class="bh-back" onclick="closePage()">‹</button><span id="bAccBtn" class="bh-av" onclick="openPage('p-blogin')">登录</span>
   <div class="bh-sch" onclick="bTab('search');setTimeout(()=>$('bq').focus(),50)"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="#9499a0" stroke-width="1.6"><circle cx="5" cy="5" r="4"/><path d="M8 8l3 3"/></svg><span>搜索视频、UP主</span></div>
@@ -1075,7 +1088,7 @@ body.iosm .top{padding-top:50px!important}
 const ICB='https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/';
 const GEAR=`<svg viewBox="0 0 24 24" width="40" height="40" fill="#d8d8dc"><path d="M19.4 13a7.5 7.5 0 000-2l2-1.6-2-3.4-2.4 1a7.4 7.4 0 00-1.7-1L15 3.4h-4l-.4 2.6a7.4 7.4 0 00-1.7 1l-2.4-1-2 3.4 2 1.6a7.5 7.5 0 000 2l-2 1.6 2 3.4 2.4-1a7.4 7.4 0 001.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 001.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" transform="translate(-1 0)"/></svg>`;
 const IOS_APPS={call:['img','电话'],qq:['img','QQ'],music:['img','网易云音乐'],bili:['img','哔哩哔哩'],cam:['img','相机'],gal:['img','照片'],life:['img','她的日记'],zone:['img','QQ空间'],
- mem:['img','记忆'],vault:['img','钱包'],prof:['img','资料卡'],usage:['img','用量'],plug:['img','插件'],persona:['img','人格'],bilitv:['img','Bilibili国际'],x:['img','X'],ig:['img','Instagram'],fb:['img','Facebook'],tg:['img','Telegram'],tt:['img','TikTok'],
+ mem:['img','记忆'],vault:['img','钱包'],prof:['img','资料卡'],usage:['img','用量'],plug:['img','插件'],persona:['img','人格'],bilitv:['img','Bilibili国际'],web:['img','浏览器'],x:['img','X'],ig:['img','Instagram'],fb:['img','Facebook'],tg:['img','Telegram'],tt:['img','TikTok'],
  yu:['yu','小鱼yu'],set:[GEAR,'设置','linear-gradient(#8e8e93,#5a5a5f)'],theme:['🎨','个性装扮','linear-gradient(135deg,#ff6fd8,#7d5fff 55%,#3ec6ff)']};
 const IOS_DOCK=['call','qq','music','bili'];
 function iosIcon(k){const a=IOS_APPS[k];let inner;
@@ -1085,7 +1098,7 @@ function iosIcon(k){const a=IOS_APPS[k];let inner;
 function iosRender(){
  $('iosP1').innerHTML=`<div class="ios-w s wcal" data-k="life"><div class="wd" id="iosWd">星期五</div><div class="dn" id="iosDn">6</div><div class="ev" id="iosEv">她今天还没有动态</div></div>
   <div class="ios-w s wyu" data-k="yu"><small id="iosNowK">她正在</small><b id="iosNowT">…</b></div>`+['yu','cam','gal','life','zone','prof','theme','set'].map(iosIcon).join('');
- $('iosP2').innerHTML=`<div class="ios-w l wtl" data-k="life"><small>她最近</small><div id="iosTl"></div></div>`+['bilitv','x','ig','fb','tg','tt','mem','vault','usage','plug','persona'].map(iosIcon).join('');
+ $('iosP2').innerHTML=`<div class="ios-w l wtl" data-k="life"><small>她最近</small><div id="iosTl"></div></div>`+['web','bilitv','x','ig','fb','tg','tt','mem','vault','usage','plug','persona'].map(iosIcon).join('');
  $('iosToday').innerHTML=`<div class="tsrch"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="5" cy="5" r="4"/><path d="M8 8l3 3"/></svg>搜索</div>
   <div class="ios-w wyu" data-k="yu" style="height:170px"><small id="iosTdK">她正在</small><b id="iosTdT">…</b></div>
   <div class="ios-w" data-k="call" style="display:flex;align-items:center;gap:12px"><img src="${ICB}call.webp" style="width:44px;height:44px;border-radius:11px"><div><small>快速拨号</small><div style="font-size:16px;font-weight:600">给小鱼yu打电话</div></div></div>
@@ -1094,10 +1107,23 @@ function iosRender(){
  requestAnimationFrame(()=>{const p=$('iosPager');p.scrollLeft=p.clientWidth})}
 function iosShow(on){document.body.classList.add('iosm');$('ios').classList.toggle('on',on);if(on)requestAnimationFrame(()=>{const p=$('iosPager');if(p.scrollLeft<5&&!p._t)p.scrollLeft=p.clientWidth;p._t=1})}
 function iosGoHome(){try{closePage();drawer(0)}catch(e){};callEnd(true);camStop();yuClose(true);iosPan();$('ios').classList.remove('open','jig');iosShow(true);iosTick();iosLife()}
-function iosWeb(u,n){toast('正在打开 '+n);setTimeout(()=>window.open(u,'_blank'),250)}
+const WB_BLOCK=['x.com','twitter.com','instagram.com','facebook.com','telegram.org','tiktok.com','youtube.com','google.com','douyin.com','weibo.com'];
+const WB_FAV=[['bilitv','Bilibili国际','https://www.bilibili.tv/zh'],['x','X','https://x.com'],['ig','Instagram','https://www.instagram.com'],['fb','Facebook','https://www.facebook.com'],['tg','Telegram','https://web.telegram.org/k/'],['tt','TikTok','https://www.tiktok.com']];
+const WB={hist:[],icon:'',name:''};
+function wbHost(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch(e){return ''}}
+function iosWeb(u,n,ic){if(window.YuNative&&YuNative.open){YuNative.open(u,n||'');return}WB.hist=[];WB.icon=ic||'';WB.name=n||'';openPage('p-web');wbGo(u)}
+function wbGo(u){u=(u||'').trim();if(!u){wbHome();return}if(!/^https?:\/\//.test(u))u=/^[\w-]+(\.[\w-]+)+(\/.*)?$/.test(u)?'https://'+u:'https://www.bing.com/search?q='+encodeURIComponent(u);
+ if(window.YuNative&&YuNative.open){YuNative.open(u,WB.name);return}
+ WB.hist.push(u);$('wbUrl').value=wbHost(u)||u;const h=wbHost(u),b=$('wbBody');
+ if(WB_BLOCK.some(d=>h===d||h.endsWith('.'+d))){const f=WB_FAV.find(x=>wbHost(x[2])===h);b.innerHTML=`<div class="wb-blk">${f?`<img src="ic/${f[0]}.webp">`:''}<b>${esc(f?f[1]:h)}</b><div>${esc(f?f[1]:h)} 不允许在网页里内嵌打开。<br>装上「小鱼yu的手机」APK 后，这里会直接变成真的 App，可以登录、刷视频。</div><a href="${esc(u)}" target="_blank" rel="noopener">先用系统浏览器打开</a><small>在中国大陆需要开 VPN</small></div>`;return}
+ b.innerHTML=`<iframe src="${esc(u)}" referrerpolicy="no-referrer-when-downgrade" allow="autoplay; fullscreen; clipboard-write" allowfullscreen></iframe>`}
+function wbHome(){$('wbUrl').value='';$('wbBody').innerHTML='<div class="wb-home">'+WB_FAV.map(f=>`<div onclick="wbGo('${f[2]}')"><img src="ic/${f[0]}.webp">${f[1]}</div>`).join('')+'</div>'}
+function wbBack(){if(WB.hist.length>1){WB.hist.pop();const u=WB.hist.pop();wbGo(u)}else wbClose()}
+function wbReload(){const u=WB.hist.pop();if(u)wbGo(u)}
+function wbClose(){$('wbBody').innerHTML='';closePage()}
 function iosOpen(k){if($('ios').classList.contains('jig'))return;const m={call:()=>{openPage('p-call');callInit()},music:()=>openPage('p-music'),bili:()=>openPage('p-bili'),cam:()=>{openPage('p-cam');camStart()},gal:()=>{openPage('p-gal');galRender()},
  life:()=>{openPage('p-life');loadLife()},mem:()=>openPage('p-mem'),theme:()=>openPage('p-theme'),vault:()=>openPage('p-vault'),set:()=>openPage('p-run'),prof:()=>openPage('p-prof'),usage:()=>openPage('p-usage'),plug:()=>openPage('p-plugins'),persona:()=>openPage('p-persona'),
- yu:()=>yuOpen(),x:()=>iosWeb('https://x.com','X'),ig:()=>iosWeb('https://www.instagram.com','Instagram'),fb:()=>iosWeb('https://www.facebook.com','Facebook'),tg:()=>iosWeb('https://web.telegram.org/k/','Telegram'),tt:()=>iosWeb('https://www.tiktok.com','TikTok'),bilitv:()=>{toast('正在打开 Bilibili 国际版（可用 Google 或手机号登录）');setTimeout(()=>window.open('https://www.bilibili.tv/zh','_blank'),300)},qq:()=>{iosShow(false);tab('msg')},zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
+ yu:()=>yuOpen(),x:()=>iosWeb('https://x.com','X'),ig:()=>iosWeb('https://www.instagram.com','Instagram'),fb:()=>iosWeb('https://www.facebook.com','Facebook'),tg:()=>iosWeb('https://web.telegram.org/k/','Telegram'),tt:()=>iosWeb('https://www.tiktok.com','TikTok'),bilitv:()=>iosWeb('https://www.bilibili.tv/zh','Bilibili国际'),web:()=>{WB.hist=[];WB.name='';if(window.YuNative&&YuNative.open){YuNative.open('https://www.bing.com','');return}openPage('p-web');wbHome()},qq:()=>{iosShow(false);tab('msg')},zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
 // 点击 / 长按抖动
 (function(){const R=$('ios');let lp=null,moved=false,sx=0,sy=0,pan=null;
  R.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;moved=false;e.stopPropagation();
