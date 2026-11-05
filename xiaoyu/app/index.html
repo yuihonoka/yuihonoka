@@ -438,7 +438,7 @@ cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY
 #p-bili .bcard{border-radius:6px;box-shadow:none}
 #p-bili .bcard .cv{aspect-ratio:16/10;background:#e3e5e7}
 #p-bili .bcard .cv span{font-size:11.5px;padding:16px 7px 5px}
-#p-bili .bcard .t{font-size:13.5px;line-height:1.38;height:37px;padding:7px 8px 0;color:#18191c}
+#p-bili .bcard .t{font-size:13.5px;line-height:19px;height:38px;margin:7px 8px 0;padding:0;color:#18191c}
 #p-bili .bcard .u{display:flex;align-items:center;gap:4px;padding:8px 8px 9px;color:#9499a0;font-size:12px}
 #p-bili .bcard .u:before{content:"UP";font-size:9px;border:1px solid #9499a0;border-radius:2px;padding:0 2px;line-height:12px}
 .bmore{display:block;margin:6px auto 16px;border:0;background:none;color:#9499a0;font-size:13px}
@@ -579,7 +579,7 @@ let BTAB='rcmd',BPAGE=1,BV=null;
 function bNav(el){document.querySelectorAll('.bnav>div').forEach(d=>d.classList.toggle('on',d===el))}
 function bTab(t){BTAB=t;document.querySelectorAll('#p-bili .bseg button').forEach(b=>b.classList.remove('on'));if($('bs-'+t))$('bs-'+t).classList.add('on');$('bSearch').style.display=t==='search'?'flex':'none';BPAGE=1;
  if(t==='me')return bMe();if(t==='search'){$('bGrid').innerHTML='';$('bMore').style.display='none';return}bLoad()}
-function bCards(L){return L.map(v=>`<div class="bcard" onclick='openBv(${JSON.stringify(v.bvid)})'><div class="cv"><img referrerpolicy="no-referrer" src="${esc(v.pic)}@320w_200h.webp" onerror="this.src='${esc(v.pic)}'" loading="lazy" alt=""><span><i>▶ ${fmtN(v.view||0)}</i><i>${typeof v.dur==='number'?Math.floor(v.dur/60)+':'+String(v.dur%60).padStart(2,'0'):esc(v.dur)}</i></span></div><div class="t">${esc(v.title)}</div><div class="u">UP ${esc(v.up)}</div></div>`).join('')}
+function bCards(L){return L.map(v=>`<div class="bcard" onclick='openBv(${JSON.stringify(v.bvid)})'><div class="cv"><img referrerpolicy="no-referrer" src="${esc(v.pic)}@320w_200h.webp" onerror="this.src='${esc(v.pic)}'" loading="lazy" alt=""><span><i>▶ ${fmtN(v.view||0)}</i><i>${typeof v.dur==='number'?Math.floor(v.dur/60)+':'+String(v.dur%60).padStart(2,'0'):esc(v.dur)}</i></span></div><div class="t">${esc(v.title)}</div><div class="u">${esc(v.up)}</div></div>`).join('')}
 async function bLoad(more){if(more)BPAGE++;if(!more)$('bGrid').innerHTML='<div class="tip" style="grid-column:span 2">加载中…</div>';$('bMore').style.display='block';
  try{const L=BTAB==='search'?await api('/api/bili/search?q='+encodeURIComponent($('bq').value)+'&page='+BPAGE):await api(`/api/bili/feed?kind=${BTAB}&page=${BPAGE}`);
   if(more&&BTAB!=='rcmd')$('bGrid').insertAdjacentHTML('beforeend',bCards(L));else $('bGrid').innerHTML=bCards(L)||'<div class="tip" style="grid-column:span 2">没有内容</div>'}catch(e){$('bGrid').innerHTML=`<div class="tip" style="grid-column:span 2">${esc(e.message)}</div>`}}
@@ -1001,7 +1001,7 @@ body.iosm .top{padding-top:50px!important}
 .dl-tabs{display:grid;grid-template-columns:repeat(4,1fr);padding:6px 0 22px;background:#f7f7f7}
 .dl-tabs div{display:flex;flex-direction:column;align-items:center;font-size:12px;font-weight:600;color:#777;gap:3px}.dl-tabs svg{width:24px;height:24px;fill:#aaa}
 .dl-tabs .on{color:#1f6fe5}.dl-tabs .on svg{fill:#1f6fe5}
-.cv{background:linear-gradient(180deg,#2c3e66,#0d1428)!important;color:#fff;text-align:center;flex-direction:column;align-items:center;padding:40px 20px}
+#p-call .cv{background:linear-gradient(180deg,#2c3e66,#0d1428)!important;color:#fff;text-align:center;flex-direction:column;align-items:center;padding:40px 20px}
 .call-no{opacity:.7;font-size:14px;margin-top:4px}
 /* 相机 / 相册 */
 #p-cam .body{background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
