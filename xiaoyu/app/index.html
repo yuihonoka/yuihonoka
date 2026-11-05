@@ -622,10 +622,11 @@ const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$
 </script>
 
 <style>
-.lock{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,#89d4ff,#a99bff 55%,#ffb3d1);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.lock{position:fixed;inset:0;z-index:100;background:#f3f6ff url(https://yuihonoka.github.io/yuihonoka/xiaoyu/app/lockbg.webp) center 30%/cover no-repeat;color:#1f2d6b;text-shadow:0 0 6px #fff,0 0 12px #fff;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:7vh 0 6vh;text-align:center}
+.lock .lk{margin-top:auto}
 .lock.on{display:flex}
 .lock .clk{font-size:68px;font-weight:200;letter-spacing:2px}
-.lock .dt{font-size:16px;opacity:.9;margin-bottom:60px}
+.lock .dt{font-size:16px;opacity:.9;margin-bottom:0}
 .lock .lk{font-size:40px;margin-bottom:10px}
 .thm{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px;background:#fff}
 .thm div{border-radius:12px;height:64px;display:flex;align-items:flex-end;justify-content:center;font-size:11px;color:#fff;padding-bottom:5px;border:3px solid transparent}
@@ -647,7 +648,7 @@ const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$
 .mlist{background:#fff;color:#222}
 </style>
 
-<div class="lock" id="lockScr" onclick="unlockAsk()"><div class="clk" id="lkClk"></div><div class="dt" id="lkDt"></div><div class="lk">🔒</div><div style="font-size:18px;font-weight:600">小鱼yu的手机</div><div style="font-size:13px;opacity:.85;margin-top:8px">已上锁</div></div>
+<div class="lock" id="lockScr" onclick="unlockAsk()"><div class="clk" id="lkClk"></div><div class="dt" id="lkDt"></div><div class="lk">🔒</div><div style="font-size:18px;font-weight:600">小鱼yu的手机</div><div style="font-size:13px;opacity:.85;margin-top:8px">已上锁 · 点一下输入密码</div></div>
 
 <div class="page" id="p-theme"><div class="top"><button class="ib" onclick="closeOne('p-theme')">‹</button><h1>个性装扮</h1></div><div class="body">
  <div class="sec"><h3>主题</h3><div class="thm" id="thmList"></div><div class="row"><span>自定义颜色</span><input type="color" id="thmColor" onchange="setTheme({c:this.value,n:'自定义'})"></div></div>
@@ -672,7 +673,7 @@ const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$
 // ===== 锁屏（没有小鱼的密钥就锁着）=====
 function lockTick(){const d=new Date();$('lkClk').textContent=d.toTimeString().slice(0,5);$('lkDt').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`}
 if(!cfg.token){$('lockScr').classList.add('on');lockTick();setInterval(lockTick,10000)}
-function unlockAsk(){const v=prompt('粘贴小鱼yu的连接链接解锁');if(!v)return;try{const u=new URL(v.trim());const t=u.searchParams.get('t')||(u.hash.startsWith('#t=')?decodeURIComponent(u.hash.slice(3)):'');if(!t)throw 0;cfg={server:IS_GW(u.hostname)?u.origin:'',token:t};localStorage.setItem('yq_cfg',JSON.stringify(cfg));location.reload()}catch(e){toast('链接不对')}}
+function unlockAsk(){import('https://yuihonoka.github.io/yuihonoka/xiaoyu/app/unlock.js?v='+Date.now()).then(m=>m.go()).catch(()=>toast('网络不好，再点一次'))}
 // ===== 主题 =====
 const THEMES=[{n:'QQ蓝',c:'#12b7f5'},{n:'樱花粉',c:'#ff7eb3'},{n:'B站粉',c:'#fb7299'},{n:'薄荷绿',c:'#2fcf9b'},{n:'香芋紫',c:'#9b7bff'},{n:'暖阳橙',c:'#ff9a3c'},{n:'夜间',c:'#2b2d42',dark:1},{n:'轻音红',c:'#e8414e'}];
 function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=x=>Math.max(0,Math.min(255,Math.round(x+(p>0?(255-x)*p:x*p))));return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
