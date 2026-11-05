@@ -529,7 +529,7 @@ function drawer(on){$('drawer').classList.toggle('on',!!on);$('dMask').classList
 let PROF=null;
 function badgeHtml(b){b=b||{};return (b.svip?`<span class="bd svip">SVIP${b.svip}</span>`:'')+(b.green?`<span class="bd green">绿钻${b.green}</span>`:'')+(b.bili_year?'<span class="bd bili">年度大会员</span>':'')}
 async function fillDrawer(){try{PROF=await api('/api/profile')}catch(e){PROF=PROF||{qq:ME,badges:{svip:10,green:10,bili_year:true}}}
- const q=PROF.qq||ME;$('dAva').src=q.avatar||ava(q.id||2751351976);$('dName').textContent=q.nick||'小鱼yu';$('dSign').textContent=q.longnick||'';$('dBadges').innerHTML=badgeHtml(PROF.badges)}
+ const q=PROF.qq||ME;$('dAva').src=q.avatar||ava(q.id||2751351976);$('dName').textContent=q.nick||'小鱼yu';$('dSign').textContent=q.longnick||'';$('dBadges').innerHTML=badgeHtml(PROF.badges);const dh=document.querySelector('.dhead');if(dh&&PROF.bg)dh.style.cssText+=`;background:linear-gradient(#0003,#0006),center/cover url("${PROF.bg.replace(/"/g,'')}")!important`}
 $('topAva').onclick=()=>drawer(1);
 // 左滑边缘打开侧边栏
 (function(){let sx=null;document.addEventListener('touchstart',e=>{const t=e.touches[0];sx=(t.clientX<24&&!document.querySelector('.page.on,.chat.on'))?t.clientX:null},{passive:true});
