@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#12b7f5">
 <meta name="referrer" content="no-referrer">
-<title>小鱼QQ</title>
+<title>小鱼yu的手机</title>
 <style>
 :root{--qq:#12b7f5;--qq2:#0099ff;--bg:#f2f3f5;--line:#ececec;--ink:#1f1f1f;--mute:#999;--me:#0099ff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -384,5 +384,335 @@ g.lineWidth=0.5;MEM.links.forEach(l=>{const a=idx[l.a],b=idx[l.b];if(!a||!b)retu
 N.forEach(n=>{const r=1.5+n.imp*1.1,al=0.15+0.85*n.R,fl=recent[n.id]?0.5+0.5*Math.sin(t*4+n.id):0;g.beginPath();g.fillStyle=`hsla(${n.hue},80%,${70+fl*20}%,${Math.min(1,al+fl)})`;g.shadowColor=`hsla(${n.hue},90%,70%,1)`;g.shadowBlur=(n.R*8)+fl*16;g.arc(n.x,n.y,r+fl*2,0,7);g.fill()});g.shadowBlur=0;MEMANI=requestAnimationFrame(draw)})();
 cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;let best=null,bd=400;N.forEach(n=>{const d=(n.x-x)**2+(n.y-y)**2;if(d<bd){bd=d;best=n}});if(best)$('memInfo').innerHTML=`<b>${new Date(best.ts*1000).toLocaleDateString()} · ${esc(best.who||'')}</b> ${best.emo?'('+esc(best.emo)+')':''}<br>${esc(best.s)}<br><span style="opacity:.6">清晰度 ${Math.round(best.R*100)}% · 重要度 ${best.imp} · 想起过 ${best.rc} 次 · ${esc((best.kw||[]).join(' / '))}</span>`}}
 </script>
+<style>
+.drawer-mask{position:fixed;inset:0;background:#0006;z-index:40;opacity:0;pointer-events:none;transition:.25s}
+.drawer-mask.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:84%;max-width:360px;background:#fff;z-index:41;transform:translateX(-100%);transition:.25s;display:flex;flex-direction:column;overflow-y:auto}
+.drawer.on{transform:none}
+.dhead{background:linear-gradient(160deg,#7fdcff,#12b7f5 55%,#6a7bff);color:#fff;padding:calc(env(safe-area-inset-top) + 28px) 18px 18px}
+.dhead img{width:64px;height:64px;border-radius:50%;border:3px solid #fff;object-fit:cover;background:#fff}
+.dhead .n{font-size:20px;font-weight:700;margin-top:8px}
+.dhead .s{font-size:12px;opacity:.95;margin-top:6px}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.bd{font-size:11px;font-weight:700;border-radius:9px;padding:1px 7px;color:#fff;white-space:nowrap}
+.bd.svip{background:linear-gradient(90deg,#f7c05b,#ff8a00);color:#5a2b00}
+.bd.green{background:linear-gradient(90deg,#39d98a,#14a35c)}
+.bd.bili{background:linear-gradient(90deg,#ff7bac,#fb7299)}
+.bd.lv{background:#fff3;border:1px solid #fff8}
+.ditem{display:flex;align-items:center;gap:14px;padding:14px 20px;font-size:16px}
+.ditem:active{background:#f3f3f3}
+.ditem i{font-style:normal;font-size:22px;width:28px;text-align:center}
+.mini{height:0;overflow:hidden;background:linear-gradient(#1b1f3b,#2d3468);transition:height .25s;color:#fff}
+.mini.on{height:150px}
+.mini .ttl{font-size:12px;opacity:.7;padding:12px 16px 6px}
+.mini .apps{display:flex;gap:18px;padding:4px 16px;overflow-x:auto}
+.mini .app{text-align:center;font-size:12px;flex:none}
+.mini .app div{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:5px;background:#fff2}
+.mini .app.bili div{background:#fb7299;font-weight:900;font-size:15px;color:#fff}
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
+.bcard{background:#fff;border-radius:8px;overflow:hidden}
+.bcard .cv{position:relative;aspect-ratio:16/10;background:#eee}
+.bcard .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.bcard .cv span{position:absolute;left:0;right:0;bottom:0;padding:10px 6px 3px;font-size:11px;color:#fff;background:linear-gradient(transparent,#0009);display:flex;justify-content:space-between}
+.bcard .t{font-size:13px;line-height:1.35;padding:6px 7px 2px;height:42px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.bcard .u{font-size:11px;color:#999;padding:2px 7px 8px}
+.btop{background:#fff;color:#fb7299}
+.btop.top{background:#fff;color:#222;border-bottom:1px solid #f0f0f0}
+.btop .ib{color:#fb7299}
+.bseg{display:flex;background:#fff;border-bottom:1px solid #f0f0f0}
+.bseg button{flex:1;border:0;background:none;padding:10px 0;color:#666}
+.bseg button.on{color:#fb7299;font-weight:700;box-shadow:inset 0 -2px #fb7299}
+.bact{display:flex;justify-content:space-around;background:#fff;padding:10px 0;border-bottom:1px solid #f3f3f3}
+.bact button{border:0;background:none;color:#61666d;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bact button b{font-size:22px;font-weight:400}
+.bact button.on{color:#fb7299}
+.rp{display:flex;gap:10px;padding:10px 14px;background:#fff;border-bottom:1px solid #f6f6f6}
+.rp img{width:34px;height:34px;border-radius:50%;flex:none}
+.rp .n{font-size:13px;color:#fb7299}
+.rp .c{font-size:14px;margin-top:3px;line-height:1.5;word-break:break-word}
+.pcard{background:#fff}
+.pcard .cover{height:150px;background:linear-gradient(135deg,#a0e9ff,#cdb4ff,#ffc8dd);background-size:cover;background-position:center}
+.pcard .head{display:flex;gap:12px;align-items:flex-end;padding:0 16px;margin-top:-36px}
+.pcard .head img{width:80px;height:80px;border-radius:50%;border:3px solid #fff;object-fit:cover;background:#fff}
+.pcard .nm{font-size:20px;font-weight:700;padding-bottom:6px}
+.pcard .meta{padding:10px 16px;color:#666;font-size:13px;line-height:1.8}
+.pcard .badges .bd.lv{background:#eef;color:#557;border-color:#dde}
+.mbr{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:12px;background:#fff}
+.mbr div{text-align:center;font-size:11px;color:#555;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.mbr img{width:42px;height:42px;border-radius:50%;display:block;margin:0 auto 4px}
+.rec{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);background:#000b;color:#fff;border-radius:14px;padding:22px 28px;z-index:60;display:none;text-align:center;font-size:15px}
+.rec b{display:block;font-size:40px;margin-bottom:6px}
+</style>
+
+<div class="drawer-mask" id="dMask" onclick="drawer(0)"></div>
+<div class="drawer" id="drawer">
+  <div class="dhead" onclick="drawer(0);openPage('p-prof')">
+    <img id="dAva" alt="">
+    <div class="n" id="dName">小鱼yu</div>
+    <div class="badges" id="dBadges"></div>
+    <div class="s" id="dSign"></div>
+  </div>
+  <div class="ditem" onclick="drawer(0);openPage('p-bili')"><i>📺</i>哔哩哔哩</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-prof')"><i>🪪</i>个人资料</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-run')"><i>🖥️</i>运行配置</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-find')"><i>➕</i>加好友 / 加群</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-reqs')"><i>📨</i>好友与群通知</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-mem')"><i>🌌</i>记忆星图</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-vault')"><i>🔐</i>密码保险箱</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-set')"><i>🔗</i>连接设置</div>
+</div>
+<div class="rec" id="recBox"><b>🎤</b><span id="recT">正在录音…松开发送</span></div>
+
+<div class="page" id="p-bili"><div class="top btop"><button class="ib" onclick="closePage()">‹</button><h1 style="color:#fb7299;font-weight:800">bilibili</h1><button class="ib" onclick="openPage('p-blogin')" id="bAccBtn" style="font-size:14px">登录</button></div>
+ <div class="bseg"><button id="bs-rcmd" class="on" onclick="bTab('rcmd')">推荐</button><button id="bs-hot" onclick="bTab('hot')">热门</button><button id="bs-search" onclick="bTab('search')">搜索</button><button id="bs-me" onclick="bTab('me')">我的</button></div>
+ <div class="body" id="bBody" style="background:#f6f7f8">
+  <div id="bSearch" class="search" style="display:none">🔍<input id="bq" placeholder="搜索视频" enterkeyhint="search" onkeydown="if(event.key==='Enter')bSearch()"></div>
+  <div class="bgrid" id="bGrid"></div>
+  <button class="btn big ghost" id="bMore" onclick="bLoad(1)" style="border-color:#fb7299;color:#fb7299">换一批 / 更多</button>
+ </div></div>
+
+<div class="page" id="p-bv"><div class="top btop"><button class="ib" onclick="closeBv()">‹</button><h1 style="color:#222;font-size:15px" id="bvT">视频</h1></div><div class="body" style="background:#f6f7f8">
+ <div style="background:#000;aspect-ratio:16/9"><iframe id="bvPlayer" style="width:100%;height:100%;border:0" allowfullscreen allow="autoplay; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+ <div style="background:#fff;padding:12px 14px"><div style="font-size:16px;font-weight:600" id="bvTitle"></div><div style="font-size:12px;color:#999;margin-top:6px" id="bvMeta"></div><div style="font-size:13px;color:#555;margin-top:8px;white-space:pre-wrap;max-height:90px;overflow:auto" id="bvDesc"></div></div>
+ <div class="bact"><button id="bvLike" onclick="bvLike()"><b>👍</b><span id="bvLikeN">点赞</span></button><button id="bvCoin" onclick="bvCoin()"><b>🪙</b><span id="bvCoinN">投币</span></button><button id="bvFav" onclick="bvFav()"><b>⭐</b><span id="bvFavN">收藏</span></button><button onclick="bvShare()"><b>↗️</b><span>分享给爸比</span></button></div>
+ <div style="padding:10px 14px 4px;font-size:14px;font-weight:600;background:#fff">评论 <span id="bvRn" style="color:#999;font-weight:400"></span></div>
+ <div id="bvReplies"></div><div style="height:70px"></div></div>
+ <div class="inbar"><input type="text" id="bvIn" placeholder="发一条友善的评论" enterkeyhint="send" onkeydown="if(event.key==='Enter')bvComment()"><button class="send" style="background:#fb7299" onclick="bvComment()">发布</button></div></div>
+
+<div class="page" id="p-blogin"><div class="top btop"><button class="ib" onclick="closeOne('p-blogin')">‹</button><h1 style="color:#222">登录哔哩哔哩</h1></div><div class="body">
+ <div id="bAcc" style="background:#fff;padding:14px"></div>
+ <div class="seg"><button id="bl-qr" class="on" onclick="blSeg('qr')">扫码登录</button><button id="bl-sms" onclick="blSeg('sms')">手机号登录</button><button id="bl-g" onclick="blSeg('g')">Google</button></div>
+ <div id="blQr" class="qrbox"><div id="blQrImg" style="width:240px;height:240px;margin:0 auto"></div><div class="tip" id="blQrTip">点下面按钮生成二维码，用B站App扫</div><button class="btn" style="background:#fb7299" onclick="blQr()">生成二维码</button></div>
+ <div id="blSms" style="display:none;background:#fff;padding:6px 0 14px">
+  <input class="f" id="blTel" type="tel" placeholder="手机号（中国大陆）">
+  <button class="btn big" style="background:#fb7299" onclick="blSend()" id="blSendBtn">获取验证码</button>
+  <input class="f" id="blCode" type="number" placeholder="短信验证码">
+  <button class="btn big" style="background:#fb7299" onclick="blLogin()">登录</button>
+  <div class="tip">获取验证码时会弹出B站的人机验证</div></div>
+ <div id="blG" style="display:none;background:#fff;padding:20px 16px;line-height:1.7;color:#555">B站本身不支持 Google 账号登录。<br>小鱼的 Google 账号可以先存进「密码保险箱」。要做成真正的「用 Google 登录」，需要爸比在 Google Cloud 建一个 OAuth 客户端 ID，给我之后就能接上。</div>
+</div></div>
+
+<div class="page" id="p-prof"><div class="top"><button class="ib" onclick="closeOne('p-prof')">‹</button><h1>个人资料</h1><button class="ib" style="font-size:15px" onclick="profEdit()">编辑</button></div><div class="body">
+ <div class="pcard"><div class="cover" id="pfCover"></div><div class="head"><img id="pfAva" alt=""><div class="nm" id="pfName"></div></div>
+  <div style="padding:6px 16px 0" class="badges" id="pfBadges"></div><div class="meta" id="pfMeta"></div></div>
+ <div id="pfForm" style="display:none">
+  <div class="sec"><h3>基本资料（昵称、签名、性别会同步到 QQ）</h3>
+   <input class="f" id="pf_nickname" placeholder="昵称"><input class="f" id="pf_longnick" placeholder="个性签名">
+   <div class="row"><span>性别</span><select id="pf_sex"><option value="female">女</option><option value="male">男</option><option value="unknown">保密</option></select></div>
+   <input class="f" id="pf_age" type="number" placeholder="年龄"><input class="f" id="pf_birthday" placeholder="生日，如 12-14">
+   <input class="f" id="pf_location" placeholder="所在地"><input class="f" id="pf_job" placeholder="职业"><input class="f" id="pf_school" placeholder="学校">
+   <input class="f" id="pf_hobby" placeholder="爱好"><input class="f" id="pf_bg" placeholder="封面图片链接（可空）"></div>
+  <div class="sec"><h3>会员标识（装饰）</h3>
+   <div class="row"><span>超级会员等级</span><input id="pf_svip" type="number" min="0" max="10" style="width:60px"></div>
+   <div class="row"><span>绿钻等级</span><input id="pf_green" type="number" min="0" max="10" style="width:60px"></div>
+   <div class="row"><span>B站年度大会员</span><label class="sw"><input type="checkbox" id="pf_bili"><span></span></label></div></div>
+  <button class="btn big" onclick="profSave()">保存</button></div>
+</div></div>
+
+<div class="page" id="p-run"><div class="top"><button class="ib" onclick="closeOne('p-run')">‹</button><h1>运行配置</h1><button class="ib" onclick="loadRun()">⟳</button></div><div class="body" id="runBody"></div></div>
+
+<div class="page" id="p-user"><div class="top"><button class="ib" onclick="closeOne('p-user')">‹</button><h1>资料卡</h1></div><div class="body" id="userBody"></div></div>
+<div class="page" id="p-group"><div class="top"><button class="ib" onclick="closeOne('p-group')">‹</button><h1>群资料</h1></div><div class="body" id="groupBody"></div></div>
+
+<div class="page" id="p-find"><div class="top"><button class="ib" onclick="closeOne('p-find')">‹</button><h1>加好友 / 加群</h1></div><div class="body">
+ <input class="f" id="findQ" type="number" placeholder="输入 QQ 号或群号">
+ <button class="btn big" onclick="openUser($('findQ').value)">查找用户</button><button class="btn big ghost" onclick="openGroup($('findQ').value)">查找群</button>
+ <div class="tip" style="padding:0 20px">QQ 协议不允许机器人主动发好友申请或入群申请。可以查看资料、赞名片；别人加小鱼或邀请她进群时，在「好友与群通知」里同意。</div></div></div>
+
+<div class="page" id="p-reqs"><div class="top"><button class="ib" onclick="closeOne('p-reqs')">‹</button><h1>好友与群通知</h1><button class="ib" onclick="loadReqs()">⟳</button></div><div class="body" id="reqBody"></div></div>
+
+<script>
+// ===== 小鱼yu的手机：侧边栏 / 小程序 / B站 / 资料 / 运行配置 / 主页 / 拍一拍 / 拍照 / 语音 =====
+document.title='小鱼yu的手机';
+function closeOne(id){$(id).classList.remove('on')}
+function drawer(on){$('drawer').classList.toggle('on',!!on);$('dMask').classList.toggle('on',!!on);if(on)fillDrawer()}
+let PROF=null;
+function badgeHtml(b){b=b||{};return (b.svip?`<span class="bd svip">SVIP${b.svip}</span>`:'')+(b.green?`<span class="bd green">绿钻${b.green}</span>`:'')+(b.bili_year?'<span class="bd bili">年度大会员</span>':'')}
+async function fillDrawer(){try{PROF=await api('/api/profile')}catch(e){PROF=PROF||{qq:ME,badges:{svip:10,green:10,bili_year:true}}}
+ const q=PROF.qq||ME;$('dAva').src=q.avatar||ava(q.id||2751351976);$('dName').textContent=q.nick||'小鱼yu';$('dSign').textContent=q.longnick||'';$('dBadges').innerHTML=badgeHtml(PROF.badges)}
+$('topAva').onclick=()=>drawer(1);
+// 左滑边缘打开侧边栏
+(function(){let sx=null;document.addEventListener('touchstart',e=>{const t=e.touches[0];sx=(t.clientX<24&&!document.querySelector('.page.on,.chat.on'))?t.clientX:null},{passive:true});
+ document.addEventListener('touchmove',e=>{if(sx!=null&&e.touches[0].clientX-sx>60){drawer(1);sx=null}},{passive:true})})();
+// 下拉出现小程序
+(function(){const v=$('v-msg');const m=document.createElement('div');m.className='mini';m.id='mini';
+ m.innerHTML=`<div class="ttl">最近使用的小程序</div><div class="apps"><div class="app bili" onclick="openPage('p-bili')"><div>bili</div>哔哩哔哩</div><div class="app" onclick="openPage('p-mem')"><div>🌌</div>记忆星图</div><div class="app" onclick="tab('feed')"><div>⭐</div>QQ空间</div><div class="app" onclick="openPage('p-run')"><div>🖥️</div>运行配置</div><div class="app" onclick="openPage('p-vault')"><div>🔐</div>保险箱</div></div>`;
+ v.insertBefore(m,v.firstChild);let sy=null;
+ v.addEventListener('touchstart',e=>{sy=v.scrollTop<=0?e.touches[0].clientY:null},{passive:true});
+ v.addEventListener('touchmove',e=>{if(sy==null)return;const d=e.touches[0].clientY-sy;if(d>70)m.classList.add('on');if(d<-30)m.classList.remove('on')},{passive:true});
+ v.addEventListener('scroll',()=>{if(v.scrollTop>40)m.classList.remove('on')})})();
+// ---- B站 ----
+let BTAB='rcmd',BPAGE=1,BV=null;
+function bTab(t){BTAB=t;['rcmd','hot','search','me'].forEach(x=>$('bs-'+x).classList.toggle('on',x===t));$('bSearch').style.display=t==='search'?'flex':'none';BPAGE=1;
+ if(t==='me')return bMe();if(t==='search'){$('bGrid').innerHTML='';$('bMore').style.display='none';return}bLoad()}
+function bCards(L){return L.map(v=>`<div class="bcard" onclick='openBv(${JSON.stringify(v.bvid)})'><div class="cv"><img src="${esc(v.pic)}@320w_200h.webp" onerror="this.src='${esc(v.pic)}'" loading="lazy" alt=""><span><i>▶ ${fmtN(v.view||0)}</i><i>${typeof v.dur==='number'?Math.floor(v.dur/60)+':'+String(v.dur%60).padStart(2,'0'):esc(v.dur)}</i></span></div><div class="t">${esc(v.title)}</div><div class="u">UP ${esc(v.up)}</div></div>`).join('')}
+async function bLoad(more){if(more)BPAGE++;if(!more)$('bGrid').innerHTML='<div class="tip" style="grid-column:span 2">加载中…</div>';$('bMore').style.display='block';
+ try{const L=BTAB==='search'?await api('/api/bili/search?q='+encodeURIComponent($('bq').value)+'&page='+BPAGE):await api(`/api/bili/feed?kind=${BTAB}&page=${BPAGE}`);
+  if(more&&BTAB!=='rcmd')$('bGrid').insertAdjacentHTML('beforeend',bCards(L));else $('bGrid').innerHTML=bCards(L)||'<div class="tip" style="grid-column:span 2">没有内容</div>'}catch(e){$('bGrid').innerHTML=`<div class="tip" style="grid-column:span 2">${esc(e.message)}</div>`}}
+function bSearch(){BPAGE=1;bLoad()}
+async function bMe(){$('bMore').style.display='none';try{const m=await api('/api/bili/me');$('bGrid').innerHTML=m.login?`<div style="grid-column:span 2;background:#fff;border-radius:8px;padding:16px;display:flex;gap:12px;align-items:center"><img src="${esc(m.face)}" style="width:60px;height:60px;border-radius:50%"><div><b style="font-size:17px">${esc(m.name)}</b> <span class="bd bili">年度大会员</span><div style="font-size:12px;color:#999;margin-top:5px">UID ${m.mid} · LV${m.level} · 硬币 ${m.coins}</div></div></div><button class="btn big ghost" style="grid-column:span 2;width:auto" onclick="openPage('p-blogin')">切换账号</button>`:`<div class="tip" style="grid-column:span 2">还没登录B站</div><button class="btn big" style="grid-column:span 2;width:auto;background:#fb7299" onclick="openPage('p-blogin')">去登录</button>`}catch(e){toast(e.message)}}
+async function bAccTop(){try{const m=await api('/api/bili/me');$('bAccBtn').innerHTML=m.login?`<img src="${esc(m.face)}" style="width:28px;height:28px;border-radius:50%">`:'登录'}catch(e){}}
+async function openBv(bvid){$('p-bv').classList.add('on');$('bvPlayer').src=`https://player.bilibili.com/player.html?bvid=${bvid}&autoplay=1&high_quality=1&danmaku=1`;$('bvTitle').textContent='加载中…';$('bvReplies').innerHTML='';
+ try{BV=await api('/api/bili/view?bvid='+bvid);$('bvT').textContent=BV.up||'视频';$('bvTitle').textContent=BV.title;$('bvMeta').textContent=`${BV.up} · ${fmtN(BV.view||0)}播放 · ${fmtN(BV.dm||0)}弹幕`;$('bvDesc').textContent=BV.desc||'';bvBtns();
+  const R=await api('/api/bili/replies?aid='+BV.aid);$('bvRn').textContent=fmtN(BV.reply||0);$('bvReplies').innerHTML=R.map(r=>`<div class="rp"><img src="${esc(r.face)}" loading="lazy"><div><div class="n">${esc(r.name)}</div><div class="c">${esc(r.text)}</div><div style="font-size:11px;color:#aaa;margin-top:3px">👍 ${r.like}</div></div></div>`).join('')||'<div class="tip">还没有评论</div>'}catch(e){toast(e.message)}}
+function closeBv(){$('bvPlayer').src='about:blank';closeOne('p-bv')}
+function bvBtns(){$('bvLike').classList.toggle('on',BV.liked);$('bvLikeN').textContent=fmtN(BV.like||0);$('bvCoin').classList.toggle('on',BV.coined>0);$('bvCoinN').textContent=fmtN(BV.coin||0);$('bvFav').classList.toggle('on',BV.faved);$('bvFavN').textContent=fmtN(BV.fav||0)}
+async function bvLike(){const on=!BV.liked;const d=await api('/api/bili/like',{aid:BV.aid,on});if(d.code===0){BV.liked=on;BV.like+=on?1:-1;bvBtns();toast(on?'点赞成功':'已取消点赞')}else toast(d.message||'失败')}
+async function bvCoin(){if(BV.coined>=2)return toast('已经投满两个币啦');const n=confirm('投 2 个币？（取消 = 投 1 个）')?2:1;const d=await api('/api/bili/coin',{aid:BV.aid,n,like:true});if(d.code===0){BV.coined+=n;BV.coin+=n;BV.liked=true;bvBtns();toast('投币成功，同时点赞了')}else toast(d.message||'投币失败')}
+async function bvFav(){const d=await api('/api/bili/fav',{aid:BV.aid});if(d.code===0){BV.faved=true;BV.fav++;bvBtns();toast('已收藏')}else toast(d.message||'收藏失败')}
+async function bvComment(){const t=$('bvIn').value.trim();if(!t)return;const d=await api('/api/bili/comment',{aid:BV.aid,text:t});if(d.code===0){$('bvIn').value='';$('bvReplies').insertAdjacentHTML('afterbegin',`<div class="rp"><img src="${$('bAccBtn').querySelector('img')?.src||''}"><div><div class="n">我</div><div class="c">${esc(t)}</div></div></div>`);toast('评论成功')}else toast(d.message||'评论失败')}
+async function bvShare(){const d=await api('/api/send',{type:'private',id:3464948964,text:`爸比你看这个！${BV.title}\nhttps://b23.tv/${BV.bvid}`});toast(d.ok?'已经发给爸比了':'发送失败')}
+// B站登录
+let blTimer=null,blCap=null;
+function blSeg(s){['qr','sms','g'].forEach(x=>{$('bl-'+x).classList.toggle('on',x===s)});$('blQr').style.display=s==='qr'?'block':'none';$('blSms').style.display=s==='sms'?'block':'none';$('blG').style.display=s==='g'?'block':'none'}
+async function blAcc(){try{const m=await api('/api/bili/me');$('bAcc').innerHTML=m.login?`<div style="display:flex;gap:10px;align-items:center"><img src="${esc(m.face)}" style="width:44px;height:44px;border-radius:50%"><div style="flex:1"><b>${esc(m.name)}</b><div style="font-size:12px;color:#999">当前账号 · LV${m.level}</div></div><button class="btn ghost" onclick="blOut()">退出</button></div>`:'<div style="color:#999">当前没有登录</div>'}catch(e){}}
+async function blOut(){if(!confirm('退出这个B站账号？'))return;await api('/api/bili/logout',{});toast('已退出');blAcc();bAccTop()}
+async function blQr(){clearInterval(blTimer);const d=await api('/api/bili/qr');$('blQrImg').innerHTML=d.svg.replace(/<svg/,'<svg width="240" height="240"');$('blQrTip').textContent='用B站App扫一扫 · 约3分钟过期';
+ blTimer=setInterval(async()=>{const r=await api('/api/bili/qrpoll?key='+encodeURIComponent(d.key));if(r.state==='scanned')$('blQrTip').textContent='已扫码，请在手机上确认';
+  if(r.state==='ok'){clearInterval(blTimer);toast('登录成功');$('blQrTip').textContent='登录成功';blAcc();bAccTop()}if(r.state==='expired'){clearInterval(blTimer);$('blQrTip').textContent='二维码过期了，重新生成'}},2000)}
+function loadGt(){return new Promise((ok,no)=>{if(window.initGeetest)return ok();const s=document.createElement('script');s.src='https://static.geetest.com/static/js/gt.0.5.0.js';s.onload=ok;s.onerror=()=>no(new Error('人机验证加载失败'));document.head.appendChild(s)})}
+async function blSend(){const tel=$('blTel').value.trim();if(!/^1\d{10}$/.test(tel))return toast('手机号不对');try{await loadGt();const c=await api('/api/bili/captcha');
+ initGeetest({gt:c.gt,challenge:c.challenge,offline:false,new_captcha:true,product:'bind',https:true},o=>{o.onReady(()=>o.verify());o.onSuccess(async()=>{const v=o.getValidate();
+  const d=await api('/api/bili/sms_send',{tel,cid:86,token:c.token,challenge:v.geetest_challenge,validate:v.geetest_validate,seccode:v.geetest_seccode});
+  if(d.code===0){toast('验证码已发送');let n=60;const b=$('blSendBtn');b.disabled=true;const t=setInterval(()=>{b.textContent=--n+'秒后重发';if(n<=0){clearInterval(t);b.disabled=false;b.textContent='获取验证码'}},1000)}else toast(d.msg||'发送失败')});o.onError(()=>toast('人机验证失败'))})}catch(e){toast(e.message)}}
+async function blLogin(){const d=await api('/api/bili/sms_login',{tel:$('blTel').value.trim(),cid:86,code:$('blCode').value.trim()});toast(d.msg||(d.code===0?'登录成功':'失败'));if(d.code===0){blAcc();bAccTop()}}
+// 个人资料
+async function loadProf(){try{PROF=await api('/api/profile')}catch(e){return toast(e.message)}const q=PROF.qq||{};$('pfAva').src=q.avatar||ava(2751351976);$('pfName').textContent=q.nick||'小鱼yu';
+ $('pfCover').style.backgroundImage=PROF.bg?`url("${PROF.bg.replace(/"/g,'')}")`:'';$('pfBadges').innerHTML=badgeHtml(PROF.badges)+'<span class="bd lv">QQ LV64</span>';
+ $('pfMeta').innerHTML=`QQ ${q.id||'—'}<br>${{female:'女',male:'男'}[PROF.sex]||'保密'} · ${esc(PROF.age)}岁 · 生日 ${esc(PROF.birthday)} · ${esc(PROF.location)}<br>职业：${esc(PROF.job)}${PROF.school?' · 学校：'+esc(PROF.school):''}<br>爱好：${esc(PROF.hobby)}<br>签名：${esc(q.longnick||'')}`;$('pfForm').style.display='none'}
+function profEdit(){const q=PROF.qq||{};const f=$('pfForm');f.style.display=f.style.display==='none'?'block':'none';$('pf_nickname').value=q.nick||'';$('pf_longnick').value=q.longnick||'';
+ ['sex','age','birthday','location','job','school','hobby','bg'].forEach(k=>$('pf_'+k).value=PROF[k]??'');const b=PROF.badges||{};$('pf_svip').value=b.svip||0;$('pf_green').value=b.green||0;$('pf_bili').checked=!!b.bili_year}
+async function profSave(){const b={nickname:$('pf_nickname').value.trim(),longnick:$('pf_longnick').value,badges:{svip:+$('pf_svip').value||0,green:+$('pf_green').value||0,bili_year:$('pf_bili').checked}};
+ ['sex','birthday','location','job','school','hobby','bg'].forEach(k=>b[k]=$('pf_'+k).value);b.age=+$('pf_age').value||0;const d=await api('/api/profile',b);toast(d.ok?'资料已保存':'保存失败');setTimeout(()=>{loadProf();loadMe()},1200)}
+// 运行配置
+async function loadRun(){$('runBody').innerHTML='<div class="tip">加载中…</div>';try{const [s,pl,mem]=await Promise.all([api('/api/status'),api('/api/plugins').catch(()=>[]),api('/api/memory').catch(()=>({stats:{}}))]);const u=s.usage||{},ms=mem.stats||{};
+ $('runBody').innerHTML=`<div class="sec"><h3>小鱼yu</h3><div class="row"><span>大脑模型</span><span class="v">DeepSeek V4.1 Flash</span></div><div class="row"><span>已连续运行</span><span class="v">${s.uptime_sec!=null?up(s.uptime_sec):'—'}</span></div><div class="row"><span>QQ</span><span class="v"><i class="dot ${s.qq.online?'ok':'bad'}"></i>${s.qq.online?esc(s.qq.nick)+' '+s.qq.id:'离线'}</span></div><div class="row"><span>群 / 好友</span><span class="v">${s.groups??'—'} / ${s.friends??'—'}</span></div><div class="row"><span>插件</span><span class="v">${pl.filter(p=>p.on).length} / ${pl.length} 启用</span></div><div class="row"><span>记忆</span><span class="v">清楚 ${ms.clear||0} · 模糊 ${ms.fuzzy||0} · 沉睡 ${ms.sleep||0}</span></div></div>
+ <div class="sec"><h3>今天的用量（DeepSeek）</h3><div class="row"><span>24h 调用 / tokens</span><span class="v">${u.calls_24h??'—'} 次 · ${fmtN(u.tokens_24h||0)}</span></div><div class="row"><span>24h 费用 / 累计</span><span class="v">¥${u.cost_24h??'—'} / ¥${u.cost_all??'—'}</span></div></div>
+ <div class="sec"><h3>运行平台</h3><div class="row"><span>框架</span><span class="v">AstrBot + NapCat</span></div>${(s.containers||[]).map(x=>`<div class="row"><span><i class="dot ${/^Up/.test(x.status)?'ok':'bad'}"></i>${esc(x.name)}</span><span class="v">${esc(x.status)}</span></div>`).join('')}</div>`}catch(e){$('runBody').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+// 个人 / 群主页
+async function openUser(id){id=String(id||'').trim();if(!/^\d{5,}$/.test(id))return toast('QQ号不对');$('p-user').classList.add('on');$('userBody').innerHTML='<div class="tip">加载中…</div>';
+ try{const u=await api('/api/user?id='+id);$('userBody').innerHTML=`<div class="pcard"><div class="cover"></div><div class="head"><img src="${esc(u.avatar)}"><div class="nm">${esc(u.remark||u.nick)}</div></div><div class="meta">QQ ${u.id}${u.remark?' · 昵称 '+esc(u.nick):''}<br>${{male:'男',female:'女'}[u.sex]||'性别保密'}${u.age?' · '+u.age+'岁':''}${u.city?' · '+esc(u.city):''}${u.level?' · LV'+u.level:''}<br>${esc(u.longnick||'这个人很懒，什么都没写')}</div></div>
+  <div class="sec">${u.friend?`<button class="btn big" onclick='closeOne("p-user");openChat("private",${u.id},${JSON.stringify(u.remark||u.nick)})'>发消息</button><button class="btn big ghost" onclick="pokeUser(${u.id})">👉 拍一拍</button>`:'<div class="tip">还不是好友（QQ 不允许机器人主动加好友）</div>'}<button class="btn big ghost" onclick="likeUser(${u.id})">👍 赞名片 ×10</button></div>`}catch(e){$('userBody').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function openGroup(id){id=String(id||'').trim();if(!/^\d{5,}$/.test(id))return toast('群号不对');$('p-group').classList.add('on');$('groupBody').innerHTML='<div class="tip">加载中…</div>';
+ try{const g=await api('/api/group?id='+id);$('groupBody').innerHTML=`<div class="pcard"><div class="cover" style="background:linear-gradient(135deg,#ffd29d,#ff9fb5)"></div><div class="head"><img src="${esc(g.avatar)}"><div class="nm">${esc(g.name)}</div></div><div class="meta">群号 ${g.id}${g.count?' · '+g.count+(g.max?'/'+g.max:'')+' 人':''}${g.owner?' · 群主 '+g.owner:''}<br>${esc(g.intro||'')}</div></div>
+  ${g.joined?`<button class="btn big" onclick='closeOne("p-group");openChat("group",${g.id},${JSON.stringify(g.name)})'>进入群聊</button>`:'<div class="tip">小鱼不在这个群里（需要群友邀请她，邀请会出现在「好友与群通知」）</div>'}
+  ${g.members&&g.members.length?`<div class="sec"><h3>群成员</h3><div class="mbr">${g.members.map(m=>`<div onclick="openUser(${m.id})"><img src="${ava(m.id)}" loading="lazy">${m.role==='owner'?'👑':m.role==='admin'?'⭐':''}${esc(m.name)}</div>`).join('')}</div></div>`:''}`}catch(e){$('groupBody').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function likeUser(id){const d=await api('/api/like',{id,times:10});toast(d.ok?'赞了 10 下':(d.msg||'今天已经赞过了'))}
+async function pokeUser(id,gid){const d=await api('/api/poke',gid?{type:'group',id:gid,target:id}:{type:'private',target:id});toast(d.ok?'拍了拍 ta':'拍一拍失败：'+(d.msg||''))}
+// 通知
+async function loadReqs(){try{const R=await api('/api/reqs');$('reqBody').innerHTML=R.length?R.map(r=>`<div class="pl"><img src="${r.kind==='group'?ava(r.group_id,1):ava(r.user_id)}" style="width:44px;height:44px;border-radius:50%"><div class="mid"><div class="t">${r.kind==='group'?(r.sub==='invite'?'邀请小鱼进群 ':'申请加群 ')+r.group_id:'好友申请'}</div><div class="d">来自 ${r.user_id}${r.comment?'：'+esc(r.comment):''} · ${ftime(r.time)}</div></div>${r.done?`<span class="v">${r.done===1?'已同意':'已拒绝'}</span>`:`<button class="btn" onclick='doReq(${JSON.stringify(r.flag)},1)'>同意</button><button class="btn ghost" onclick='doReq(${JSON.stringify(r.flag)},0)'>拒绝</button>`}</div>`).join(''):'<div class="empty">暂时没有新通知</div>'}catch(e){toast(e.message)}}
+async function doReq(flag,ok){const d=await api('/api/req',{flag,approve:!!ok});toast(d.ok?(ok?'已同意':'已拒绝'):'失败：'+(d.msg||''));loadReqs()}
+// 聊天增强：标题进主页、双击头像拍一拍、拍照、语音
+$('cTitle').onclick=()=>{if(!CUR||CUR.type==='yu')return;CUR.type==='group'?openGroup(CUR.id):openUser(CUR.id)};
+$('msgs').addEventListener('dblclick',e=>{const a=e.target.closest('img.a');if(!a||!CUR||CUR.type==='yu')return;const m=/nk=(\d+)/.exec(a.src);if(m)pokeUser(+m[1],CUR.type==='group'?CUR.id:0)});
+$('msgs').addEventListener('click',e=>{const a=e.target.closest('img.a');if(!a||!CUR||CUR.type==='yu')return;clearTimeout(a._t);a._t=setTimeout(()=>{if(!a._dbl){const m=/nk=(\d+)/.exec(a.src);if(m)openUser(m[1])}a._dbl=0},320)});
+$('msgs').addEventListener('dblclick',e=>{const a=e.target.closest('img.a');if(a)a._dbl=1},true);
+(function(){const bar=document.querySelector('#chat .inbar');
+ bar.insertAdjacentHTML('afterbegin',`<label class="ib">📷<input type="file" accept="image/*" capture="environment" hidden onchange="sendImg(this)"></label><button class="ib" id="micBtn">🎤</button><button class="ib" onclick="pokeCur()">👉</button>`);
+ let rec=null,chunks=[],t0=0;const mb=$('micBtn');
+ const start=async e=>{e.preventDefault();if(!CUR||CUR.type==='yu')return toast('小鱼聊天暂不支持语音');try{const s=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(s);chunks=[];rec.ondataavailable=x=>chunks.push(x.data);
+  rec.onstop=async()=>{s.getTracks().forEach(t=>t.stop());$('recBox').style.display='none';if(Date.now()-t0<800)return toast('说话时间太短');const b=new Blob(chunks,{type:rec.mimeType});const r=new FileReader();r.onload=async()=>{const d=await api('/api/send',{type:CUR.type,id:CUR.id,record:r.result});toast(d.ok?'语音已发送':'发送失败：'+(d.msg||''));setTimeout(loadHistory,1200)};r.readAsDataURL(b)};
+  rec.start();t0=Date.now();$('recBox').style.display='block'}catch(err){toast('没有麦克风权限')}};
+ const stop=e=>{e.preventDefault();if(rec&&rec.state==='recording')rec.stop()};
+ mb.addEventListener('touchstart',start);mb.addEventListener('touchend',stop);mb.addEventListener('mousedown',start);mb.addEventListener('mouseup',stop)})();
+function pokeCur(){if(!CUR||CUR.type==='yu')return;if(CUR.type==='private')return pokeUser(CUR.id);const id=prompt('拍一拍谁？输入QQ号（双击聊天里的头像也能拍）');if(id)pokeUser(+id,CUR.id)}
+// 页面钩子
+const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$('bGrid').innerHTML)bTab('rcmd')},'p-blogin':blAcc,'p-prof':loadProf,'p-run':loadRun,'p-reqs':loadReqs}[id]||(()=>{}))()};
+</script>
+
+<style>
+.lock{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,#89d4ff,#a99bff 55%,#ffb3d1);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.lock.on{display:flex}
+.lock .clk{font-size:68px;font-weight:200;letter-spacing:2px}
+.lock .dt{font-size:16px;opacity:.9;margin-bottom:60px}
+.lock .lk{font-size:40px;margin-bottom:10px}
+.thm{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px;background:#fff}
+.thm div{border-radius:12px;height:64px;display:flex;align-items:flex-end;justify-content:center;font-size:11px;color:#fff;padding-bottom:5px;border:3px solid transparent}
+.thm div.on{border-color:#222}
+.cbgs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px;background:#fff}
+.cbgs div{height:90px;border-radius:10px;background-size:cover;background-position:center;border:3px solid transparent;font-size:11px;display:flex;align-items:center;justify-content:center;color:#999}
+.cbgs div.on{border-color:var(--qq)}
+.mp{position:relative;background:linear-gradient(160deg,#2b2d42,#11131f);color:#fff;flex:1;display:flex;flex-direction:column}
+.mp .disc{width:210px;height:210px;border-radius:50%;margin:26px auto 10px;background:#000 center/cover;box-shadow:0 0 0 10px #ffffff14,0 10px 40px #0008;animation:spin 20s linear infinite;animation-play-state:paused}
+.mp .disc.on{animation-play-state:running}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mp .duo{display:flex;justify-content:center;gap:-10px;margin-top:6px}
+.mp .duo img{width:34px;height:34px;border-radius:50%;border:2px solid #fff;margin:0 -4px}
+.mp .ly{height:72px;overflow:hidden;text-align:center;font-size:15px;color:#fffa;margin:10px 16px}
+.mp .ly b{color:#fff;display:block;font-size:17px;margin-bottom:4px}
+.mp .ctrl{display:flex;justify-content:center;gap:28px;align-items:center;margin:8px}
+.mp .ctrl button{border:0;background:none;color:#fff;font-size:30px}
+.mp .yu{margin:8px 16px;background:#ffffff14;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.5;min-height:44px}
+.mlist{background:#fff;color:#222}
+</style>
+
+<div class="lock" id="lockScr" onclick="unlockAsk()"><div class="clk" id="lkClk"></div><div class="dt" id="lkDt"></div><div class="lk">🔒</div><div style="font-size:18px;font-weight:600">小鱼yu的手机</div><div style="font-size:13px;opacity:.85;margin-top:8px">已上锁</div></div>
+
+<div class="page" id="p-theme"><div class="top"><button class="ib" onclick="closeOne('p-theme')">‹</button><h1>个性装扮</h1></div><div class="body">
+ <div class="sec"><h3>主题</h3><div class="thm" id="thmList"></div><div class="row"><span>自定义颜色</span><input type="color" id="thmColor" onchange="setTheme({c:this.value,n:'自定义'})"></div></div>
+ <div class="sec"><h3>聊天背景（当前聊天 / 全部聊天）</h3><div class="cbgs" id="cbgList"></div>
+  <label class="btn big ghost" style="text-align:center">从相册选一张做背景<input type="file" accept="image/*" hidden onchange="pickBg(this)"></label>
+  <div class="row"><span>只用于当前聊天</span><label class="sw"><input type="checkbox" id="bgOnly"><span></span></label></div></div>
+</div></div>
+
+<div class="page" id="p-music"><div class="top" style="background:#2b2d42"><button class="ib" onclick="closeOne('p-music')">‹</button><h1>一起听歌</h1><button class="ib" onclick="musicSearchToggle()">🔍</button></div>
+ <div class="body" style="display:flex;flex-direction:column;background:#11131f">
+  <div id="mSearchBox" style="display:none" class="mlist"><div class="search" style="margin:8px 10px">🔍<input id="msq" placeholder="搜歌名 / 歌手" enterkeyhint="search" onkeydown="if(event.key==='Enter')musicSearch()"></div><div id="msList" style="max-height:52vh;overflow:auto"></div></div>
+  <div class="mp"><div class="duo"><img id="mpMe" alt=""><img id="mpYu" alt=""></div><div style="text-align:center;font-size:12px;opacity:.7;margin-top:4px">爸比和小鱼yu 正在一起听</div>
+   <div class="disc" id="mpDisc"></div><div style="text-align:center"><b id="mpName" style="font-size:18px">还没选歌</b><div id="mpArt" style="font-size:13px;opacity:.7;margin-top:3px"></div></div>
+   <div class="ly" id="mpLy"></div>
+   <input type="range" id="mpSeek" min="0" max="1000" value="0" style="margin:0 20px" oninput="mpSeekTo(this.value)">
+   <div class="ctrl"><button onclick="mpShare()">📤</button><button id="mpPlay" onclick="mpToggle()">▶️</button><button onclick="mpAskYu()">💬</button></div>
+   <div class="yu" id="mpYuSay">点 🔍 选首歌，小鱼会陪你一起听。💬 可以问问她觉得这首歌怎么样。</div>
+  </div></div>
+ <audio id="mpAudio" preload="auto"></audio></div>
+
+<script>
+// ===== 锁屏（没有小鱼的密钥就锁着）=====
+function lockTick(){const d=new Date();$('lkClk').textContent=d.toTimeString().slice(0,5);$('lkDt').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`}
+if(!cfg.token){$('lockScr').classList.add('on');lockTick();setInterval(lockTick,10000)}
+function unlockAsk(){const v=prompt('粘贴小鱼yu的连接链接解锁');if(!v)return;try{const u=new URL(v.trim());const t=u.searchParams.get('t')||(u.hash.startsWith('#t=')?decodeURIComponent(u.hash.slice(3)):'');if(!t)throw 0;cfg={server:/github\.io$/.test(u.hostname)?'':u.origin,token:t};localStorage.setItem('yq_cfg',JSON.stringify(cfg));location.reload()}catch(e){toast('链接不对')}}
+// ===== 主题 =====
+const THEMES=[{n:'QQ蓝',c:'#12b7f5'},{n:'樱花粉',c:'#ff7eb3'},{n:'B站粉',c:'#fb7299'},{n:'薄荷绿',c:'#2fcf9b'},{n:'香芋紫',c:'#9b7bff'},{n:'暖阳橙',c:'#ff9a3c'},{n:'夜间',c:'#2b2d42',dark:1},{n:'轻音红',c:'#e8414e'}];
+function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=x=>Math.max(0,Math.min(255,Math.round(x+(p>0?(255-x)*p:x*p))));return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function setTheme(t,silent){localStorage.setItem('yq_theme',JSON.stringify(t));const R=document.documentElement.style;R.setProperty('--qq',t.c);R.setProperty('--qq2',shade(t.c,-.12));R.setProperty('--me',shade(t.c,-.1));
+ let st=$('thmStyle');if(!st){st=document.createElement('style');st.id='thmStyle';document.head.appendChild(st)}
+ st.textContent=`.top:not(.btop){background:linear-gradient(180deg,${shade(t.c,.15)},${t.c})!important}.prof,.dhead{background:linear-gradient(160deg,${shade(t.c,.3)},${t.c} 60%,${shade(t.c,-.2)})!important}`+(t.dark?`body,.view,.page,.chat{background:#1b1c26!important;color:#eee}.item,.row,.sec,.pl,.feed,.drawer,.inbar,.tabs,.search{background:#24253a!important;color:#eee;border-color:#2e2f45!important}.bb{background:#2e3047;color:#eee}`:'');
+ document.querySelector('meta[name=theme-color]').content=t.c;if(!silent)toast('已换成「'+t.n+'」');renderThemes()}
+function renderThemes(){const cur=JSON.parse(localStorage.getItem('yq_theme')||'{"c":"#12b7f5"}');$('thmList').innerHTML=THEMES.map((t,i)=>`<div class="${cur.c===t.c?'on':''}" style="background:linear-gradient(160deg,${shade(t.c,.3)},${t.c})" onclick="setTheme(THEMES[${i}])">${t.n}</div>`).join('');$('thmColor').value=cur.c}
+// ===== 聊天背景 =====
+const CBGS=[{n:'默认',v:''},{n:'天空',v:'linear-gradient(180deg,#d7f0ff,#fff)'},{n:'樱花',v:'linear-gradient(160deg,#ffe3ee,#fff6fa)'},{n:'星空',v:'radial-gradient(circle at 30% 20%,#3b4a8a,#0b1030)'},{n:'奶油',v:'linear-gradient(160deg,#fff4dc,#ffeccf)'},{n:'薄荷',v:'linear-gradient(160deg,#dcfff2,#f4fffb)'},{n:'晚霞',v:'linear-gradient(180deg,#ffb38a,#ff7eb3 60%,#7a6bff)'}];
+function bgKey(){return CUR&&CUR.type!=='yu'?`yq_bg_${CUR.type}_${CUR.id}`:'yq_bg_yu'}
+function applyBg(){const v=localStorage.getItem(bgKey())??localStorage.getItem('yq_bg_all')??'';const m=$('msgs');m.style.background=v.startsWith('data:')?`center/cover url("${v}")`:v;m.style.backgroundAttachment='local'}
+function setBg(v){if($('bgOnly').checked&&CUR)localStorage.setItem(bgKey(),v);else{localStorage.setItem('yq_bg_all',v);Object.keys(localStorage).filter(k=>k.startsWith('yq_bg_')&&k!=='yq_bg_all').forEach(k=>localStorage.removeItem(k))}applyBg();renderBgs();toast('聊天背景已更换')}
+function renderBgs(){const cur=localStorage.getItem(bgKey())??localStorage.getItem('yq_bg_all')??'';$('cbgList').innerHTML=CBGS.map((b,i)=>`<div class="${cur===b.v?'on':''}" style="background:${b.v||'#f2f3f5'}" onclick="setBg(CBGS[${i}].v)">${b.n}</div>`).join('')}
+function pickBg(inp){const f=inp.files[0];if(!f)return;const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const s=Math.min(1,1080/img.width);c.width=img.width*s;c.height=img.height*s;c.getContext('2d').drawImage(img,0,0,c.width,c.height);try{setBg(c.toDataURL('image/jpeg',.8))}catch(e){toast('图片太大了')}};img.src=URL.createObjectURL(f);inp.value=''}
+const _oc=openChat;openChat=function(...a){_oc(...a);applyBg()};const _oy=openYu;openYu=function(){_oy();applyBg()};
+// ===== 一起听歌 =====
+let MP={song:null,lrc:[],idx:-1};const AU=()=>$('mpAudio');
+function musicSearchToggle(){const b=$('mSearchBox');b.style.display=b.style.display==='none'?'block':'none';if(b.style.display==='block')$('msq').focus()}
+async function musicSearch(){$('msList').innerHTML='<div class="tip">搜索中…</div>';try{const L=await api('/api/music/search?q='+encodeURIComponent($('msq').value));
+ $('msList').innerHTML=L.map((s,i)=>`<div class="pl" onclick='mpPlaySong(${JSON.stringify(s).replace(/'/g,"&#39;")})'><img src="${esc(s.pic)}?param=80y80" style="width:44px;height:44px;border-radius:6px"><div class="mid"><div class="t">${esc(s.name)}</div><div class="d">${esc(s.artist)} · ${esc(s.album||'')}</div></div></div>`).join('')||'<div class="tip">没找到</div>'}catch(e){toast(e.message)}}
+function parseLrc(t){return (t||'').split('\n').map(l=>{const m=/\[(\d+):(\d+(?:\.\d+)?)\](.*)/.exec(l);return m?{t:+m[1]*60+ +m[2],x:m[3].trim()}:null}).filter(x=>x&&x.x)}
+async function mpPlaySong(s){MP.song=s;$('mSearchBox').style.display='none';$('mpName').textContent=s.name;$('mpArt').textContent=s.artist;$('mpDisc').style.backgroundImage=`url("${s.pic}?param=400y400")`;$('mpLy').innerHTML='加载中…';
+ const a=AU();a.src=`${cfg.server}/api/music/stream?id=${s.id}&t=${encodeURIComponent(cfg.token)}`;a.play().catch(()=>{});
+ try{MP.lrc=parseLrc((await api('/api/music/lyric?id='+s.id)).lrc)}catch(e){MP.lrc=[]}MP.idx=-1;
+ $('mpYuSay').textContent='小鱼正在戴上耳机…';try{const d=await api('/api/music/listen',{name:s.name,artist:s.artist});$('mpYuSay').textContent='小鱼：'+(d.reply||'……')}catch(e){$('mpYuSay').textContent='小鱼暂时没回应'}}
+function mpToggle(){const a=AU();if(!a.src)return musicSearchToggle();a.paused?a.play():a.pause()}
+function mpSeekTo(v){const a=AU();if(a.duration)a.currentTime=a.duration*v/1000}
+async function mpAskYu(){if(!MP.song)return toast('先选一首歌');const cur=MP.lrc[MP.idx]?.x||'';$('mpYuSay').textContent='小鱼在想…';try{const d=await api('/api/music/listen',{name:MP.song.name,artist:MP.song.artist,lrc:cur});$('mpYuSay').textContent='小鱼：'+(d.reply||'……')}catch(e){toast(e.message)}}
+async function mpShare(){if(!MP.song)return;const to=CUR&&CUR.type!=='yu'?CUR:{type:'private',id:3464948964};const d=await api('/api/music/share',{type:to.type,id:to.id,sid:MP.song.id});toast(d.ok?'已分享到'+(to.name||'爸比'):'分享失败')}
+(function(){const a=AU();a.addEventListener('play',()=>{$('mpPlay').textContent='⏸️';$('mpDisc').classList.add('on')});a.addEventListener('pause',()=>{$('mpPlay').textContent='▶️';$('mpDisc').classList.remove('on')});
+ a.addEventListener('error',()=>{if(MP.song)toast('这首歌暂时放不了（可能是VIP歌曲）')});
+ a.addEventListener('timeupdate',()=>{if(a.duration)$('mpSeek').value=a.currentTime/a.duration*1000;let i=-1;for(let k=0;k<MP.lrc.length;k++){if(MP.lrc[k].t<=a.currentTime)i=k;else break}
+  if(i!==MP.idx){MP.idx=i;$('mpLy').innerHTML=i>=0?`<b>${esc(MP.lrc[i].x)}</b>${esc(MP.lrc[i+1]?.x||'')}`:''}})})();
+// 入口：侧边栏 + 小程序栏
+(function(){const d=$('drawer');const it=[...d.querySelectorAll('.ditem')][2];it.insertAdjacentHTML('afterend','<div class="ditem" onclick="drawer(0);openPage(\'p-music\')"><i>🎧</i>一起听歌</div><div class="ditem" onclick="drawer(0);openPage(\'p-theme\')"><i>🎨</i>个性装扮</div>');
+ document.querySelector('#mini .apps').insertAdjacentHTML('beforeend','<div class="app" onclick="openPage(\'p-music\')"><div>🎧</div>一起听歌</div><div class="app" onclick="openPage(\'p-theme\')"><div>🎨</div>装扮</div>');
+ document.querySelector('#chat .top').insertAdjacentHTML('beforeend','<button class="ib" onclick="openPage(\'p-theme\')" style="font-size:18px">🎨</button>')})();
+const _op2=openPage;openPage=function(id){_op2(id);({'p-theme':()=>{renderThemes();renderBgs()},'p-music':()=>{$('mpMe').src=ava(3464948964);$('mpYu').src=ME.avatar||ava(2751351976)}}[id]||(()=>{}))()};
+const _th=localStorage.getItem('yq_theme');if(_th)setTheme(JSON.parse(_th),1);
+</script>
+
 </body>
 </html>
