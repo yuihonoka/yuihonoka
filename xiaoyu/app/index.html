@@ -860,11 +860,11 @@ function callMain(){CALL.on?callEnd():callStart()}
 function callStart(){CALL.on=true;$('cMain').className='end';$('cMainT').textContent='挂断';$('callSt').textContent='正在呼叫…';
  setTimeout(async()=>{if(!CALL.on)return;CALL.t0=Date.now();CALL.tm=setInterval(()=>{const s=Math.floor((Date.now()-CALL.t0)/1000);$('callSt').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
   await callSay('（爸比给你打来了电话，你接起来了。用一句很短的口语打招呼，不要表情符号）');callListen()},1600)}
-function callEnd(silent){if(!CALL.on)return;CALL.on=false;clearInterval(CALL.tm);try{CALL.rec&&CALL.rec.abort()}catch(e){};speechSynthesis&&speechSynthesis.cancel();$('callAv').classList.remove('talk');
+function callEnd(silent){if(!CALL.on)return;CALL.on=false;clearInterval(CALL.tm);try{CALL.rec&&CALL.rec.abort()}catch(e){};speechSynthesis&&speechSynthesis.cancel();try{CALL.au&&CALL.au.pause()}catch(e){};$('callAv').classList.remove('talk');
  $('cMain').className='go';$('cMainT').textContent='呼叫';$('callSt').textContent='通话结束';if(!silent)setTimeout(()=>{if(!CALL.on)$('callSt').textContent='手机'},2000)}
-function callSpeak(t){return new Promise(r=>{if(!CALL.spk||!window.speechSynthesis)return r();const u=new SpeechSynthesisUtterance(t.replace(/[（(][^）)]*[）)]/g,'').replace(/[\u{1F300}-\u{1FAFF}]/gu,''));u.lang='zh-CN';u.pitch=1.5;u.rate=1.08;
- const v=speechSynthesis.getVoices().find(v=>/zh/i.test(v.lang)&&/female|xiaoxiao|xiaoyi|ting|mei|女/i.test(v.name))||speechSynthesis.getVoices().find(v=>/zh/i.test(v.lang));if(v)u.voice=v;
- $('callAv').classList.add('talk');u.onend=u.onerror=()=>{$('callAv').classList.remove('talk');r()};speechSynthesis.speak(u)})}
+function callSpeak(t){return new Promise(r=>{if(!CALL.spk)return r();const txt=t.replace(/[（(][^）)]*[）)]/g,'').trim();if(!txt)return r();
+ const a=new Audio(`${cfg.server}/api/tts?t=${encodeURIComponent(cfg.token)}&text=${encodeURIComponent(txt.slice(0,300))}`);CALL.au=a;$('callAv').classList.add('talk');
+ const done=()=>{$('callAv').classList.remove('talk');r()};a.onended=done;a.onerror=()=>{if(!window.speechSynthesis)return done();const u=new SpeechSynthesisUtterance(txt);u.lang='zh-CN';u.pitch=1.5;u.rate=1.08;u.onend=u.onerror=done;speechSynthesis.speak(u)};a.play().catch(a.onerror)})}
 async function callSay(msg){CALL.busy=true;$('callSub').textContent='…';try{const d=await api('/api/chat',{message:msg,session:'baba-call'});const t=(d.reply||'').trim();$('callSub').textContent=t;if(CALL.on)await callSpeak(t)}catch(e){$('callSub').textContent='信号不好…'}CALL.busy=false}
 function callListen(){if(!CALL.on||CALL.mute||CALL.busy)return;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('callSub').textContent+='\n（这个浏览器不能语音识别，点「打字」说话）';return}
  const r=new SR();CALL.rec=r;r.lang='zh-CN';r.interimResults=true;r.continuous=false;let fin='';
