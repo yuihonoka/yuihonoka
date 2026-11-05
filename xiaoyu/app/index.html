@@ -250,7 +250,8 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
 <script>
 const $=id=>document.getElementById(id);
 let cfg=JSON.parse(localStorage.getItem('yq_cfg')||'{}');
-if(location.protocol.startsWith('http')&&!/github\.io$/.test(location.hostname)){const t=new URLSearchParams(location.search).get('t');cfg.server=location.origin;if(t)cfg.token=t;localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
+const IS_GW=h=>/trycloudflare\.com$|^localhost$|^127\./.test(h);
+if(location.protocol.startsWith('http')&&IS_GW(location.hostname)){const t=new URLSearchParams(location.search).get('t');cfg.server=location.origin;if(t)cfg.token=t;localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
 if(location.hash.startsWith('#t=')){cfg.token=decodeURIComponent(location.hash.slice(3));localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
 let ME={},CONTACTS=[],CUR=null,timer=null,yuHist=JSON.parse(localStorage.getItem('yq_yu')||'[]');
 function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',1800)}
@@ -339,7 +340,7 @@ async function loadSys(){try{const s=await api('/api/status');const c=await api(
  $('sysSvc').innerHTML=(s.containers||[]).map(x=>`<div class="row"><span><i class="dot ${/^Up/.test(x.status)?'ok':'bad'}"></i>${x.name}</span><button class="btn ghost" onclick="restartSvc('${x.name}',this)">重启</button></div>`).join('');
  $('sysCfg').innerHTML=`<div class="row"><span>默认模型</span><span class="v">${esc((c.model||'').split('/').pop())}</span></div><div class="row"><span>可用模型</span><span class="v">${(c.providers||[]).length} 个</span></div>`}catch(e){toast(e.message)}}
 async function restartSvc(n,b){if(!confirm('重启 '+n+'？'+(n==='napcat'?'可能需要重新扫码':'')))return;b.disabled=true;b.textContent='重启中…';await api('/api/restart',{name:n});b.textContent='已重启';setTimeout(loadSys,5000)}
-function saveLink(){try{const u=new URL($('link').value.trim());const t=u.searchParams.get('t')||(u.hash.startsWith('#t=')?decodeURIComponent(u.hash.slice(3)):'');if(!t)throw 0;cfg={server:/github\.io$/.test(u.hostname)?'':u.origin,token:t};localStorage.setItem('yq_cfg',JSON.stringify(cfg));toast('已保存');closePage();loadMe();loadContacts()}catch(e){toast('链接要包含 ?t=')}}
+function saveLink(){try{const u=new URL($('link').value.trim());const t=u.searchParams.get('t')||(u.hash.startsWith('#t=')?decodeURIComponent(u.hash.slice(3)):'');if(!t)throw 0;cfg={server:IS_GW(u.hostname)?u.origin:'',token:t};localStorage.setItem('yq_cfg',JSON.stringify(cfg));toast('已保存');closePage();loadMe();loadContacts()}catch(e){toast('链接要包含 ?t=')}}
 // avatar DIY
 const AV={img:null,x:0,y:0};
 function pickAv(inp){const f=inp.files[0];if(!f)return;const i=new Image();i.onload=()=>{AV.img=i;AV.x=0;AV.y=0;$('avZoom').value=1;drawAv()};i.src=URL.createObjectURL(f)}
@@ -671,7 +672,7 @@ const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$
 // ===== 锁屏（没有小鱼的密钥就锁着）=====
 function lockTick(){const d=new Date();$('lkClk').textContent=d.toTimeString().slice(0,5);$('lkDt').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`}
 if(!cfg.token){$('lockScr').classList.add('on');lockTick();setInterval(lockTick,10000)}
-function unlockAsk(){const v=prompt('粘贴小鱼yu的连接链接解锁');if(!v)return;try{const u=new URL(v.trim());const t=u.searchParams.get('t')||(u.hash.startsWith('#t=')?decodeURIComponent(u.hash.slice(3)):'');if(!t)throw 0;cfg={server:/github\.io$/.test(u.hostname)?'':u.origin,token:t};localStorage.setItem('yq_cfg',JSON.stringify(cfg));location.reload()}catch(e){toast('链接不对')}}
+function unlockAsk(){const v=prompt('粘贴小鱼yu的连接链接解锁');if(!v)return;try{const u=new URL(v.trim());const t=u.searchParams.get('t')||(u.hash.startsWith('#t=')?decodeURIComponent(u.hash.slice(3)):'');if(!t)throw 0;cfg={server:IS_GW(u.hostname)?u.origin:'',token:t};localStorage.setItem('yq_cfg',JSON.stringify(cfg));location.reload()}catch(e){toast('链接不对')}}
 // ===== 主题 =====
 const THEMES=[{n:'QQ蓝',c:'#12b7f5'},{n:'樱花粉',c:'#ff7eb3'},{n:'B站粉',c:'#fb7299'},{n:'薄荷绿',c:'#2fcf9b'},{n:'香芋紫',c:'#9b7bff'},{n:'暖阳橙',c:'#ff9a3c'},{n:'夜间',c:'#2b2d42',dark:1},{n:'轻音红',c:'#e8414e'}];
 function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=x=>Math.max(0,Math.min(255,Math.round(x+(p>0?(255-x)*p:x*p))));return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
