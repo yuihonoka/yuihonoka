@@ -1423,6 +1423,10 @@ if(window.speechSynthesis)speechSynthesis.getVoices();
 .cat[open] summary::before{transform:rotate(90deg)}
 .cat summary small{margin-left:auto;color:#aaa}
 .cat summary::-webkit-details-marker{display:none}
+html,body{overscroll-behavior:none}
+.view,.msgs,.page .body,.qemo{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.chat{height:100dvh}
+.msgs{background:#f2f3f5 fixed}
 </style>
 </body>
 </html>
