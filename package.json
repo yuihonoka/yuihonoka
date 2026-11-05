@@ -1,0 +1,1 @@
+{"name":"xiaoyu-phone","private":true,"scripts":{"dev":"npx serve -s . -l 5173","build":"mkdir -p dist && cp index.html dist/"}}
