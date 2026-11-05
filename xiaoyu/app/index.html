@@ -267,9 +267,10 @@ if(location.protocol.startsWith('http')&&IS_GW(location.hostname)){const t=new U
 if(location.hash.startsWith('#t=')){cfg.token=decodeURIComponent(location.hash.slice(3));localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
 let ME={},CONTACTS=[],CUR=null,timer=null,yuHist=JSON.parse(localStorage.getItem('yq_yu')||'[]');
 function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',1800)}
-const SRV_URL='https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/xiaoyu/app/srv.json';
+const SRV_URLS=['https://yuihonoka.github.io/yuihonoka/xiaoyu/app/srv.json','https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/xiaoyu/app/srv.json'];
 let srvTry=0;
-async function findServer(){if(!cfg.token)return false;try{const j=await (await fetch(SRV_URL+'?_='+Date.now(),{cache:'no-store'})).json();
+async function srvJson(){let best=null;for(const u of SRV_URLS){try{const j=await (await fetch(u+'?_='+Date.now(),{cache:'no-store'})).json();if(!best||(j.ts||0)>(best.ts||0))best=j}catch(e){}}if(!best)throw 0;return best}
+async function findServer(){if(!cfg.token)return false;try{const j=await srvJson();
  const kb=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('yq-srv|'+cfg.token));const hx=[...new Uint8Array(kb)].map(b=>b.toString(16).padStart(2,'0')).join('');
  const key=await crypto.subtle.importKey('raw',new Uint8Array(hx.slice(0,64).match(/../g).map(h=>parseInt(h,16))),'AES-CBC',false,['decrypt']);
  const iv=new Uint8Array(j.iv.match(/../g).map(h=>parseInt(h,16)));const ct=Uint8Array.from(atob(j.ct),c=>c.charCodeAt(0));
@@ -278,7 +279,7 @@ async function findServer(){if(!cfg.token)return false;try{const j=await (await 
 async function api(p,body){if(!cfg.token)throw new Error('未连接');
  const go=()=>fetch(cfg.server+p,{method:body?'POST':'GET',headers:{'X-App-Token':cfg.token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
  let r;try{r=cfg.server?await go():null}catch(e){r=null}
- if((!r||r.status>=500||r.status===404)&&Date.now()-srvTry>15000){srvTry=Date.now();const old=cfg.server;if(await findServer()&&cfg.server!==old){try{r=await go()}catch(e){r=null}}}
+ if((!r||r.status>=500||r.status===404)&&Date.now()-srvTry>5000){srvTry=Date.now();const old=cfg.server;if(await findServer()&&cfg.server!==old){try{r=await go()}catch(e){r=null}}}
  if(!r)throw new Error('连不上服务器');if(r.status===401)throw new Error('密钥不对');return r.json()}
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function ava(id,g){return g?`https://p.qlogo.cn/gh/${id}/${id}/100`:`https://q1.qlogo.cn/g?b=qq&nk=${id}&s=100`}
