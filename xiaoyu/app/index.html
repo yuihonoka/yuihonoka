@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12b7f5">
+<meta name="referrer" content="no-referrer">
+<title>小鱼QQ</title>
+<style>
+:root{--qq:#12b7f5;--qq2:#0099ff;--bg:#f2f3f5;--line:#ececec;--ink:#1f1f1f;--mute:#999;--me:#0099ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif;font-size:15px}
+button{font:inherit}
+.app{display:flex;flex-direction:column;height:100%}
+.top{background:linear-gradient(180deg,#1fc1ff,#12b7f5);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;display:flex;align-items:center;gap:10px;min-height:52px}
+.top .ava{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#fff}
+.top h1{font-size:17px;margin:0;flex:1;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .sub{font-size:11px;opacity:.9;display:block;font-weight:400}
+.top .ib{background:none;border:0;color:#fff;font-size:22px;padding:0 4px;line-height:1}
+.view{flex:1;overflow-y:auto;display:none}
+.view.on{display:block}
+.tabs{display:flex;background:#fafafa;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{flex:1;border:0;background:none;padding:7px 0 5px;color:#7d7d7d;font-size:11px}
+.tabs button i{display:block;font-style:normal;font-size:22px;line-height:1.2;filter:grayscale(1);opacity:.7}
+.tabs button.on{color:var(--qq)}
+.tabs button.on i{filter:none;opacity:1}
+.search{margin:8px 10px;background:#fff;border-radius:6px;padding:7px 10px;color:var(--mute);display:flex;gap:6px}
+.search input{border:0;outline:0;flex:1;font:inherit;background:none}
+.item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff;border-bottom:1px solid #f5f5f5}
+.item:active{background:#f0f0f0}
+.item img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#ddd;flex:none}
+.item .mid{flex:1;min-width:0}
+.item .nm{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .ls{font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.item .tm{font-size:11px;color:#b2b2b2;align-self:flex-start;margin-top:4px}
+.tag{font-size:10px;border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:2px;color:#fff;background:var(--qq)}
+.tag.g{background:#ff9f2e}.tag.c{background:#ff6f9f}
+/* chat */
+.chat{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:20}
+.chat.on{display:flex}
+.msgs{flex:1;overflow-y:auto;padding:10px 10px 16px}
+.mr{display:flex;gap:8px;margin:12px 0;align-items:flex-start}
+.mr img.a{width:38px;height:38px;border-radius:50%;flex:none;background:#ddd;object-fit:cover}
+.mr.me{flex-direction:row-reverse}
+.mr .col{max-width:72%;display:flex;flex-direction:column}
+.mr.me .col{align-items:flex-end}
+.mr .who{font-size:12px;color:var(--mute);margin:0 4px 3px}
+.bb{background:#fff;padding:9px 12px;border-radius:4px 14px 14px 14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.mr.me .bb{background:var(--me);color:#fff;border-radius:14px 4px 14px 14px}
+.bb img{max-width:180px;border-radius:8px;display:block;margin-top:4px}
+.rc{font-size:11px;color:#ff5a5a;margin:3px 4px 0}
+.tip{text-align:center;color:#b2b2b2;font-size:12px;margin:10px 0}
+.inbar{display:flex;gap:8px;align-items:center;padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);background:#f7f7f7;border-top:1px solid var(--line)}
+.inbar input[type=text]{flex:1;border:0;border-radius:6px;padding:9px 10px;font:inherit;outline:none;background:#fff}
+.inbar .send{border:0;background:var(--qq2);color:#fff;border-radius:6px;padding:8px 14px}
+.inbar .send:disabled{opacity:.5}
+.inbar .ib{border:0;background:none;font-size:24px;color:#666;padding:0}
+/* cards */
+.sec{background:#fff;margin:10px 0}
+.sec h3{font-size:13px;color:var(--mute);font-weight:400;margin:0;padding:10px 14px 4px;background:var(--bg)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #f5f5f5;background:#fff}
+.row:active{background:#f6f6f6}
+.row .v{color:var(--mute);font-size:14px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
+.row .arr::after{content:"›";color:#c8c8c8;font-size:20px;margin-left:6px}
+.prof{background:linear-gradient(160deg,#5fd0ff,#12b7f5 60%,#0a8fe0);color:#fff;padding:24px 16px 18px;display:flex;gap:14px;align-items:center}
+.prof img{width:68px;height:68px;border-radius:50%;border:3px solid #fff;object-fit:cover;background:#fff}
+.prof .n{font-size:20px;font-weight:600}
+.prof .s{font-size:13px;opacity:.95;margin-top:4px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:#ccc}
+.dot.ok{background:#3fd27f}.dot.bad{background:#ff5a5a}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px;background:#fff}
+.grid div{background:#f4fbff;border-radius:10px;padding:10px 12px}
+.grid small{color:var(--mute);font-size:12px}
+.grid b{display:block;font-size:19px;margin-top:2px;color:#0a8fe0}
+.bars{display:flex;align-items:flex-end;gap:6px;height:90px;padding:8px 14px 4px;background:#fff}
+.bars div{flex:1;background:linear-gradient(#5fd0ff,#12b7f5);border-radius:4px 4px 0 0;position:relative;min-height:2px}
+.bars span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--mute)}
+.sw{position:relative;width:46px;height:28px;flex:none}
+.sw input{display:none}
+.sw span{position:absolute;inset:0;background:#ddd;border-radius:14px;transition:.2s}
+.sw span::after{content:"";position:absolute;width:24px;height:24px;left:2px;top:2px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px #0003}
+.sw input:checked+span{background:#3fd27f}
+.sw input:checked+span::after{left:20px}
+.pl{display:flex;gap:10px;align-items:center;padding:12px 14px;background:#fff;border-bottom:1px solid #f5f5f5}
+.pl .mid{flex:1;min-width:0}
+.pl .t{font-size:15px}
+.pl .d{font-size:12px;color:var(--mute);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.btn{border:0;background:var(--qq2);color:#fff;border-radius:6px;padding:6px 12px;font-size:13px;flex:none}
+.btn.ghost{background:#fff;color:var(--qq2);border:1px solid var(--qq2)}
+.btn.big{display:block;width:calc(100% - 28px);margin:14px;padding:11px;font-size:16px}
+.btn.red{background:#ff5a5a}
+.btn:disabled{opacity:.5}
+.seg{display:flex;margin:10px 14px;background:#e6e8eb;border-radius:8px;padding:3px}
+.seg button{flex:1;border:0;background:none;padding:6px;border-radius:6px;color:#555}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px #0001}
+textarea.ta{width:calc(100% - 28px);margin:10px 14px;min-height:140px;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;outline:none;resize:vertical;background:#fff}
+input.f{width:calc(100% - 28px);margin:10px 14px;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;outline:none}
+.page{position:fixed;inset:0;background:var(--bg);z-index:30;display:none;flex-direction:column}
+.page.on{display:flex}
+.page .body{flex:1;overflow-y:auto}
+.toast{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:8px;z-index:99;display:none;max-width:80%;text-align:center}
+.qrbox{text-align:center;padding:20px;background:#fff}
+.qrbox img{width:240px;height:240px;image-rendering:pixelated}
+.feed{background:#fff;margin:10px 0;padding:14px}
+.feed .h{display:flex;gap:10px;align-items:center}
+.feed .h img{width:40px;height:40px;border-radius:50%}
+.feed .c{margin-top:10px;line-height:1.6;white-space:pre-wrap}
+canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch-action:none;width:240px;height:240px}
+.range{display:flex;align-items:center;gap:10px;padding:6px 14px;background:#fff}
+.range input{flex:1}
+.empty{padding:40px 20px;text-align:center;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top" id="top">
+    <img class="ava" id="topAva" alt="">
+    <h1 id="title">消息<span class="sub" id="tsub"></span></h1>
+    <button class="ib" id="topBtn" onclick="topAction()">＋</button>
+  </div>
+
+  <!-- 消息 -->
+  <div class="view on" id="v-msg">
+    <div class="search">🔍<input id="q" placeholder="搜索" oninput="renderContacts()"></div>
+    <div class="item" onclick="openYu()"><img src="" id="yuAva" alt=""><div class="mid"><div class="nm">小鱼yu<span class="tag c">AI</span></div><div class="ls">直接跟小鱼聊天</div></div></div>
+    <div id="clist"></div>
+  </div>
+
+  <!-- 动态 -->
+  <div class="view" id="v-feed">
+    <div class="feed"><div class="h"><img id="fAva" alt=""><div><b id="fName">小鱼yu</b><div style="font-size:12px;color:#999">发表说说到 QQ 空间</div></div></div>
+      <textarea class="ta" id="qzText" placeholder="分享新鲜事…" style="margin:12px 0 0;width:100%"></textarea>
+      <button class="btn big" style="margin:12px 0 0;width:100%" onclick="postQzone()">发表</button>
+    </div>
+    <div id="feedList"></div>
+  </div>
+
+  <!-- 我的 -->
+  <div class="view" id="v-me">
+    <div class="prof"><img id="meAva" alt=""><div><div class="n" id="meName">小鱼yu</div><div class="s" id="meId"></div><div class="s" id="meSign"></div></div></div>
+    <h3 class="sec" style="margin:0"></h3>
+    <div class="sec">
+      <div class="row arr" onclick="openPage('p-sign')"><span>✏️ 个性签名</span><span class="v" id="vSign"></span></div>
+      <div class="row arr" onclick="openPage('p-avatar')"><span>🖼️ DIY 头像</span><span class="v"></span></div>
+      <div class="row arr" onclick="openPage('p-recall')"><span>🛡️ 防撤回记录</span><span class="v" id="vRecall"></span></div>
+      <div class="row arr" onclick="openPage('p-login')"><span>📷 扫码登录</span><span class="v" id="vLogin"></span></div>
+    </div>
+    <div class="sec">
+      <div class="row arr" onclick="openPage('p-usage')"><span>📊 Token 用量</span><span class="v" id="vUsage"></span></div>
+      <div class="row arr" onclick="openPage('p-plugins')"><span>🧩 插件</span><span class="v" id="vPlug"></span></div>
+      <div class="row arr" onclick="openPage('p-persona')"><span>🎭 人格配置</span><span class="v">default</span></div>
+      <div class="row arr" onclick="openPage('p-sys')"><span>⚙️ AstrBot / NapCat</span><span class="v" id="vSys"></span></div>
+      <div class="row arr" onclick="openPage('p-mem')"><span>🌌 记忆星图</span><span class="v" id="vMem"></span></div>
+      <div class="row arr" onclick="openPage('p-vault')"><span>🔐 密码保险箱</span><span class="v" id="vVault"></span></div>
+      <div class="row arr" onclick="openPage('p-set')"><span>🔗 连接设置</span><span class="v"></span></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="on" id="t-msg" onclick="tab('msg')"><i>💬</i>消息</button>
+    <button id="t-feed" onclick="tab('feed')"><i>⭐</i>动态</button>
+    <button id="t-me" onclick="tab('me')"><i>👤</i>我的</button>
+  </div>
+</div>
+
+<!-- 聊天窗口 -->
+<div class="chat" id="chat">
+  <div class="top"><button class="ib" onclick="closeChat()">‹</button><h1 id="cTitle"></h1><button class="ib" onclick="loadHistory()">⟳</button></div>
+  <div class="msgs" id="msgs"></div>
+  <div class="inbar">
+    <label class="ib">🖼️<input type="file" accept="image/*" hidden onchange="sendImg(this)"></label>
+    <input type="text" id="cin" placeholder="" enterkeyhint="send">
+    <button class="send" id="csend" onclick="sendMsg()">发送</button>
+  </div>
+</div>
+
+<!-- 子页面 -->
+<div class="page" id="p-sign"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>个性签名</h1></div><div class="body">
+  <textarea class="ta" id="signIn" maxlength="80" placeholder="写点什么…"></textarea>
+  <button class="btn big" onclick="saveSign()">保存</button></div></div>
+
+<div class="page" id="p-avatar"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>DIY 头像</h1></div><div class="body">
+  <canvas id="av" width="640" height="640"></canvas>
+  <div class="range">🔍<input type="range" id="avZoom" min="1" max="4" step="0.01" value="1" oninput="drawAv()"></div>
+  <div class="range">文字<input type="text" id="avText" placeholder="可选，写在头像底部" oninput="drawAv()" style="border:1px solid #eee;border-radius:6px;padding:6px"></div>
+  <div class="range">边框<select id="avFrame" onchange="drawAv()"><option value="">无</option><option value="#12b7f5">蓝色</option><option value="#ff8fb1">粉色</option><option value="#ffd54a">金色</option><option value="rainbow">彩虹</option></select></div>
+  <label class="btn ghost big" style="text-align:center">选择图片<input type="file" accept="image/*" hidden onchange="pickAv(this)"></label>
+  <button class="btn big" onclick="saveAv()">设为 QQ 头像</button>
+  <div class="tip">拖动图片调整位置</div></div></div>
+
+<div class="page" id="p-recall"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>防撤回记录</h1></div><div class="body" id="recallList"></div></div>
+
+<div class="page" id="p-login"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>扫码登录</h1></div><div class="body">
+  <div class="sec"><div class="row"><span>当前状态</span><span class="v" id="lgState"></span></div></div>
+  <div class="qrbox" id="qrBox"><div class="tip">如果 QQ 掉线，点下面按钮生成二维码，用 2751351976 扫码</div></div>
+  <button class="btn big" onclick="relogin()">重新登录 / 生成二维码</button>
+  <button class="btn big ghost" onclick="loadQr()">刷新二维码</button></div></div>
+
+<div class="page" id="p-usage"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>Token 用量</h1></div><div class="body">
+  <div class="grid" id="uGrid"></div>
+  <div class="sec"><h3>近 7 天 tokens</h3><div class="bars" id="uBars"></div><div style="height:22px;background:#fff"></div></div>
+  <div class="sec"><h3>24 小时按模型</h3><div id="uModels"></div></div>
+  <div class="tip">费用按 DeepSeek V4 Flash 官方价估算</div></div></div>
+
+<div class="page" id="p-plugins"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>插件</h1></div><div class="body">
+  <div class="seg"><button class="on" id="sg-i" onclick="plugSeg('i')">已安装</button><button id="sg-y" onclick="plugSeg('y')">小鱼专属</button><button id="sg-m" onclick="plugSeg('m')">插件市场</button></div>
+  <div class="search" id="mSearch" style="display:none">🔍<input id="mq" placeholder="搜索插件市场" onkeydown="if(event.key==='Enter'){mPage=0;loadMarket()}"></div>
+  <div id="plugList"></div>
+  <button class="btn big ghost" id="mMore" style="display:none" onclick="mPage++;loadMarket(true)">加载更多</button></div></div>
+
+<div class="page" id="p-persona"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>人格配置</h1></div><div class="body">
+  <div class="sec"><div class="row"><span>人格</span><select id="psel" onchange="showPersona()" style="font:inherit;border:0;color:#999"></select></div></div>
+  <textarea class="ta" id="pText" style="min-height:55vh"></textarea>
+  <button class="btn big" onclick="savePersona()">保存人格</button></div></div>
+
+<div class="page" id="p-sys"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>AstrBot / NapCat</h1></div><div class="body">
+  <div class="sec"><h3>运行</h3><div id="sysInfo"></div></div>
+  <div class="sec"><h3>服务</h3><div id="sysSvc"></div></div>
+  <div class="sec"><h3>模型</h3><div id="sysCfg"></div></div></div></div>
+
+<div class="page" id="p-set"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>连接设置</h1></div><div class="body">
+  <div class="tip">粘贴小鱼私信给你的连接链接（服务器重启后链接会变）</div>
+  <input class="f" id="link" placeholder="https://…/?t=…">
+  <button class="btn big" onclick="saveLink()">保存并连接</button>
+  <div class="tip" id="curSrv"></div></div></div>
+
+<div class="page" id="p-mem"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>记忆星图</h1><button class="ib" onclick="loadMem()">↻</button></div><div class="body" style="padding:0;background:#070b1a;color:#cfe">
+<div id="memStat" style="padding:10px 14px;font-size:13px;opacity:.85">加载中…</div>
+<canvas id="memCv" style="width:100%;height:58vh;display:block;touch-action:none"></canvas>
+<div id="memInfo" style="padding:10px 14px;font-size:14px;min-height:60px">点一颗星看看小鱼记得什么。越亮越清楚，暗的是快忘了的，闪烁的是刚刚想起的。</div>
+<div id="memHits" style="padding:0 14px 20px;font-size:12px;opacity:.75"></div>
+</div></div>
+<div class="page" id="p-vault"><div class="top"><button class="ib" onclick="lockVault();closePage()">‹</button><h1>密码保险箱</h1><button class="ib" id="vAdd" onclick="editItem()" style="display:none">＋</button></div><div class="body">
+  <div id="vLock"><div class="tip" id="vHint" style="margin-top:30px">🔐 只保存在这台手机，用主密码加密</div>
+    <input class="f" type="password" id="vPw" placeholder="主密码" onkeydown="if(event.key==='Enter')unlockVault()">
+    <input class="f" type="password" id="vPw2" placeholder="再输一次主密码" style="display:none">
+    <button class="btn big" onclick="unlockVault()" id="vBtn">解锁</button>
+    <div class="tip">忘记主密码就无法恢复，请记牢</div></div>
+  <div id="vBody" style="display:none"><div class="search">🔍<input id="vq" placeholder="搜索" oninput="renderVault()"></div><div id="vList"></div>
+    <button class="btn big ghost" onclick="exportVault()">导出加密备份</button><button class="btn big ghost" onclick="lockVault()">锁定</button></div>
+  <div id="vEdit" style="display:none">
+    <input class="f" id="eName" placeholder="名称（如 QQ、B站）"><input class="f" id="eUser" placeholder="账号"><input class="f" id="ePass" placeholder="密码">
+    <button class="btn ghost big" onclick="$('ePass').value=genPw()">生成强密码</button>
+    <textarea class="ta" id="eNote" placeholder="备注" style="min-height:80px"></textarea>
+    <button class="btn big" onclick="saveItem()">保存</button><button class="btn big red" id="eDel" onclick="delItem()">删除</button><button class="btn big ghost" onclick="showVault()">取消</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+let cfg=JSON.parse(localStorage.getItem('yq_cfg')||'{}');
+if(location.protocol.startsWith('http')&&!/github\.io$/.test(location.hostname)){const t=new URLSearchParams(location.search).get('t');cfg.server=location.origin;if(t)cfg.token=t;localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
+if(location.hash.startsWith('#t=')){cfg.token=decodeURIComponent(location.hash.slice(3));localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
+let ME={},CONTACTS=[],CUR=null,timer=null,yuHist=JSON.parse(localStorage.getItem('yq_yu')||'[]');
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',1800)}
+const SRV_URL='https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/xiaoyu/app/srv.json';
+let srvTry=0;
+async function findServer(){if(!cfg.token)return false;try{const j=await (await fetch(SRV_URL+'?_='+Date.now(),{cache:'no-store'})).json();
+ const kb=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('yq-srv|'+cfg.token));const hx=[...new Uint8Array(kb)].map(b=>b.toString(16).padStart(2,'0')).join('');
+ const key=await crypto.subtle.importKey('raw',new Uint8Array(hx.slice(0,64).match(/../g).map(h=>parseInt(h,16))),'AES-CBC',false,['decrypt']);
+ const iv=new Uint8Array(j.iv.match(/../g).map(h=>parseInt(h,16)));const ct=Uint8Array.from(atob(j.ct),c=>c.charCodeAt(0));
+ const u=new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-CBC',iv},key,ct));if(!/^https:\/\//.test(u))return false;
+ if(u!==cfg.server){cfg.server=u;localStorage.setItem('yq_cfg',JSON.stringify(cfg));toast('服务器换地址了，已自动连上新的')}return true}catch(e){return false}}
+async function api(p,body){if(!cfg.token)throw new Error('未连接');
+ const go=()=>fetch(cfg.server+p,{method:body?'POST':'GET',headers:{'X-App-Token':cfg.token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+ let r;try{r=cfg.server?await go():null}catch(e){r=null}
+ if((!r||r.status>=500||r.status===404)&&Date.now()-srvTry>15000){srvTry=Date.now();const old=cfg.server;if(await findServer()&&cfg.server!==old){try{r=await go()}catch(e){r=null}}}
+ if(!r)throw new Error('连不上服务器');if(r.status===401)throw new Error('密钥不对');return r.json()}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function ava(id,g){return g?`https://p.qlogo.cn/gh/${id}/${id}/100`:`https://q1.qlogo.cn/g?b=qq&nk=${id}&s=100`}
+function ftime(t){if(!t)return'';const d=new Date(t*1000),n=new Date();return d.toDateString()===n.toDateString()?d.toTimeString().slice(0,5):(d.getMonth()+1)+'/'+d.getDate()}
+// tabs
+let TAB='msg';
+function tab(t){TAB=t;['msg','feed','me'].forEach(x=>{$('v-'+x).classList.toggle('on',x===t);$('t-'+x).classList.toggle('on',x===t)});
+ $('title').firstChild.textContent={msg:'消息',feed:'动态',me:'我的'}[t];$('topBtn').textContent=t==='msg'?'⟳':'';if(t==='me')loadMe();if(t==='msg')loadContacts()}
+function topAction(){if(TAB==='msg'){loadContacts();toast('已刷新')}}
+// me
+async function loadMe(){try{const s=await api('/api/status');ME=s.qq||{};
+ const a=ME.avatar||ava(ME.id||2751351976);['topAva','meAva','fAva','yuAva'].forEach(i=>$(i).src=a);
+ $('meName').textContent=ME.nick||'未登录';$('fName').textContent=ME.nick||'小鱼yu';$('meId').textContent='QQ '+(ME.id||'—')+(ME.online?' · 在线':' · 离线');
+ $('meSign').textContent=ME.longnick||'';$('vSign').textContent=ME.longnick||'未设置';$('tsub').textContent=ME.online?'在线':'离线';
+ const u=s.usage||{};$('vUsage').textContent=(u.tokens_24h!=null?fmtN(u.tokens_24h):'—')+' / 24h';
+ $('vLogin').innerHTML=`<i class="dot ${ME.online?'ok':'bad'}"></i>${ME.online?'在线':'离线'}`;
+ const up=(s.containers||[]).filter(c=>/^Up/.test(c.status)).length;$('vSys').textContent=up+'/'+(s.containers||[]).length+' 运行中';window.STATUS=s}
+ catch(e){$('tsub').textContent='未连接';$('meName').textContent='未连接';toast(e.message)}}
+function fmtN(n){return n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':String(n)}
+function up(s){const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+'天':'')+h+'小时'+m+'分'}
+// contacts
+async function loadContacts(){try{CONTACTS=await api('/api/contacts');renderContacts()}catch(e){$('clist').innerHTML=`<div class="empty">连不上服务器：${esc(e.message)}<br><br>去「我的 → 连接设置」粘贴链接</div>`}}
+function renderContacts(){const q=$('q').value.trim();$('clist').innerHTML=CONTACTS.filter(c=>!q||c.name.includes(q)||String(c.id).includes(q)).map(c=>
+ `<div class="item" onclick='openChat(${JSON.stringify(c.type)},${c.id},${JSON.stringify(c.name)})'><img src="${c.avatar}" loading="lazy" alt=""><div class="mid"><div class="nm">${esc(c.name)}${c.type==='group'?'<span class="tag g">群</span>':''}</div><div class="ls">${esc(c.last||'')}</div></div><div class="tm">${ftime(c.time)}</div></div>`).join('')}
+// chat
+function openChat(type,id,name){CUR={type,id,name};$('cTitle').textContent=name;$('chat').classList.add('on');$('cin').placeholder='发消息给 '+name;$('msgs').innerHTML='<div class="tip">加载中…</div>';loadHistory();clearInterval(timer);timer=setInterval(loadHistory,5000)}
+function openYu(){CUR={type:'yu',id:0,name:'小鱼yu'};$('cTitle').textContent='小鱼yu';$('chat').classList.add('on');$('cin').placeholder='跟小鱼说点什么…';renderYu()}
+function closeChat(){$('chat').classList.remove('on');clearInterval(timer);CUR=null}
+async function loadHistory(){if(!CUR||CUR.type==='yu')return renderYu();try{const ms=await api(`/api/history?type=${CUR.type}&id=${CUR.id}`);const box=$('msgs');const atBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;
+ box.innerHTML=(ms.length?'':'<div class="tip">还没有消息记录（从这次连上之后的消息会出现在这里）</div>')+ms.map(m=>{const mine=m.uid==ME.id;return `<div class="mr ${mine?'me':''}"><img class="a" src="${ava(m.uid)}" loading="lazy" alt=""><div class="col">${CUR.type==='group'&&!mine?`<div class="who">${esc(m.name)}</div>`:''}<div class="bb">${esc(m.text)}${(m.imgs||[]).map(u=>`<img src="${esc(u)}" loading="lazy">`).join('')}</div>${m.recalled?'<div class="rc">🛡️ 对方撤回了这条消息</div>':''}</div></div>`}).join('');
+ if(atBottom||box.dataset.first!=='1'){box.scrollTop=1e9;box.dataset.first='1'}}catch(e){toast(e.message)}}
+function renderYu(){const box=$('msgs');const a=ME.avatar||ava(2751351976);box.innerHTML=(yuHist.length?'':'<div class="tip">这里是跟小鱼的专属聊天</div>')+yuHist.map(m=>`<div class="mr ${m.r==='me'?'me':''}"><img class="a" src="${m.r==='me'?ava(3464948964):a}" alt=""><div class="col"><div class="bb">${esc(m.t)}</div></div></div>`).join('');box.scrollTop=1e9}
+async function sendMsg(){const t=$('cin').value.trim();if(!t||!CUR)return;$('cin').value='';$('csend').disabled=true;
+ try{if(CUR.type==='yu'){yuHist.push({r:'me',t});renderYu();$('msgs').insertAdjacentHTML('beforeend','<div class="tip" id="typing">小鱼正在输入…</div>');$('msgs').scrollTop=1e9;
+   const d=await api('/api/chat',{message:t});yuHist.push({r:'yu',t:(d.reply||d.error||'……')});yuHist=yuHist.slice(-200);localStorage.setItem('yq_yu',JSON.stringify(yuHist));renderYu()}
+  else{const d=await api('/api/send',{type:CUR.type,id:CUR.id,text:t});if(!d.ok)toast('发送失败：'+(d.msg||''));setTimeout(loadHistory,800)}}
+ catch(e){toast(e.message)}$('csend').disabled=false}
+function sendImg(inp){const f=inp.files[0];if(!f||!CUR||CUR.type==='yu')return toast('小鱼聊天暂不支持发图');const r=new FileReader();r.onload=async()=>{const d=await api('/api/send',{type:CUR.type,id:CUR.id,image:r.result});toast(d.ok?'已发送':'发送失败');setTimeout(loadHistory,1000)};r.readAsDataURL(f);inp.value=''}
+$('cin').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
+// pages
+function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':loadMem,'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
+function closePage(){document.querySelectorAll('.page.on').forEach(p=>p.classList.remove('on'))}
+async function saveSign(){const d=await api('/api/longnick',{text:$('signIn').value});toast(d.ok?'签名已更新':'失败：'+(d.msg||''));if(d.ok){closePage();setTimeout(loadMe,800)}}
+async function postQzone(){const t=$('qzText').value.trim();if(!t)return toast('写点内容吧');if(!confirm('发表到 QQ 空间？'))return;const d=await api('/api/qzone',{text:t});
+ if(d.ok){toast('已发表');$('feedList').insertAdjacentHTML('afterbegin',`<div class="feed"><div class="h"><img src="${$('fAva').src}"><div><b>${esc(ME.nick||'小鱼yu')}</b><div style="font-size:12px;color:#999">刚刚</div></div></div><div class="c">${esc(t)}</div></div>`);$('qzText').value=''}else toast('发表失败：'+(d.msg||''))}
+async function loadRecalls(){try{const r=await api('/api/recalls');$('recallList').innerHTML=r.length?r.map(m=>`<div class="pl"><img src="${ava(m.uid)}" style="width:40px;height:40px;border-radius:50%"><div class="mid"><div class="t">${esc(m.name||m.uid)} <span style="color:#999;font-size:12px">${m.type==='group'?'群 '+m.chat:'私聊'} · ${ftime(m.recalled_at)}</span></div><div class="d" style="-webkit-line-clamp:5;color:#333">${esc(m.text)}</div></div></div>`).join(''):'<div class="empty">还没有人撤回消息</div>'}catch(e){toast(e.message)}}
+async function loadLogin(){$('lgState').innerHTML=`<i class="dot ${ME.online?'ok':'bad'}"></i>${ME.online?'在线 '+(ME.nick||''):'离线'}`}
+async function relogin(){if(!confirm('会重启 NapCat，可能需要扫码，确定？'))return;toast('正在重启 NapCat…');await api('/api/relogin',{});setTimeout(loadQr,12000)}
+async function loadQr(){const d=await api('/api/qr');if(d.png){$('qrBox').innerHTML=`<img src="data:image/png;base64,${d.png}"><div class="tip">用 2751351976 扫码 · 约 2 分钟过期<br>生成于 ${new Date(d.mtime*1000).toLocaleTimeString('zh-CN',{hour12:false})}</div>`}else $('qrBox').innerHTML='<div class="tip">暂时没有二维码（可能已经登录）</div>';loadMe().then(loadLogin)}
+async function loadUsage(){try{const s=await api('/api/status');const u=s.usage||{};
+ $('uGrid').innerHTML=`<div><small>24h 调用</small><b>${u.calls_24h} 次</b></div><div><small>24h tokens</small><b>${fmtN(u.tokens_24h)}</b></div><div><small>24h 费用</small><b>¥${u.cost_24h}</b></div><div><small>累计费用</small><b>¥${u.cost_all}</b></div><div><small>累计调用</small><b>${u.calls_all} 次</b></div><div><small>累计 tokens</small><b>${fmtN(u.tokens_all)}</b></div>`;
+ const mx=Math.max(1,...(u.days||[]).map(d=>d.tokens));$('uBars').innerHTML=(u.days||[]).map(d=>`<div style="height:${Math.max(2,d.tokens/mx*80)}px" title="${d.tokens}"><span>${d.d.slice(5)}</span></div>`).join('');
+ $('uModels').innerHTML=(u.models||[]).map(m=>`<div class="row"><span>${esc(String(m.m).split('/').pop())}</span><span class="v">${m.calls} 次 · ${fmtN(m.tokens)}</span></div>`).join('')||'<div class="row"><span>暂无</span></div>'}catch(e){toast(e.message)}}
+// plugins
+let PLUGS=[],SEG='i',mPage=0;
+async function plugSeg(s){SEG=s;['i','y','m'].forEach(x=>$('sg-'+x).classList.toggle('on',x===s));$('mSearch').style.display=s==='m'?'flex':'none';$('mMore').style.display='none';
+ if(s==='m'){mPage=0;return loadMarket()}$('plugList').innerHTML='<div class="tip">加载中…</div>';try{PLUGS=await api('/api/plugins');$('vPlug').textContent=PLUGS.filter(p=>p.on).length+'/'+PLUGS.length+' 启用';
+ const L=PLUGS.filter(p=>s==='i'||p.custom);$('plugList').innerHTML=L.map(p=>`<div class="pl"><div class="mid"><div class="t">${esc(p.title)} <span style="color:#bbb;font-size:12px">${esc(p.version||'')}</span>${p.custom?'<span class="tag c">小鱼</span>':''}</div><div class="d">${esc(p.desc||p.name)}</div></div><label class="sw"><input type="checkbox" ${p.on?'checked':''} onchange='togglePlug(${JSON.stringify(p.name)},this)'><span></span></label></div>`).join('')}catch(e){toast(e.message)}}
+async function togglePlug(name,el){el.disabled=true;const d=await api('/api/plugin/toggle',{name,on:el.checked});toast(d.ok?(el.checked?'已启用':'已停用'):'失败：'+(d.msg||''));if(!d.ok)el.checked=!el.checked;el.disabled=false}
+async function loadMarket(more){if(!more)$('plugList').innerHTML='<div class="tip">加载插件市场…</div>';try{const d=await api(`/api/market?q=${encodeURIComponent($('mq').value.trim())}&page=${mPage}`);
+ const h=d.items.map(p=>`<div class="pl"><div class="mid"><div class="t">${esc(p.title)} <span style="color:#bbb;font-size:12px">⭐${p.stars||0} · ${esc(p.category||'')}</span></div><div class="d">${esc(p.desc)}</div></div>${p.installed?'<button class="btn ghost" disabled>已安装</button>':`<button class="btn" onclick='installPlug(${JSON.stringify(p.repo||'')},${JSON.stringify(p.download_url||'')},this)'>安装</button>`}</div>`).join('');
+ if(more)$('plugList').insertAdjacentHTML('beforeend',h);else $('plugList').innerHTML=`<div class="tip">共 ${d.total} 个</div>`+h;$('mMore').style.display=(mPage+1)*30<d.total?'block':'none'}catch(e){toast(e.message)}}
+async function installPlug(repo,dl,b){if(!confirm('安装这个插件？'))return;b.disabled=true;b.textContent='安装中…';const d=await api('/api/plugin/install',{repo,download_url:dl});b.textContent=d.ok?'已安装':'失败';toast(d.ok?'安装成功':'失败：'+(d.msg||''));if(!d.ok)b.disabled=false}
+// persona
+let PERS=[];async function loadPersona(){PERS=await api('/api/personas');$('psel').innerHTML=PERS.map(p=>`<option>${esc(p.id)}</option>`).join('');showPersona()}
+function showPersona(){const p=PERS.find(x=>x.id===$('psel').value)||PERS[0];$('pText').value=p?p.prompt:''}
+async function savePersona(){if(!confirm('保存人格？小鱼下一句话开始生效'))return;const d=await api('/api/persona',{id:$('psel').value,prompt:$('pText').value});toast(d.ok?'已保存':'失败：'+(d.msg||''))}
+// sys
+async function loadSys(){try{const s=await api('/api/status');const c=await api('/api/config');
+ $('sysInfo').innerHTML=`<div class="row"><span>已运行</span><span class="v">${s.uptime_sec!=null?up(s.uptime_sec):'—'}</span></div><div class="row"><span>QQ</span><span class="v"><i class="dot ${s.qq.online?'ok':'bad'}"></i>${s.qq.online?s.qq.nick:'离线'}</span></div><div class="row"><span>群 / 好友</span><span class="v">${s.groups??'—'} / ${s.friends??'—'}</span></div>`;
+ $('sysSvc').innerHTML=(s.containers||[]).map(x=>`<div class="row"><span><i class="dot ${/^Up/.test(x.status)?'ok':'bad'}"></i>${x.name}</span><button class="btn ghost" onclick="restartSvc('${x.name}',this)">重启</button></div>`).join('');
+ $('sysCfg').innerHTML=`<div class="row"><span>默认模型</span><span class="v">${esc((c.model||'').split('/').pop())}</span></div><div class="row"><span>可用模型</span><span class="v">${(c.providers||[]).length} 个</span></div>`}catch(e){toast(e.message)}}
+async function restartSvc(n,b){if(!confirm('重启 '+n+'？'+(n==='napcat'?'可能需要重新扫码':'')))return;b.disabled=true;b.textContent='重启中…';await api('/api/restart',{name:n});b.textContent='已重启';setTimeout(loadSys,5000)}
+function saveLink(){try{const u=new URL($('link').value.trim());const t=u.searchParams.get('t')||(u.hash.startsWith('#t=')?decodeURIComponent(u.hash.slice(3)):'');if(!t)throw 0;cfg={server:/github\.io$/.test(u.hostname)?'':u.origin,token:t};localStorage.setItem('yq_cfg',JSON.stringify(cfg));toast('已保存');closePage();loadMe();loadContacts()}catch(e){toast('链接要包含 ?t=')}}
+// avatar DIY
+const AV={img:null,x:0,y:0};
+function pickAv(inp){const f=inp.files[0];if(!f)return;const i=new Image();i.onload=()=>{AV.img=i;AV.x=0;AV.y=0;$('avZoom').value=1;drawAv()};i.src=URL.createObjectURL(f)}
+function drawAv(){const c=$('av'),g=c.getContext('2d'),S=640;g.clearRect(0,0,S,S);g.fillStyle='#eef7fd';g.fillRect(0,0,S,S);
+ if(AV.img){const z=+$('avZoom').value,i=AV.img,base=Math.max(S/i.width,S/i.height)*z,w=i.width*base,h=i.height*base;g.drawImage(i,(S-w)/2+AV.x,(S-h)/2+AV.y,w,h)}else{g.fillStyle='#9ad8f5';g.font='bold 60px sans-serif';g.textAlign='center';g.fillText('选择图片',S/2,S/2+20)}
+ const t=$('avText').value.trim();if(t){g.fillStyle='rgba(0,0,0,.35)';g.fillRect(0,S-130,S,130);g.fillStyle='#fff';g.font='bold 64px sans-serif';g.textAlign='center';g.fillText(t,S/2,S-45)}
+ const fr=$('avFrame').value;if(fr){g.lineWidth=36;if(fr==='rainbow'){const gr=g.createLinearGradient(0,0,S,S);['#ff6b6b','#ffd54a','#3fd27f','#12b7f5','#a66bff'].forEach((c,k)=>gr.addColorStop(k/4,c));g.strokeStyle=gr}else g.strokeStyle=fr;g.beginPath();g.arc(S/2,S/2,S/2-18,0,7);g.stroke()}}
+(function(){const c=$('av');let s=null;c.addEventListener('pointerdown',e=>{s={x:e.clientX,y:e.clientY,ox:AV.x,oy:AV.y};c.setPointerCapture(e.pointerId)});c.addEventListener('pointermove',e=>{if(!s)return;const k=640/c.clientWidth;AV.x=s.ox+(e.clientX-s.x)*k;AV.y=s.oy+(e.clientY-s.y)*k;drawAv()});c.addEventListener('pointerup',()=>s=null)})();
+async function saveAv(){if(!AV.img)return toast('先选一张图片');if(!confirm('设为小鱼的 QQ 头像？'))return;toast('上传中…');const d=await api('/api/avatar',{image:$('av').toDataURL('image/jpeg',.92)});toast(d.ok?'头像已更新':'失败：'+(d.msg||''));if(d.ok)setTimeout(loadMe,1500)}
+// vault (client-side AES-GCM, PBKDF2 310k)
+let VKEY=null,VITEMS=[],VEDIT=-1;const enc=new TextEncoder(),dec=new TextDecoder();
+const b64=a=>btoa(String.fromCharCode(...new Uint8Array(a))),ub64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function vDerive(pw,salt){const k=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:310000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+function vStore(){return JSON.parse(localStorage.getItem('yq_vault')||'null')}
+function vaultInit(){const st=vStore();$('vPw2').style.display=st?'none':'block';$('vBtn').textContent=st?'解锁':'创建保险箱';$('vHint').textContent=st?'🔐 输入主密码解锁':'🔐 第一次使用，设置一个主密码';$('vVault').textContent=st?'已加密':'未创建';if(!window.crypto||!crypto.subtle)$('vHint').textContent='⚠️ 当前环境不支持加密，请用 https 打开'}
+async function unlockVault(){const pw=$('vPw').value;if(pw.length<6)return toast('主密码至少 6 位');const st=vStore();
+ try{if(!st){if(pw!==$('vPw2').value)return toast('两次不一致');const salt=crypto.getRandomValues(new Uint8Array(16));VKEY=await vDerive(pw,salt);VITEMS=[];localStorage.setItem('yq_vault',JSON.stringify({salt:b64(salt)}));await vSave()}
+ else{VKEY=await vDerive(pw,ub64(st.salt));VITEMS=JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64(st.iv)},VKEY,ub64(st.data))))}
+ $('vPw').value='';$('vPw2').value='';showVault()}catch(e){VKEY=null;toast('主密码不对')}}
+async function vSave(){const st=vStore();const iv=crypto.getRandomValues(new Uint8Array(12));const data=await crypto.subtle.encrypt({name:'AES-GCM',iv},VKEY,enc.encode(JSON.stringify(VITEMS)));localStorage.setItem('yq_vault',JSON.stringify({salt:st.salt,iv:b64(iv),data:b64(data)}))}
+function showVault(){$('vLock').style.display='none';$('vEdit').style.display='none';$('vBody').style.display='block';$('vAdd').style.display='block';renderVault()}
+function lockVault(){VKEY=null;VITEMS=[];$('vLock').style.display='block';$('vBody').style.display='none';$('vEdit').style.display='none';$('vAdd').style.display='none';vaultInit()}
+function renderVault(){const q=$('vq').value.trim();$('vList').innerHTML=VITEMS.map((it,i)=>[it,i]).filter(([it])=>!q||(it.name+it.user).includes(q)).map(([it,i])=>`<div class="pl"><div class="mid" onclick="editItem(${i})"><div class="t">${esc(it.name)}</div><div class="d">${esc(it.user)}</div></div><button class="btn ghost" onclick="copyPw(${i})">复制密码</button></div>`).join('')||'<div class="empty">还没有密码，点右上角＋添加</div>'}
+function editItem(i){VEDIT=i??-1;const it=VITEMS[VEDIT]||{name:'',user:'',pass:'',note:''};$('eName').value=it.name;$('eUser').value=it.user;$('ePass').value=it.pass;$('eNote').value=it.note||'';$('eDel').style.display=VEDIT<0?'none':'block';$('vBody').style.display='none';$('vEdit').style.display='block'}
+async function saveItem(){const it={name:$('eName').value.trim(),user:$('eUser').value.trim(),pass:$('ePass').value,note:$('eNote').value};if(!it.name)return toast('写个名称');if(VEDIT<0)VITEMS.push(it);else VITEMS[VEDIT]=it;await vSave();toast('已保存');showVault()}
+async function delItem(){if(!confirm('删除这条？'))return;VITEMS.splice(VEDIT,1);await vSave();showVault()}
+function copyPw(i){const t=VITEMS[i].pass;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('已复制，30 秒后清空'),()=>{prompt('复制密码',t)});setTimeout(()=>navigator.clipboard&&navigator.clipboard.writeText(''),30000)}
+function genPw(){const c='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';return Array.from(crypto.getRandomValues(new Uint32Array(16)),x=>c[x%c.length]).join('')}
+function exportVault(){const blob=new Blob([localStorage.getItem('yq_vault')],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='xiaoyu-vault.json';a.click()}
+// init
+vaultInit();loadMe();loadContacts();if(!cfg.token)openPage('p-set');
+
+let MEM=null,MEMANI=0;
+async function loadMem(){try{MEM=await api('/api/memory')}catch(e){$('memStat').textContent='读取失败：'+e.message;return}
+const st=MEM.stats||{};$('memStat').textContent=`清楚 ${st.clear||0} · 模糊 ${st.fuzzy||0} · 沉睡 ${st.sleep||0} · 聊天存档 ${st.raw||0} 段`;
+const cv=$('memCv'),W=cv.clientWidth,H=cv.clientHeight,dpr=devicePixelRatio||1;cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext('2d');g.scale(dpr,dpr);
+const N=MEM.nodes,idx={};N.forEach((n,i)=>{idx[n.id]=n;const h=[...(n.who||'?')].reduce((a,c)=>a+c.charCodeAt(0),0);const ang=(h%360)/57.3+i*0.37,rad=40+Math.min(W,H)*0.42*(1-Math.min(1,n.R+0.1))+((n.id*37)%30);n.x=W/2+Math.cos(ang)*rad;n.y=H/2+Math.sin(ang)*rad;n.hue=h%360});
+const recent={};(MEM.hits||[]).forEach(h=>{if(Date.now()/1000-h.ts<600)recent[h.episode]=h.kind});
+$('memHits').innerHTML=(MEM.hits||[]).slice(0,8).map(h=>{const n=idx[h.episode];return n?`<div>${new Date(h.ts*1000).toLocaleTimeString()} ${({clear:'想起',fuzzy:'隐约想起',assoc:'联想到',spont:'忽然想起'})[h.kind]||h.kind}：${esc(n.s.slice(0,24))}</div>`:''}).join('');
+cancelAnimationFrame(MEMANI);let t=0;(function draw(){t+=0.03;g.fillStyle='#070b1a';g.fillRect(0,0,W,H);
+g.lineWidth=0.5;MEM.links.forEach(l=>{const a=idx[l.a],b=idx[l.b];if(!a||!b)return;g.strokeStyle=`rgba(140,180,255,${0.05+0.25*Math.min(a.R,b.R)})`;g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke()});
+N.forEach(n=>{const r=1.5+n.imp*1.1,al=0.15+0.85*n.R,fl=recent[n.id]?0.5+0.5*Math.sin(t*4+n.id):0;g.beginPath();g.fillStyle=`hsla(${n.hue},80%,${70+fl*20}%,${Math.min(1,al+fl)})`;g.shadowColor=`hsla(${n.hue},90%,70%,1)`;g.shadowBlur=(n.R*8)+fl*16;g.arc(n.x,n.y,r+fl*2,0,7);g.fill()});g.shadowBlur=0;MEMANI=requestAnimationFrame(draw)})();
+cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;let best=null,bd=400;N.forEach(n=>{const d=(n.x-x)**2+(n.y-y)**2;if(d<bd){bd=d;best=n}});if(best)$('memInfo').innerHTML=`<b>${new Date(best.ts*1000).toLocaleDateString()} · ${esc(best.who||'')}</b> ${best.emo?'('+esc(best.emo)+')':''}<br>${esc(best.s)}<br><span style="opacity:.6">清晰度 ${Math.round(best.R*100)}% · 重要度 ${best.imp} · 想起过 ${best.rc} 次 · ${esc((best.kw||[]).join(' / '))}</span>`}}
+</script>
+</body>
+</html>
