@@ -58,6 +58,7 @@ button{font:inherit}
 /* cards */
 .sec{background:#fff;margin:10px 0}
 .sec h3{font-size:13px;color:var(--mute);font-weight:400;margin:0;padding:10px 14px 4px;background:var(--bg)}
+.qst{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 14px;background:#fff}.qst button{border:1px solid #e5e5e5;background:#f7f7f7;border-radius:16px;padding:7px 12px;font-size:14px}.qst button.on{background:#e8f3ff;border-color:#0099ff;color:#0077dd}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #f5f5f5;background:#fff}
 .row:active{background:#f6f6f6}
 .row .v{color:var(--mute);font-size:14px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
@@ -516,6 +517,7 @@ cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY
   <div class="ditem" onclick="drawer(0);openPage('p-bili')"><i>📺</i>哔哩哔哩</div>
   <div class="ditem" onclick="drawer(0);openPage('p-prof')"><i>🪪</i>个人资料</div>
   <div class="ditem" onclick="drawer(0);openPage('p-run')"><i>🖥️</i>运行配置</div>
+  <div class="ditem" onclick="drawer(0);openPage('p-send')"><i>📮</i>发送状态</div>
   <div class="ditem" onclick="drawer(0);openPage('p-find')"><i>➕</i>加好友 / 加群</div>
   <div class="ditem" onclick="drawer(0);openPage('p-reqs')"><i>📨</i>好友与群通知</div>
   <div class="ditem" onclick="drawer(0);openPage('p-mem')"><i>🌌</i>记忆星图</div>
@@ -579,6 +581,7 @@ cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY
   <button class="btn big" onclick="profSave()">保存</button></div>
 </div></div>
 
+<div class="page" id="p-send"><div class="top"><button class="ib" onclick="closeOne('p-send')">‹</button><h1>发送状态</h1><button class="ib" onclick="loadSend()">⟳</button></div><div class="body" id="sendBody"></div></div>
 <div class="page" id="p-run"><div class="top"><button class="ib" onclick="closeOne('p-run')">‹</button><h1>运行配置</h1><button class="ib" onclick="loadRun()">⟳</button></div><div class="body" id="runBody"></div></div>
 
 <div class="page" id="p-user"><div class="top"><button class="ib" onclick="closeOne('p-user')">‹</button><h1>资料卡</h1></div><div class="body" id="userBody"></div></div>
@@ -660,6 +663,17 @@ async function loadRun(){$('runBody').innerHTML='<div class="tip">加载中…</
  $('runBody').innerHTML=`<div class="sec"><h3>小鱼yu</h3><div class="row"><span>大脑模型</span><span class="v">DeepSeek V4.1 Flash</span></div><div class="row"><span>已连续运行</span><span class="v">${s.uptime_sec!=null?up(s.uptime_sec):'—'}</span></div><div class="row"><span>QQ</span><span class="v"><i class="dot ${s.qq.online?'ok':'bad'}"></i>${s.qq.online?esc(s.qq.nick)+' '+s.qq.id:'离线'}</span></div><div class="row"><span>群 / 好友</span><span class="v">${s.groups??'—'} / ${s.friends??'—'}</span></div><div class="row"><span>插件</span><span class="v">${pl.filter(p=>p.on).length} / ${pl.length} 启用</span></div><div class="row"><span>记忆</span><span class="v">清楚 ${ms.clear||0} · 模糊 ${ms.fuzzy||0} · 沉睡 ${ms.sleep||0}</span></div></div>
  <div class="sec"><h3>今天的用量（DeepSeek）</h3><div class="row"><span>24h 调用 / tokens</span><span class="v">${u.calls_24h??'—'} 次 · ${fmtN(u.tokens_24h||0)}</span></div><div class="row"><span>24h 费用 / 累计</span><span class="v">¥${u.cost_24h??'—'} / ¥${u.cost_all??'—'}</span></div></div>
  <div class="sec"><h3>运行平台</h3><div class="row"><span>框架</span><span class="v">AstrBot + NapCat</span></div>${(s.containers||[]).map(x=>`<div class="row"><span><i class="dot ${/^Up/.test(x.status)?'ok':'bad'}"></i>${esc(x.name)}</span><span class="v">${esc(x.status)}</span></div>`).join('')}</div>`}catch(e){$('runBody').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+// 发送状态：QQ 在线状态 + 发消息情况
+const QST=[['在线',10,0,'🟢'],['Q我吧',60,0,'💬'],['离开',30,0,'🌙'],['忙碌',50,0,'⛔'],['请勿打扰',70,0,'🔕'],['隐身',40,0,'👻'],['听歌中',10,1028,'🎵'],['学习中',10,1018,'📚'],['睡觉中',10,1016,'😴'],['摸鱼中',10,1300,'🐟']];
+function fdur(s){return s>=86400?Math.floor(s/86400)+'天'+Math.floor(s%86400/3600)+'小时':s>=3600?Math.floor(s/3600)+'小时'+Math.floor(s%3600/60)+'分':Math.max(1,Math.ceil(s/60))+'分钟'}
+async function loadSend(){$('sendBody').innerHTML='<div class="tip">加载中…</div>';try{const d=await api('/api/sendstate'),q=d.qqst||{},G=d.groups||[];
+ const muted=G.filter(g=>g.mute>0||g.all),L=d.last;
+ $('sendBody').innerHTML=`<div class="sec"><h3>QQ 状态（现在：${esc(q.name||'在线')}）</h3><div class="qst">${QST.map(x=>`<button class="${(q.status??10)==x[1]&&(q.ext??0)==x[2]?'on':''}" onclick="setQst('${x[0]}',${x[1]},${x[2]})">${x[3]} ${x[0]}</button>`).join('')}</div></div>
+ <div class="sec"><h3>发消息</h3><div class="row"><span>能不能发</span><span class="v"><i class="dot ${d.online?'ok':'bad'}"></i>${d.online?(muted.length?'能发（'+muted.length+' 个群被禁言）':'正常'):'QQ 离线，发不出去'}</span></div>
+ <div class="row"><span>1 小时 / 24 小时</span><span class="v">${d.n1h??'—'} 条 / ${d.n24h??'—'} 条</span></div>
+ <div class="row"><span>最后一条</span><span class="v">${L?ftime(L.time)+' · '+(L.type==='group'?'群 ':'私聊 ')+L.id:'—'}</span></div>${L&&L.text?`<div class="row"><span class="v" style="text-align:left">${esc(L.text)}</span></div>`:''}</div>
+ ${G.length?`<div class="sec"><h3>各群发言</h3>${G.map(g=>`<div class="row"><span>${esc(g.name)}</span><span class="v"><i class="dot ${g.mute>0||g.all?'bad':'ok'}"></i>${g.all?'全员禁言':g.mute>0?'禁言 '+fdur(g.mute):'可以发言'}</span></div>`).join('')}</div>`:''}`}catch(e){$('sendBody').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function setQst(name,st,ext){const d=await api('/api/qqstatus',{name,status:st,ext});toast(d.ok?'状态已改成「'+name+'」':'修改失败：'+(d.msg||''));if(d.ok)loadSend()}
 // 个人 / 群主页
 async function openUser(id){id=String(id||'').trim();if(!/^\d{5,}$/.test(id))return toast('QQ号不对');$('p-user').classList.add('on');$('userBody').innerHTML='<div class="tip">加载中…</div>';
  try{const u=await api('/api/user?id='+id);$('userBody').innerHTML=`<div class="pcard"><div class="cover"></div><div class="head"><img src="${esc(u.avatar)}"><div class="nm">${esc(u.remark||u.nick)}</div></div><div class="meta">QQ ${u.id}${u.remark?' · 昵称 '+esc(u.nick):''}<br>${{male:'男',female:'女'}[u.sex]||'性别保密'}${u.age?' · '+u.age+'岁':''}${u.city?' · '+esc(u.city):''}${u.level?' · LV'+u.level:''}<br>${esc(u.longnick||'这个人很懒，什么都没写')}</div></div>
@@ -688,7 +702,7 @@ $('msgs').addEventListener('dblclick',e=>{const a=e.target.closest('img.a');if(a
  mb.addEventListener('touchstart',start);mb.addEventListener('touchend',stop);mb.addEventListener('mousedown',start);mb.addEventListener('mouseup',stop)})();
 function pokeCur(){if(!CUR||CUR.type==='yu')return;if(CUR.type==='private')return pokeUser(CUR.id);const id=prompt('拍一拍谁？输入QQ号（双击聊天里的头像也能拍）');if(id)pokeUser(+id,CUR.id)}
 // 页面钩子
-const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$('bGrid').innerHTML)bTab('rcmd')},'p-blogin':blAcc,'p-prof':loadProf,'p-run':loadRun,'p-reqs':loadReqs}[id]||(()=>{}))()};
+const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$('bGrid').innerHTML)bTab('rcmd')},'p-blogin':blAcc,'p-prof':loadProf,'p-run':loadRun,'p-send':loadSend,'p-reqs':loadReqs}[id]||(()=>{}))()};
 </script>
 
 <style>
