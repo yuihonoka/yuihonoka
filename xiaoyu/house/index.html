@@ -42,6 +42,7 @@ input{width:100%;border:1px solid #dde;border-radius:12px;padding:12px;font-size
 <main>
 <div class="card" id="login"><h2>🔑 连接密钥</h2><div class="small">用小鱼yu App 的同一个密钥（爸比专用）</div><input id="tk" placeholder="粘贴密钥" autocomplete="off"><button onclick="saveTk()" style="width:100%">连接</button></div>
 <div class="alert" id="alert"></div>
+<div class="card" id="dfyCard" style="padding:0;overflow:hidden;background:linear-gradient(180deg,#dcebff 0%,#f4f8ff 100%)"><iframe id="dfy" title="大肥鱼" style="display:block;width:100%;height:380px;border:0;background:transparent" allow="autoplay"></iframe></div>
 <div class="card trial" id="trialCard"><h2>☁️ 小屋还能住</h2>
  <div style="display:flex;align-items:baseline;gap:6px"><span class="big" id="tDays">一直住</span></div>
  <div class="bar"><i id="tBar" style="width:0"></i></div>
@@ -91,7 +92,7 @@ const pct=(a,b)=>b?Math.round(a*100/b):0;
 function setBar(id,v,hot){const e=$(id);e.style.width=Math.min(100,v)+'%';e.classList.toggle('hot',!!hot)}
 const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',snowluma:'QQ SnowLuma',gateway:'App 网关',kemeng:'deepseek模型 · 聊天',sing:'deepseek模型 · 语音+唱歌',tunnel:'外网隧道'};
 async function load(){try{const s=await api('/api/server');
- $('dot').classList.remove('off');$('sub').textContent='京都 · 16核32G · 在线';
+ $('dot').classList.remove('off');$('sub').textContent='京都 · 16核32G · 在线';{const f=$('dfy');const u=cfg.server+'/l2d/'+encodeURIComponent(cfg.token)+'/';if(f&&f.dataset.u!==u){f.dataset.u=u;f.src=u}}
  const l=parseFloat(s.load[0]);$('cpu').textContent=l.toFixed(2);setBar('cpuBar',pct(l,s.cpus),l>s.cpus*.8);
  const m=s.mem;$('mem').textContent=(m.avail/m.total*32).toFixed(1)+'G / 32G';setBar('memBar',100-pct(m.avail,m.total),m.avail<300);
  $('swap').textContent='';
