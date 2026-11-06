@@ -45,7 +45,8 @@ input{width:100%;border:1px solid #dde;border-radius:12px;padding:12px;font-size
 <div class="card trial" id="trialCard"><h2>☁️ 小屋还能住</h2>
  <div style="display:flex;align-items:baseline;gap:6px"><span class="big" id="tDays">--</span><span>天左右</span></div>
  <div class="bar"><i id="tBar" style="width:0"></i></div>
- <div class="small" style="margin-top:8px" id="tInfo"></div></div>
+ <div class="small" style="margin-top:8px" id="tInfo"></div>
+ <button onclick="topup()" style="width:100%;margin-top:12px;background:linear-gradient(135deg,#ff9a3d,#ff6a3d);color:#fff">💳 给小屋充值</button></div>
 <div class="card"><h2>📊 状态</h2><div class="grid">
  <div class="m"><div class="k">CPU 负载</div><div class="v" id="cpu">--</div><div class="bar"><i id="cpuBar"></i></div></div>
  <div class="m"><div class="k">内存可用</div><div class="v" id="mem">--</div><div class="bar"><i id="memBar"></i></div></div>
@@ -104,6 +105,9 @@ async function load(){try{const s=await api('/api/server');
  const a=$('alert');if(t.warn){a.style.display='block';a.textContent=`⚠️ 爸比！小屋只剩约 ${t.days_left} 天了，到期后会开始扣钱，记得续费或者释放服务器～`}else a.style.display='none';
  $('foot').textContent='更新于 '+new Date().toLocaleTimeString();
 }catch(e){$('dot').classList.add('off');$('sub').textContent=e.message;if(!cfg.token)$('login').style.display='block'}}
+function topup(){const u='https://usercenter2.aliyun.com/home';
+ if(window.YuNative&&YuNative.open){YuNative.open(u,'阿里云充值');return}
+ const w=window.open(u,'_blank');if(!w)location.href=u}
 async function act(a,q){if(!confirm(q))return;try{const r=await api('/api/server/action',{action:a});toast(r.msg||(r.ok?'好啦':'失败'));setTimeout(load,4000)}catch(e){toast(e.message)}}
 async function logs(){$('log').textContent='加载中…';try{const r=await api('/api/server/logs?name='+$('lg').value+'&n=150');$('log').textContent=r.text||'(空)';$('log').scrollTop=1e9}catch(e){$('log').textContent=e.message}}
 load();setInterval(load,15000);
