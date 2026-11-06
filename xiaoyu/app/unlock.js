@@ -1,6 +1,7 @@
 // 小鱼yu的手机 锁屏：只有主人 QQ 收到小鱼yu发的验证码才能解锁；解锁后这台设备会记住
 const GW='https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/xiaoyu/app/gw.json';
-async function gw(){const j=await (await fetch(GW+'?_='+Date.now(),{cache:'no-store'})).json();return atob(j.u.split('').reverse().join(''))}
+const GWAPI='https://api.github.com/repos/yuihonoka/yuihonoka/contents/xiaoyu/app/gw.json?ref=main';
+async function gw(){let j;try{const a=await (await fetch(GWAPI+'&_='+Date.now(),{cache:'no-store'})).json();j=JSON.parse(atob(a.content.replace(/\s/g,'')))}catch(e){j=await (await fetch(GW+'?_='+Date.now(),{cache:'no-store'})).json()}return atob(j.u.split('').reverse().join(''))}
 async function post(base,p,b){return (await fetch(base+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})).json()}
 export async function go(){
   const qq='3464948964'; // 只认主人的 QQ，不用再手动输入
