@@ -42,7 +42,7 @@ input{width:100%;border:1px solid #dde;border-radius:12px;padding:12px;font-size
 <main>
 <div class="card" id="login"><h2>🔑 连接密钥</h2><div class="small">用小鱼yu App 的同一个密钥（爸比专用）</div><input id="tk" placeholder="粘贴密钥" autocomplete="off"><button onclick="saveTk()" style="width:100%">连接</button></div>
 <div class="alert" id="alert"></div>
-<div class="card trial" id="trialCard"><h2>☁️ 阿里云免费额度</h2>
+<div class="card trial" id="trialCard"><h2>☁️ 小屋还能住</h2>
  <div style="display:flex;align-items:baseline;gap:6px"><span class="big" id="tDays">--</span><span>天左右</span></div>
  <div class="bar"><i id="tBar" style="width:0"></i></div>
  <div class="small" style="margin-top:8px" id="tInfo"></div></div>
@@ -54,14 +54,14 @@ input{width:100%;border:1px solid #dde;border-radius:12px;padding:12px;font-size
 </div></div>
 <div class="card"><h2>🐟 小鱼的零件</h2><div id="svc"></div></div>
 <div class="card"><h2>🛠 操作</h2><div class="btns">
- <button onclick="act('restart_napcat','重启 QQ（NapCat）？可能要重新扫码')">重启 QQ</button>
+ <button onclick="act('restart_napcat','重启 QQ（SnowLuma）？')">重启 QQ</button>
  <button onclick="act('restart_astrbot','重启小鱼大脑（AstrBot）？')">重启大脑</button>
  <button onclick="act('restart_relays','重启模型中转？')">重启中转</button>
  <button onclick="act('restart_all','全部重启？约 1 分钟连不上')">全部重启</button>
  <button class="warn" onclick="act('reboot','重启整台服务器？约 2 分钟连不上')" style="grid-column:span 2">重启服务器</button>
 </div></div>
 <div class="card"><h2>📜 日志</h2>
- <div style="display:flex;gap:8px;align-items:center"><select id="lg"><option value="astrbot">小鱼大脑</option><option value="napcat">QQ</option><option value="gateway">App 网关</option><option value="kemeng">模型中转</option><option value="sing">唱歌中转</option><option value="tunnel">隧道</option></select><button onclick="logs()" style="padding:8px 14px">查看</button></div>
+ <div style="display:flex;gap:8px;align-items:center"><select id="lg"><option value="astrbot">小鱼大脑</option><option value="snowluma">QQ</option><option value="gateway">App 网关</option><option value="kemeng">模型中转</option><option value="sing">唱歌中转</option><option value="tunnel">隧道</option></select><button onclick="logs()" style="padding:8px 14px">查看</button></div>
  <pre id="log">点「查看」</pre></div>
 <div class="small" style="text-align:center" id="foot"></div>
 </main>
@@ -88,7 +88,7 @@ async function api(p,body){if(!cfg.token)throw new Error('需要密钥');
 function saveTk(){cfg.token=$('tk').value.trim();save();$('login').style.display='none';load()}
 const pct=(a,b)=>b?Math.round(a*100/b):0;
 function setBar(id,v,hot){const e=$(id);e.style.width=Math.min(100,v)+'%';e.classList.toggle('hot',!!hot)}
-const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',gateway:'App 网关',kemeng:'模型中转',sing:'唱歌中转',tunnel:'外网隧道'};
+const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',snowluma:'QQ SnowLuma',gateway:'App 网关',kemeng:'模型中转',sing:'唱歌中转',tunnel:'外网隧道'};
 async function load(){try{const s=await api('/api/server');
  $('dot').classList.remove('off');$('sub').textContent=s.host+' · 在线';
  const l=parseFloat(s.load[0]);$('cpu').textContent=l.toFixed(2);setBar('cpuBar',pct(l,s.cpus),l>s.cpus*.8);
@@ -100,8 +100,8 @@ async function load(){try{const s=await api('/api/server');
  for(const k in s.procs)html+=`<div class="row"><span>${NAMES[k]||k}</span><span class="tag ${s.procs[k]?'':'off'}">${s.procs[k]?'运行中':'停了'}</span></div>`;
  $('svc').innerHTML=html;
  const t=s.trial;$('tDays').textContent=t.days_left;setBar('tBar',pct(t.used,t.credit),t.warn);$('trialCard').classList.toggle('warn',t.warn);
- $('tInfo').textContent=`已用约 ${t.used} / ${t.credit} 元 · 预计 ${t.end} 用完 · ${t.note}`;
- const a=$('alert');if(t.warn){a.style.display='block';a.textContent=`⚠️ 爸比！免费额度只剩约 ${t.days_left} 天了，用完会开始扣钱，记得续费或者释放服务器～`}else a.style.display='none';
+ $('tInfo').textContent=`已用约 ${t.used} / ${t.credit} 元 · 预计 ${t.end} 到期 · ${t.note}`;
+ const a=$('alert');if(t.warn){a.style.display='block';a.textContent=`⚠️ 爸比！小屋只剩约 ${t.days_left} 天了，到期后会开始扣钱，记得续费或者释放服务器～`}else a.style.display='none';
  $('foot').textContent='更新于 '+new Date().toLocaleTimeString();
 }catch(e){$('dot').classList.add('off');$('sub').textContent=e.message;if(!cfg.token)$('login').style.display='block'}}
 async function act(a,q){if(!confirm(q))return;try{const r=await api('/api/server/action',{action:a});toast(r.msg||(r.ok?'好啦':'失败'));setTimeout(load,4000)}catch(e){toast(e.message)}}

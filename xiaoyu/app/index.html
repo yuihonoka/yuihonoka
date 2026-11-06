@@ -1446,7 +1446,7 @@ html,body{overscroll-behavior:none}
 <script>
 function houseOpen(){if(!cfg.server||!cfg.token){toast('先连上服务器');return}$('houseF').src=cfg.server+'/server#t='+encodeURIComponent(cfg.token);openPage('p-house')}
 async function trialCheck(){try{const last=+localStorage.getItem('yq_trialck')||0;if(Date.now()-last<6*3600e3)return;const s=await api('/api/server');localStorage.setItem('yq_trialck',Date.now());
- if(s.trial&&s.trial.warn)setTimeout(()=>alert('⚠️ 爸比！小鱼的小屋（阿里云免费额度）只剩约 '+s.trial.days_left+' 天了，预计 '+s.trial.end+' 用完，之后会开始扣钱，记得续费或者释放～'),1500)}catch(e){}}
+ if(s.trial&&s.trial.warn)setTimeout(()=>alert('⚠️ 爸比！小鱼的小屋只剩约 '+s.trial.days_left+' 天了，预计 '+s.trial.end+' 到期，之后会开始扣钱，记得续费或者释放～'),1500)}catch(e){}}
 setTimeout(trialCheck,4000);
 </script>
 </body>
