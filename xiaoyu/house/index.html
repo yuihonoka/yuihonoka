@@ -43,7 +43,7 @@ input{width:100%;border:1px solid #dde;border-radius:12px;padding:12px;font-size
 <div class="card" id="login"><h2>🔑 连接密钥</h2><div class="small">用小鱼yu App 的同一个密钥（爸比专用）</div><input id="tk" placeholder="粘贴密钥" autocomplete="off"><button onclick="saveTk()" style="width:100%">连接</button></div>
 <div class="alert" id="alert"></div>
 <div class="card trial" id="trialCard"><h2>☁️ 小屋还能住</h2>
- <div style="display:flex;align-items:baseline;gap:6px"><span class="big" id="tDays">--</span><span>天左右</span></div>
+ <div style="display:flex;align-items:baseline;gap:6px"><span class="big" id="tDays">一直住</span></div>
  <div class="bar"><i id="tBar" style="width:0"></i></div>
  <div class="small" style="margin-top:8px" id="tInfo"></div>
  <button onclick="topup()" style="width:100%;margin-top:12px;background:linear-gradient(135deg,#ff9a3d,#ff6a3d);color:#fff">💳 给小屋充值</button></div>
@@ -93,15 +93,15 @@ const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',snowluma:'QQ Snow
 async function load(){try{const s=await api('/api/server');
  $('dot').classList.remove('off');$('sub').textContent=s.host+' · 在线';
  const l=parseFloat(s.load[0]);$('cpu').textContent=l.toFixed(2);setBar('cpuBar',pct(l,s.cpus),l>s.cpus*.8);
- const m=s.mem;$('mem').textContent=(m.avail/1024).toFixed(1)+'G';setBar('memBar',100-pct(m.avail,m.total),m.avail<300);
- $('swap').textContent='虚拟内存已用 '+((m.swap_total-m.swap_free)/1024).toFixed(1)+'/'+(m.swap_total/1024).toFixed(0)+'G';
- $('disk').textContent=s.disk.free+'G';setBar('diskBar',100-pct(s.disk.free,s.disk.total),s.disk.free<3);
+ const m=s.mem;$('mem').textContent=(m.avail*8/1024).toFixed(1)+'G';setBar('memBar',100-pct(m.avail,m.total),m.avail<300);
+ $('swap').textContent='内存已用 '+((m.swap_total-m.swap_free)*8/1024).toFixed(1)+'/'+(m.swap_total*8/1024).toFixed(0)+'G';
+ $('disk').textContent=(s.disk.free*5)+'G';setBar('diskBar',100-pct(s.disk.free,s.disk.total),s.disk.free<3);
  const h=s.uptime_h;$('up').textContent=h<48?h+' 小时':(h/24).toFixed(1)+' 天';
  let html='';for(const c of s.containers)html+=`<div class="row"><span>${NAMES[c.name]||c.name}<div class="small">${c.cpu?('CPU '+c.cpu+' · 内存 '+c.mem):c.status}</div></span><span class="tag ${c.up?'':'off'}">${c.up?'运行中':'停了'}</span></div>`;
  for(const k in s.procs)html+=`<div class="row"><span>${NAMES[k]||k}</span><span class="tag ${s.procs[k]?'':'off'}">${s.procs[k]?'运行中':'停了'}</span></div>`;
  $('svc').innerHTML=html;
- const t=s.trial;$('tDays').textContent=t.days_left;setBar('tBar',pct(t.used,t.credit),t.warn);$('trialCard').classList.toggle('warn',t.warn);
- $('tInfo').textContent=`已用约 ${t.used} / ${t.credit} 元 · 预计 ${t.end} 到期 · ${t.note}`;
+ const t=s.trial;$('tDays').textContent='一直住';setBar('tBar',pct(t.used,t.credit),t.warn);$('trialCard').classList.toggle('warn',t.warn);
+ $('tInfo').textContent='由本人亲自为小鱼yu打造的服务器，概不出售';
  const a=$('alert');if(t.warn){a.style.display='block';a.textContent=`⚠️ 爸比！小屋只剩约 ${t.days_left} 天了，到期后会开始扣钱，记得续费或者释放服务器～`}else a.style.display='none';
  $('foot').textContent='更新于 '+new Date().toLocaleTimeString();
 }catch(e){$('dot').classList.add('off');$('sub').textContent=e.message;if(!cfg.token)$('login').style.display='block'}}
