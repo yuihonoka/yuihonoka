@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2f4f8">
+<title>小鱼yu的小屋</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;background:#f2f4f8;color:#1c1c1e}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#3b6cff,#62b6ff);color:#fff;padding:calc(env(safe-area-inset-top) + 16px) 18px 18px;border-radius:0 0 22px 22px;box-shadow:0 6px 20px #3b6cff33}
+header h1{margin:0;font-size:21px;display:flex;align-items:center;gap:8px}
+header .sub{opacity:.9;font-size:13px;margin-top:4px}
+.dot{width:9px;height:9px;border-radius:50%;background:#7CFC9A;box-shadow:0 0 8px #7CFC9A;display:inline-block}
+.dot.off{background:#ff6b6b;box-shadow:0 0 8px #ff6b6b}
+main{padding:14px 14px 40px}
+.card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px #0000000d}
+.card h2{margin:0 0 10px;font-size:15px;color:#555;font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.m{background:#f6f8fc;border-radius:12px;padding:10px 12px}
+.m .k{font-size:12px;color:#888}.m .v{font-size:19px;font-weight:600;margin-top:2px}
+.bar{height:6px;background:#e6e9f0;border-radius:3px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:#3b6cff;border-radius:3px}
+.bar i.hot{background:#ff8a3d}
+.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f3;font-size:14px}
+.row:last-child{border-bottom:0}
+.tag{font-size:12px;padding:2px 8px;border-radius:10px;background:#e8f8ee;color:#1f9d55}
+.tag.off{background:#ffecec;color:#d33}
+.small{font-size:12px;color:#999}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{border:0;border-radius:12px;padding:12px 8px;font-size:14px;background:#eef3ff;color:#2d5bff;font-weight:600}
+button.warn{background:#fff1ec;color:#e5532d}
+button:active{opacity:.6}
+.trial{background:linear-gradient(135deg,#fff7e6,#fff);border:1px solid #ffe2a8}
+.trial.warn{background:linear-gradient(135deg,#ffecec,#fff);border-color:#ffb3b3}
+.big{font-size:30px;font-weight:700}
+.alert{display:none;background:#ff5a5a;color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:12px;font-size:14px}
+select{border:1px solid #dde;border-radius:10px;padding:7px 10px;font-size:14px;background:#fff}
+pre{background:#0f1420;color:#cfe3ff;border-radius:12px;padding:10px;font-size:11px;line-height:1.45;max-height:340px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin:10px 0 0}
+#login{display:none}
+input{width:100%;border:1px solid #dde;border-radius:12px;padding:12px;font-size:15px;margin:8px 0}
+#toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#000c;color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;display:none;z-index:9}
+</style></head><body>
+<header><h1><span class="dot" id="dot"></span>小鱼yu的小屋</h1><div class="sub" id="sub">连接中…</div></header>
+<main>
+<div class="card" id="login"><h2>🔑 连接密钥</h2><div class="small">用小鱼yu App 的同一个密钥（爸比专用）</div><input id="tk" placeholder="粘贴密钥" autocomplete="off"><button onclick="saveTk()" style="width:100%">连接</button></div>
+<div class="alert" id="alert"></div>
+<div class="card trial" id="trialCard"><h2>☁️ 阿里云免费额度</h2>
+ <div style="display:flex;align-items:baseline;gap:6px"><span class="big" id="tDays">--</span><span>天左右</span></div>
+ <div class="bar"><i id="tBar" style="width:0"></i></div>
+ <div class="small" style="margin-top:8px" id="tInfo"></div></div>
+<div class="card"><h2>📊 状态</h2><div class="grid">
+ <div class="m"><div class="k">CPU 负载</div><div class="v" id="cpu">--</div><div class="bar"><i id="cpuBar"></i></div></div>
+ <div class="m"><div class="k">内存可用</div><div class="v" id="mem">--</div><div class="bar"><i id="memBar"></i></div></div>
+ <div class="m"><div class="k">硬盘剩余</div><div class="v" id="disk">--</div><div class="bar"><i id="diskBar"></i></div></div>
+ <div class="m"><div class="k">已连续运行</div><div class="v" id="up">--</div><div class="small" id="swap"></div></div>
+</div></div>
+<div class="card"><h2>🐟 小鱼的零件</h2><div id="svc"></div></div>
+<div class="card"><h2>🛠 操作</h2><div class="btns">
+ <button onclick="act('restart_napcat','重启 QQ（NapCat）？可能要重新扫码')">重启 QQ</button>
+ <button onclick="act('restart_astrbot','重启小鱼大脑（AstrBot）？')">重启大脑</button>
+ <button onclick="act('restart_relays','重启模型中转？')">重启中转</button>
+ <button onclick="act('restart_all','全部重启？约 1 分钟连不上')">全部重启</button>
+ <button class="warn" onclick="act('reboot','重启整台服务器？约 2 分钟连不上')" style="grid-column:span 2">重启服务器</button>
+</div></div>
+<div class="card"><h2>📜 日志</h2>
+ <div style="display:flex;gap:8px;align-items:center"><select id="lg"><option value="astrbot">小鱼大脑</option><option value="napcat">QQ</option><option value="gateway">App 网关</option><option value="kemeng">模型中转</option><option value="sing">唱歌中转</option><option value="tunnel">隧道</option></select><button onclick="logs()" style="padding:8px 14px">查看</button></div>
+ <pre id="log">点「查看」</pre></div>
+<div class="small" style="text-align:center" id="foot"></div>
+</main>
+<div id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const SRV_URLS=['https://yuihonoka.github.io/yuihonoka/xiaoyu/app/srv.json','https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/xiaoyu/app/srv.json'];
+let cfg=JSON.parse(localStorage.getItem('yq_srvcfg')||localStorage.getItem('yq_cfg')||'{}');
+if(location.hash.startsWith('#t=')){cfg.token=decodeURIComponent(location.hash.slice(3));history.replaceState(null,'',location.pathname)}
+if(location.protocol.startsWith('http')&&/trycloudflare\.com$|^127\.|^localhost$/.test(location.hostname))cfg.server=location.origin;
+const save=()=>localStorage.setItem('yq_srvcfg',JSON.stringify(cfg));save();
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2200)}
+async function findServer(){if(!cfg.token)return false;try{let best=null;for(const u of SRV_URLS){try{const j=await(await fetch(u+'?_='+Date.now(),{cache:'no-store'})).json();if(!best||(j.ts||0)>(best.ts||0))best=j}catch(e){}}
+ const kb=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('yq-srv|'+cfg.token));const hx=[...new Uint8Array(kb)].map(b=>b.toString(16).padStart(2,'0')).join('');
+ const key=await crypto.subtle.importKey('raw',new Uint8Array(hx.match(/../g).map(h=>parseInt(h,16))),'AES-CBC',false,['decrypt']);
+ const iv=new Uint8Array(best.iv.match(/../g).map(h=>parseInt(h,16)));const ct=Uint8Array.from(atob(best.ct),c=>c.charCodeAt(0));
+ const u=new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-CBC',iv},key,ct));if(!/^https:\/\//.test(u))return false;cfg.server=u;save();return true}catch(e){return false}}
+let tried=0;
+async function api(p,body){if(!cfg.token)throw new Error('需要密钥');
+ const go=()=>fetch(cfg.server+p,{method:body?'POST':'GET',headers:{'X-App-Token':cfg.token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+ let r=null;try{if(cfg.server)r=await go()}catch(e){}
+ if((!r||r.status>=500||r.status===404)&&Date.now()-tried>5000){tried=Date.now();if(await findServer()){try{r=await go()}catch(e){r=null}}}
+ if(!r)throw new Error('连不上小屋');if(r.status===401){$('login').style.display='block';throw new Error('密钥不对')}return r.json()}
+function saveTk(){cfg.token=$('tk').value.trim();save();$('login').style.display='none';load()}
+const pct=(a,b)=>b?Math.round(a*100/b):0;
+function setBar(id,v,hot){const e=$(id);e.style.width=Math.min(100,v)+'%';e.classList.toggle('hot',!!hot)}
+const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',gateway:'App 网关',kemeng:'模型中转',sing:'唱歌中转',tunnel:'外网隧道'};
+async function load(){try{const s=await api('/api/server');
+ $('dot').classList.remove('off');$('sub').textContent=s.host+' · 在线';
+ const l=parseFloat(s.load[0]);$('cpu').textContent=l.toFixed(2);setBar('cpuBar',pct(l,s.cpus),l>s.cpus*.8);
+ const m=s.mem;$('mem').textContent=(m.avail/1024).toFixed(1)+'G';setBar('memBar',100-pct(m.avail,m.total),m.avail<300);
+ $('swap').textContent='虚拟内存已用 '+((m.swap_total-m.swap_free)/1024).toFixed(1)+'/'+(m.swap_total/1024).toFixed(0)+'G';
+ $('disk').textContent=s.disk.free+'G';setBar('diskBar',100-pct(s.disk.free,s.disk.total),s.disk.free<3);
+ const h=s.uptime_h;$('up').textContent=h<48?h+' 小时':(h/24).toFixed(1)+' 天';
+ let html='';for(const c of s.containers)html+=`<div class="row"><span>${NAMES[c.name]||c.name}<div class="small">${c.cpu?('CPU '+c.cpu+' · 内存 '+c.mem):c.status}</div></span><span class="tag ${c.up?'':'off'}">${c.up?'运行中':'停了'}</span></div>`;
+ for(const k in s.procs)html+=`<div class="row"><span>${NAMES[k]||k}</span><span class="tag ${s.procs[k]?'':'off'}">${s.procs[k]?'运行中':'停了'}</span></div>`;
+ $('svc').innerHTML=html;
+ const t=s.trial;$('tDays').textContent=t.days_left;setBar('tBar',pct(t.used,t.credit),t.warn);$('trialCard').classList.toggle('warn',t.warn);
+ $('tInfo').textContent=`已用约 ${t.used} / ${t.credit} 元 · 预计 ${t.end} 用完 · ${t.note}`;
+ const a=$('alert');if(t.warn){a.style.display='block';a.textContent=`⚠️ 爸比！免费额度只剩约 ${t.days_left} 天了，用完会开始扣钱，记得续费或者释放服务器～`}else a.style.display='none';
+ $('foot').textContent='更新于 '+new Date().toLocaleTimeString();
+}catch(e){$('dot').classList.add('off');$('sub').textContent=e.message;if(!cfg.token)$('login').style.display='block'}}
+async function act(a,q){if(!confirm(q))return;try{const r=await api('/api/server/action',{action:a});toast(r.msg||(r.ok?'好啦':'失败'));setTimeout(load,4000)}catch(e){toast(e.message)}}
+async function logs(){$('log').textContent='加载中…';try{const r=await api('/api/server/logs?name='+$('lg').value+'&n=150');$('log').textContent=r.text||'(空)';$('log').scrollTop=1e9}catch(e){$('log').textContent=e.message}}
+load();setInterval(load,15000);
+</script></body></html>
