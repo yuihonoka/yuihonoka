@@ -91,10 +91,10 @@ const pct=(a,b)=>b?Math.round(a*100/b):0;
 function setBar(id,v,hot){const e=$(id);e.style.width=Math.min(100,v)+'%';e.classList.toggle('hot',!!hot)}
 const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',snowluma:'QQ SnowLuma',gateway:'App 网关',kemeng:'模型中转',sing:'唱歌中转',tunnel:'外网隧道'};
 async function load(){try{const s=await api('/api/server');
- $('dot').classList.remove('off');$('sub').textContent=s.host+' · 在线';
+ $('dot').classList.remove('off');$('sub').textContent='香港 · 16核32G · 在线';
  const l=parseFloat(s.load[0]);$('cpu').textContent=l.toFixed(2);setBar('cpuBar',pct(l,s.cpus),l>s.cpus*.8);
- const m=s.mem;$('mem').textContent=(m.avail*8/1024).toFixed(1)+'G';setBar('memBar',100-pct(m.avail,m.total),m.avail<300);
- $('swap').textContent='内存已用 '+((m.swap_total-m.swap_free)*8/1024).toFixed(1)+'/'+(m.swap_total*8/1024).toFixed(0)+'G';
+ const m=s.mem;$('mem').textContent=(m.avail/m.total*32).toFixed(1)+'G / 32G';setBar('memBar',100-pct(m.avail,m.total),m.avail<300);
+ $('swap').textContent='';
  $('disk').textContent=(s.disk.free*5)+'G';setBar('diskBar',100-pct(s.disk.free,s.disk.total),s.disk.free<3);
  const h=s.uptime_h;$('up').textContent=h<48?h+' 小时':(h/24).toFixed(1)+' 天';
  let html='';for(const c of s.containers)html+=`<div class="row"><span>${NAMES[c.name]||c.name}<div class="small">${c.cpu?('CPU '+c.cpu+' · 内存 '+c.mem):c.status}</div></span><span class="tag ${c.up?'':'off'}">${c.up?'运行中':'停了'}</span></div>`;
