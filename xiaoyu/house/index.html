@@ -89,7 +89,7 @@ async function api(p,body){if(!cfg.token)throw new Error('需要密钥');
 function saveTk(){cfg.token=$('tk').value.trim();save();$('login').style.display='none';load()}
 const pct=(a,b)=>b?Math.round(a*100/b):0;
 function setBar(id,v,hot){const e=$(id);e.style.width=Math.min(100,v)+'%';e.classList.toggle('hot',!!hot)}
-const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',snowluma:'QQ SnowLuma',gateway:'App 网关',kemeng:'deepseek模型',sing:'deepseek模型',tunnel:'外网隧道'};
+const NAMES={astrbot:'小鱼大脑 AstrBot',napcat:'QQ NapCat',snowluma:'QQ SnowLuma',gateway:'App 网关',kemeng:'deepseek模型 · 聊天',sing:'deepseek模型 · 语音+唱歌',tunnel:'外网隧道'};
 async function load(){try{const s=await api('/api/server');
  $('dot').classList.remove('off');$('sub').textContent='京都 · 16核32G · 在线';
  const l=parseFloat(s.load[0]);$('cpu').textContent=l.toFixed(2);setBar('cpuBar',pct(l,s.cpus),l>s.cpus*.8);
