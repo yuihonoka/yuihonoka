@@ -125,6 +125,7 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
 </style>
 </head>
 <body>
+<div id="bootL" style="position:fixed;inset:0;z-index:999;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font:15px -apple-system,sans-serif;color:#536471"><b style="font-size:22px;color:#0f1419">小鱼yu的手机</b><span>加载中…</span></div><script>setTimeout(()=>{const b=document.getElementById('bootL');b&&b.remove()},8000)</script>
 <div class="app">
   <div class="top" id="top">
     <div class="avw"><img class="ava" id="topAva" alt=""><i class="od"></i></div>
@@ -927,7 +928,7 @@ const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$
 // ===== 锁屏（没有小鱼的密钥就锁着）=====
 function lockTick(){const d=new Date();$('lkClk').textContent=d.toTimeString().slice(0,5);$('lkDt').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`}
 /* lock screen removed 2026-11-07 */
-function unlockAsk(){import('https://yuihonoka.github.io/yuihonoka/xiaoyu/app/unlock.js?v='+Date.now()).then(m=>m.go()).catch(()=>toast('网络不好，再点一次'))}
+function unlockAsk(){import(new URL('unlock.js?v='+Date.now(),location.href).href).then(m=>m.go()).catch(()=>toast('网络不好，再点一次'))}
 // ===== 主题 =====
 const THEMES=[{n:'QQ蓝',c:'#12b7f5'},{n:'樱花粉',c:'#ff7eb3'},{n:'B站粉',c:'#fb7299'},{n:'薄荷绿',c:'#2fcf9b'},{n:'香芋紫',c:'#9b7bff'},{n:'暖阳橙',c:'#ff9a3c'},{n:'夜间',c:'#2b2d42',dark:1},{n:'轻音红',c:'#e8414e'}];
 function shade(hex,p){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=x=>Math.max(0,Math.min(255,Math.round(x+(p>0?(255-x)*p:x*p))));return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
@@ -1511,6 +1512,8 @@ function galRender(){$('galG').innerHTML=galGet().map((u,i)=>`<img src="${u}" on
 // ---- 启动：解锁后进桌面 ----
 iosRender();iosTick();setInterval(iosTick,15000);
 if(cfg.token){iosShow(true);$('iosHome').classList.add('on');iosLife();setInterval(iosLife,120000)}
+else setTimeout(unlockAsk,300);
+{const b=document.getElementById('bootL');if(b)b.remove()}
 if(window.speechSynthesis)speechSynthesis.getVoices();
 </script>
 <style id="qq9">
