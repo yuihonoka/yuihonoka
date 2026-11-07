@@ -172,6 +172,7 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
       <div class="row arr" onclick="openPage('p-plugins')"><span>🧩 插件</span><span class="v" id="vPlug"></span></div>
       <div class="row arr" onclick="openPage('p-persona')"><span>🎭 人格配置</span><span class="v">default</span></div>
       <div class="row arr" onclick="openPage('p-model')"><span>🧠 对话模型</span><span class="v">DeepSeek</span></div>
+      <div class="row arr" onclick="openPage('p-loop')"><span>💭 思考回路</span><span class="v" id="vLoop"></span></div>
       <div class="row arr" onclick="openPage('p-sys')"><span>⚙️ AstrBot / SnowLuma</span><span class="v" id="vSys"></span></div>
       <div class="row arr" onclick="openPage('p-mem')"><span>🌌 记忆星图</span><span class="v" id="vMem"></span></div>
       <div class="row arr" onclick="openPage('p-vault')"><span>🔐 密码保险箱</span><span class="v" id="vVault"></span></div>
@@ -233,6 +234,15 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   <div id="plugList"></div>
   <button class="btn big ghost" id="mMore" style="display:none" onclick="mPage++;loadMarket(true)">加载更多</button></div></div>
 
+<div class="page" id="p-loop"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>思考回路</h1><button class="ib" onclick="loadLoop()">⟳</button></div><div class="body">
+  <div class="sec"><h3>小鱼自己的 Agent 循环：想一想 → 做事 → 自检 → 回复</h3>
+   <div class="row"><span>开启</span><label class="sw"><input type="checkbox" id="lpOn" onchange="loopSave()"><span></span></label></div>
+   <div class="row"><span>生效范围</span><select id="lpScope" onchange="loopSave()" style="font:inherit;border:0;color:#999;background:none"><option value="dad_private">只在爸比私聊</option><option value="dad_all">爸比（私聊+群）</option><option value="all_private">所有私聊</option><option value="all">所有人</option></select></div>
+   <div class="row"><span>做事最多几步</span><select id="lpSteps" onchange="loopSave()" style="font:inherit;border:0;color:#999;background:none"><option>2</option><option>4</option><option>6</option><option>8</option><option>12</option><option>20</option></select></div>
+   <div class="row"><span>先想一想</span><label class="sw"><input type="checkbox" id="lpThink" onchange="loopSave()"><span></span></label></div>
+   <div class="row"><span>回复前自检（不像小鱼就重说）</span><label class="sw"><input type="checkbox" id="lpCheck" onchange="loopSave()"><span></span></label></div>
+  </div>
+  <div class="sec"><h3>最近几次思考</h3><div id="lpRuns"></div></div></div></div>
 <div class="page" id="p-model"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>对话模型</h1></div><div class="body">
   <div class="sec"><div class="row"><span>模型</span><span class="v">DeepSeek</span></div></div>
   <p style="color:#999;font-size:13px;margin:10px 4px">在 DeepSeek 开放平台充值后，新建一个 API Key，粘贴到下面。Key 只保存在服务器，不会显示出来。</p>
@@ -350,7 +360,7 @@ function qEmo(){const b=$('qEmo');if(!b.innerHTML)b.innerHTML='😀😁😂🤣�
 function sendImg(inp){const f=inp.files[0];if(!f||!CUR||CUR.type==='yu')return toast('小鱼聊天暂不支持发图');const r=new FileReader();r.onload=async()=>{const d=await api('/api/send',{type:CUR.type,id:CUR.id,image:r.result});toast(d.ok?'已发送':'发送失败');setTimeout(loadHistory,1000)};r.readAsDataURL(f);inp.value=''}
 $('cin').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
 // pages
-function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':loadMem,'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
+function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-loop':loadLoop,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':loadMem,'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
 function closePage(){try{$('bvPlayer').pause()}catch(e){}document.querySelectorAll('.page.on').forEach(p=>p.classList.remove('on'))}
 async function saveSign(){const d=await api('/api/longnick',{text:$('signIn').value});toast(d.ok?'签名已更新':'失败：'+(d.msg||''));if(d.ok){closePage();setTimeout(loadMe,800)}}
 async function postQzone(){const t=$('qzText').value.trim();if(!t)return toast('写点内容吧');if(!confirm('发表到 QQ 空间？'))return;const d=await api('/api/qzone',{text:t});
@@ -373,6 +383,12 @@ async function loadMarket(more){if(!more)$('plugList').innerHTML='<div class="ti
  const h=d.items.map(p=>`<div class="pl"><div class="mid"><div class="t">${esc(p.title)} <span style="color:#bbb;font-size:12px">⭐${p.stars||0} · ${esc(p.category||'')}</span></div><div class="d">${esc(p.desc)}</div></div>${p.installed?'<button class="btn ghost" disabled>已安装</button>':`<button class="btn" onclick='installPlug(${JSON.stringify(p.repo||'')},${JSON.stringify(p.download_url||'')},this)'>安装</button>`}</div>`).join('');
  if(more)$('plugList').insertAdjacentHTML('beforeend',h);else $('plugList').innerHTML=`<div class="tip">共 ${d.total} 个</div>`+h;$('mMore').style.display=(mPage+1)*30<d.total?'block':'none'}catch(e){toast(e.message)}}
 async function installPlug(repo,dl,b){if(!confirm('安装这个插件？'))return;b.disabled=true;b.textContent='安装中…';const d=await api('/api/plugin/install',{repo,download_url:dl});b.textContent=d.ok?'已安装':'失败';toast(d.ok?'安装成功':'失败：'+(d.msg||''));if(!d.ok)b.disabled=false}
+// yui loop
+const LPK={think:'💭 想',tool:'🔧 工具',reply:'💬 回复',check:'🔍 自检'};
+async function loadLoop(){try{const d=await api('/api/yuiloop'),c=d.cfg;$('lpOn').checked=c.enabled;$('lpScope').value=c.scope;$('lpSteps').value=String(c.max_steps);$('lpThink').checked=c.think;$('lpCheck').checked=c.selfcheck;
+ $('vLoop').textContent=c.enabled?'开':'关';
+ $('lpRuns').innerHTML=d.runs.length?d.runs.map(r=>`<div style="padding:12px 14px;border-bottom:1px solid #f5f5f5"><div style="display:flex;justify-content:space-between;font-size:13px;color:#999"><span>${esc(r.who)} · ${esc(r.where)}</span><span>${new Date(r.t*1000).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} · ${(r.ms/1000).toFixed(1)}s ${r.ok?'✓':'⚠️'}</span></div><div style="margin:4px 0 6px">${esc(r.msg)}</div>${(r.steps||[]).map(s=>`<div style="font-size:13px;color:#555;margin:2px 0"><b style="font-weight:600">${LPK[s.k]||s.k}${s.name?' '+esc(s.name):''}</b> ${esc(s.out||s.args||'')}${s.ms?` <span style="color:#bbb">${(s.ms/1000).toFixed(1)}s</span>`:''}</div>`).join('')}${r.err?`<div style="font-size:13px;color:#e55">出错，已交回默认回路：${esc(r.err)}</div>`:''}</div>`).join(''):'<div class="row"><span style="color:#999">还没有记录，给小鱼发条私聊试试</span></div>'}catch(e){$('lpRuns').innerHTML='<div class="row"><span style="color:#e55">'+esc(e.message)+'</span></div>'}}
+async function loopSave(){try{const d=await api('/api/yuiloop',{enabled:$('lpOn').checked,scope:$('lpScope').value,max_steps:+$('lpSteps').value,think:$('lpThink').checked,selfcheck:$('lpCheck').checked});$('vLoop').textContent=d.cfg.enabled?'开':'关'}catch(e){alert('保存失败：'+e.message)}}
 // persona
 async function saveModelKey(){const k=$('mKey').value.trim();if(!k)return;$('mMsg').textContent='验证中…';try{const d=await api('/api/llm_key',{key:k});$('mMsg').textContent=d.msg||(d.ok?'已换上':'失败');if(d.ok)$('mKey').value=''}catch(e){$('mMsg').textContent='失败：'+e.message}}
 let PERS=[];async function loadPersona(){PERS=await api('/api/personas');$('psel').innerHTML=PERS.map(p=>`<option>${esc(p.id)}</option>`).join('');showPersona()}
