@@ -39,7 +39,7 @@ input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid #d6
 #empty b{display:block;font-size:17px;margin-bottom:6px}#empty span{font-size:13px;color:#5b6475}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(30,36,51,.88);color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .3s;z-index:9;pointer-events:none;max-width:80vw;text-align:center}
 #toast.on{opacity:1}
-@media (orientation:portrait){#right{width:100%;top:auto;height:auto;border-radius:18px 18px 0 0;padding:12px}.user{display:none}#side{bottom:auto;height:auto;flex-direction:row;right:10px;width:auto;padding:6px 10px}#side .sp{display:none}#panel{left:10px;right:10px;width:auto;top:80px;bottom:auto;max-height:60vh}#empty{transform:translate(-50%,-50%)}}
+/* PC 布局（爸比 2026-11-07 21:48）：竖屏也用电脑版排列，只放宽面板 */@media (orientation:portrait){#right{width:46vw}#panel{width:calc(100vw - 96px)}}
 </style>
 <script src="lib/live2dcubismcore.min.js"></script><script src="lib/pixi.min.js"></script><script src="lib/cubism4.min.js"></script><script src="lib/jszip.min.js"></script>
 </head><body>
