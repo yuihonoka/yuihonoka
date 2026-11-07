@@ -265,7 +265,8 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   <button class="btn big" onclick="saveLink()">保存并连接</button>
   <div class="tip" id="curSrv"></div></div></div>
 
-<div class="page" id="p-mem"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>记忆星图</h1><button class="ib" onclick="loadMem()">↻</button></div><div class="body" style="padding:0;background:#070b1a;color:#cfe">
+<div class="page" id="p-mem"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>记忆星图</h1><button class="ib" onclick="loadMem()">↻</button></div><div class="body" style="padding:0;background:#070b1a;color:#cfe;position:relative;isolation:isolate">
+<video id="memBg" src="membg.mp4" muted loop playsinline autoplay preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.3;z-index:-1;pointer-events:none"></video>
 <div id="memStat" style="padding:10px 14px;font-size:13px;opacity:.85">加载中…</div>
 <canvas id="memCv" style="width:100%;height:58vh;display:block;touch-action:none"></canvas>
 <div id="memInfo" style="padding:10px 14px;font-size:14px;min-height:60px">点一颗星看看小鱼记得什么。越亮越清楚，暗的是快忘了的，闪烁的是刚刚想起的。</div>
@@ -360,7 +361,7 @@ function qEmo(){const b=$('qEmo');if(!b.innerHTML)b.innerHTML='😀😁😂🤣�
 function sendImg(inp){const f=inp.files[0];if(!f||!CUR||CUR.type==='yu')return toast('小鱼聊天暂不支持发图');const r=new FileReader();r.onload=async()=>{const d=await api('/api/send',{type:CUR.type,id:CUR.id,image:r.result});toast(d.ok?'已发送':'发送失败');setTimeout(loadHistory,1000)};r.readAsDataURL(f);inp.value=''}
 $('cin').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
 // pages
-function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-loop':loadLoop,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':loadMem,'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
+function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-loop':loadLoop,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':()=>{loadMem();const v=$('memBg');if(v)v.play().catch(()=>{})},'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
 function closePage(){try{$('bvPlayer').pause()}catch(e){}document.querySelectorAll('.page.on').forEach(p=>p.classList.remove('on'))}
 async function saveSign(){const d=await api('/api/longnick',{text:$('signIn').value});toast(d.ok?'签名已更新':'失败：'+(d.msg||''));if(d.ok){closePage();setTimeout(loadMe,800)}}
 async function postQzone(){const t=$('qzText').value.trim();if(!t)return toast('写点内容吧');if(!confirm('发表到 QQ 空间？'))return;const d=await api('/api/qzone',{text:t});
@@ -440,7 +441,7 @@ const cv=$('memCv'),W=cv.clientWidth,H=cv.clientHeight,dpr=devicePixelRatio||1;c
 const N=MEM.nodes,idx={};N.forEach((n,i)=>{idx[n.id]=n;const h=[...(n.who||'?')].reduce((a,c)=>a+c.charCodeAt(0),0);const ang=(h%360)/57.3+i*0.37,rad=40+Math.min(W,H)*0.42*(1-Math.min(1,n.R+0.1))+((n.id*37)%30);n.x=W/2+Math.cos(ang)*rad;n.y=H/2+Math.sin(ang)*rad;n.hue=h%360});
 const recent={};(MEM.hits||[]).forEach(h=>{if(Date.now()/1000-h.ts<600)recent[h.episode]=h.kind});
 $('memHits').innerHTML=(MEM.hits||[]).slice(0,8).map(h=>{const n=idx[h.episode];return n?`<div>${new Date(h.ts*1000).toLocaleTimeString()} ${({clear:'想起',fuzzy:'隐约想起',assoc:'联想到',spont:'忽然想起'})[h.kind]||h.kind}：${esc(n.s.slice(0,24))}</div>`:''}).join('');
-cancelAnimationFrame(MEMANI);let t=0;(function draw(){t+=0.03;g.fillStyle='#070b1a';g.fillRect(0,0,W,H);
+cancelAnimationFrame(MEMANI);let t=0;(function draw(){t+=0.03;g.clearRect(0,0,W,H);
 g.lineWidth=0.5;MEM.links.forEach(l=>{const a=idx[l.a],b=idx[l.b];if(!a||!b)return;g.strokeStyle=`rgba(140,180,255,${0.05+0.25*Math.min(a.R,b.R)})`;g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke()});
 N.forEach(n=>{const r=1.5+n.imp*1.1,al=0.15+0.85*n.R,fl=recent[n.id]?0.5+0.5*Math.sin(t*4+n.id):0;g.beginPath();g.fillStyle=`hsla(${n.hue},80%,${70+fl*20}%,${Math.min(1,al+fl)})`;g.shadowColor=`hsla(${n.hue},90%,70%,1)`;g.shadowBlur=(n.R*8)+fl*16;g.arc(n.x,n.y,r+fl*2,0,7);g.fill()});g.shadowBlur=0;MEMANI=requestAnimationFrame(draw)})();
 cv.onclick=e=>{const b=cv.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;let best=null,bd=400;N.forEach(n=>{const d=(n.x-x)**2+(n.y-y)**2;if(d<bd){bd=d;best=n}});if(best)$('memInfo').innerHTML=`<b>${new Date(best.ts*1000).toLocaleDateString()} · ${esc(best.who||'')}</b> ${best.emo?'('+esc(best.emo)+')':''}<br>${esc(best.s)}<br><span style="opacity:.6">清晰度 ${Math.round(best.R*100)}% · 重要度 ${best.imp} · 想起过 ${best.rc} 次 · ${esc((best.kw||[]).join(' / '))}</span>`}}
