@@ -172,7 +172,7 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
       <div class="row arr" onclick="openPage('p-plugins')"><span>🧩 插件</span><span class="v" id="vPlug"></span></div>
       <div class="row arr" onclick="openPage('p-persona')"><span>🎭 人格配置</span><span class="v">default</span></div>
       <div class="row arr" onclick="openPage('p-model')"><span>🧠 对话模型</span><span class="v">DeepSeek</span></div>
-      <div class="row arr" onclick="openPage('p-sys')"><span>⚙️ AstrBot / NapCat</span><span class="v" id="vSys"></span></div>
+      <div class="row arr" onclick="openPage('p-sys')"><span>⚙️ AstrBot / SnowLuma</span><span class="v" id="vSys"></span></div>
       <div class="row arr" onclick="openPage('p-mem')"><span>🌌 记忆星图</span><span class="v" id="vMem"></span></div>
       <div class="row arr" onclick="openPage('p-vault')"><span>🔐 密码保险箱</span><span class="v" id="vVault"></span></div>
       <div class="row arr" onclick="openPage('p-set')"><span>🔗 连接设置</span><span class="v"></span></div>
@@ -670,7 +670,7 @@ async function profSave(){const b={nickname:$('pf_nickname').value.trim(),longni
 async function loadRun(){$('runBody').innerHTML='<div class="tip">加载中…</div>';try{const [s,pl,mem]=await Promise.all([api('/api/status'),api('/api/plugins').catch(()=>[]),api('/api/memory').catch(()=>({stats:{}}))]);const u=s.usage||{},ms=mem.stats||{};
  $('runBody').innerHTML=`<div class="sec"><h3>小鱼yu</h3><div class="row"><span>大脑模型</span><span class="v">DeepSeek V4.1 Flash</span></div><div class="row"><span>已连续运行</span><span class="v">${s.uptime_sec!=null?up(s.uptime_sec):'—'}</span></div><div class="row"><span>QQ</span><span class="v"><i class="dot ${s.qq.online?'ok':'bad'}"></i>${s.qq.online?esc(s.qq.nick)+' '+s.qq.id:'离线'}</span></div><div class="row"><span>群 / 好友</span><span class="v">${s.groups??'—'} / ${s.friends??'—'}</span></div><div class="row"><span>插件</span><span class="v">${pl.filter(p=>p.on).length} / ${pl.length} 启用</span></div><div class="row"><span>记忆</span><span class="v">清楚 ${ms.clear||0} · 模糊 ${ms.fuzzy||0} · 沉睡 ${ms.sleep||0}</span></div></div>
  <div class="sec"><h3>今天的用量（DeepSeek）</h3><div class="row"><span>24h 调用 / tokens</span><span class="v">${u.calls_24h??'—'} 次 · ${fmtN(u.tokens_24h||0)}</span></div><div class="row"><span>24h 费用 / 累计</span><span class="v">¥${u.cost_24h??'—'} / ¥${u.cost_all??'—'}</span></div></div>
- <div class="sec"><h3>运行平台</h3><div class="row"><span>框架</span><span class="v">AstrBot + NapCat</span></div>${(s.containers||[]).map(x=>`<div class="row"><span><i class="dot ${/^Up/.test(x.status)?'ok':'bad'}"></i>${esc(x.name)}</span><span class="v">${esc(x.status)}</span></div>`).join('')}</div>`}catch(e){$('runBody').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+ <div class="sec"><h3>运行平台</h3><div class="row"><span>框架</span><span class="v">AstrBot + SnowLuma</span></div>${(s.containers||[]).map(x=>`<div class="row"><span><i class="dot ${/^Up/.test(x.status)?'ok':'bad'}"></i>${esc(x.name)}</span><span class="v">${esc(x.status)}</span></div>`).join('')}</div>`}catch(e){$('runBody').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
 // 发送状态：QQ 在线状态 + 发消息情况
 const QST=[['在线',10,0,'🟢'],['Q我吧',60,0,'💬'],['离开',30,0,'🌙'],['忙碌',50,0,'⛔'],['请勿打扰',70,0,'🔕'],['隐身',40,0,'👻'],['听歌中',10,1028,'🎵'],['学习中',10,1018,'📚'],['睡觉中',10,1016,'😴'],['摸鱼中',10,1300,'🐟']];
 function fdur(s){return s>=86400?Math.floor(s/86400)+'天'+Math.floor(s%86400/3600)+'小时':s>=3600?Math.floor(s/3600)+'小时'+Math.floor(s%3600/60)+'分':Math.max(1,Math.ceil(s/60))+'分钟'}
