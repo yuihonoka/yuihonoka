@@ -172,6 +172,7 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
       <div class="row arr" onclick="openPage('p-plugins')"><span>🧩 插件</span><span class="v" id="vPlug"></span></div>
       <div class="row arr" onclick="openPage('p-persona')"><span>🎭 人格配置</span><span class="v">default</span></div>
       <div class="row arr" onclick="openPage('p-model')"><span>🧠 对话模型</span><span class="v">DeepSeek</span></div>
+      <div class="row arr" onclick="openPage('p-like')"><span>👍 给爸比点赞</span><span class="v" id="vLike"></span></div>
       <div class="row arr" onclick="openPage('p-loop')"><span>💭 思考回路</span><span class="v" id="vLoop"></span></div>
       <div class="row arr" onclick="openPage('p-sys')"><span>⚙️ AstrBot / SnowLuma</span><span class="v" id="vSys"></span></div>
       <div class="row arr" onclick="openPage('p-mem')"><span>🌌 记忆星图</span><span class="v" id="vMem"></span></div>
@@ -234,6 +235,14 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   <div id="plugList"></div>
   <button class="btn big ghost" id="mMore" style="display:none" onclick="mPage++;loadMarket(true)">加载更多</button></div></div>
 
+<div class="page" id="p-like"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>给爸比点赞</h1><button class="ib" onclick="loadLike()">↻</button></div><div class="body" style="background:linear-gradient(180deg,#eaf6ff,#fff);text-align:center;padding:30px 20px">
+<div style="font-size:14px;color:#888">小鱼给爸比的 QQ 主页点赞</div>
+<div style="font-size:15px;margin:6px 0 26px">京阿尼唯 · 3464948964</div>
+<button id="likeBtn" onclick="doLike()" style="position:relative;width:150px;height:150px;border-radius:50%;border:0;background:linear-gradient(145deg,#2fb6ff,#0a8cf0);color:#fff;font-size:60px;box-shadow:0 10px 30px rgba(10,140,240,.35);transition:transform .12s;display:inline-flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="70" height="70" fill="#fff"><path d="M2 21h3V9H2v12zm20-11c0-1.1-.9-2-2-2h-6.3l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L13.17 1 6.59 7.59C6.22 7.95 6 8.45 6 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg><span id="likePop" style="position:absolute;left:50%;top:-6px;font-size:22px;font-weight:700;color:#0a8cf0;opacity:0;transform:translate(-50%,0);transition:all .8s"></span></button>
+<div id="likeN" style="font-size:30px;font-weight:700;margin:22px 0 4px;color:#0a8cf0">0 / 10</div>
+<div style="font-size:13px;color:#999">今天已赞 · 每天最多 10 个，点一下赞满</div>
+<div id="likeTot" style="font-size:13px;color:#bbb;margin-top:18px"></div>
+</div></div>
 <div class="page" id="p-loop"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>思考回路</h1><button class="ib" onclick="loadLoop()">⟳</button></div><div class="body">
   <div class="sec"><h3>小鱼自己的 Agent 循环：想一想 → 做事 → 自检 → 回复</h3>
    <div class="row"><span>开启</span><label class="sw"><input type="checkbox" id="lpOn" onchange="loopSave()"><span></span></label></div>
@@ -361,7 +370,7 @@ function qEmo(){const b=$('qEmo');if(!b.innerHTML)b.innerHTML='😀😁😂🤣�
 function sendImg(inp){const f=inp.files[0];if(!f||!CUR||CUR.type==='yu')return toast('小鱼聊天暂不支持发图');const r=new FileReader();r.onload=async()=>{const d=await api('/api/send',{type:CUR.type,id:CUR.id,image:r.result});toast(d.ok?'已发送':'发送失败');setTimeout(loadHistory,1000)};r.readAsDataURL(f);inp.value=''}
 $('cin').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
 // pages
-function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-loop':loadLoop,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':()=>{loadMem();const v=$('memBg');if(v)v.play().catch(()=>{})},'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
+function openPage(id){$(id).classList.add('on');({'p-sign':()=>$('signIn').value=ME.longnick||'','p-recall':loadRecalls,'p-login':loadLogin,'p-usage':loadUsage,'p-plugins':()=>plugSeg('i'),'p-persona':loadPersona,'p-loop':loadLoop,'p-like':loadLike,'p-sys':loadSys,'p-set':()=>$('curSrv').textContent=cfg.server?'当前：'+cfg.server:'还没有连接','p-avatar':()=>{if(!AV.img)drawAv()},'p-mem':()=>{loadMem();const v=$('memBg');if(v)v.play().catch(()=>{})},'p-vault':()=>{if(!VKEY)lockVault();else showVault()}}[id]||(()=>{}))()}
 function closePage(){try{$('bvPlayer').pause()}catch(e){}document.querySelectorAll('.page.on').forEach(p=>p.classList.remove('on'))}
 async function saveSign(){const d=await api('/api/longnick',{text:$('signIn').value});toast(d.ok?'签名已更新':'失败：'+(d.msg||''));if(d.ok){closePage();setTimeout(loadMe,800)}}
 async function postQzone(){const t=$('qzText').value.trim();if(!t)return toast('写点内容吧');if(!confirm('发表到 QQ 空间？'))return;const d=await api('/api/qzone',{text:t});
@@ -384,6 +393,10 @@ async function loadMarket(more){if(!more)$('plugList').innerHTML='<div class="ti
  const h=d.items.map(p=>`<div class="pl"><div class="mid"><div class="t">${esc(p.title)} <span style="color:#bbb;font-size:12px">⭐${p.stars||0} · ${esc(p.category||'')}</span></div><div class="d">${esc(p.desc)}</div></div>${p.installed?'<button class="btn ghost" disabled>已安装</button>':`<button class="btn" onclick='installPlug(${JSON.stringify(p.repo||'')},${JSON.stringify(p.download_url||'')},this)'>安装</button>`}</div>`).join('');
  if(more)$('plugList').insertAdjacentHTML('beforeend',h);else $('plugList').innerHTML=`<div class="tip">共 ${d.total} 个</div>`+h;$('mMore').style.display=(mPage+1)*30<d.total?'block':'none'}catch(e){toast(e.message)}}
 async function installPlug(repo,dl,b){if(!confirm('安装这个插件？'))return;b.disabled=true;b.textContent='安装中…';const d=await api('/api/plugin/install',{repo,download_url:dl});b.textContent=d.ok?'已安装':'失败';toast(d.ok?'安装成功':'失败：'+(d.msg||''));if(!d.ok)b.disabled=false}
+// dad like
+function likeShow(d){$('likeN').textContent=`${d.n} / 10`;$('vLike').textContent=`今日 ${d.n}/10`;$('likeTot').textContent=d.total?`小鱼一共给爸比点了 ${d.total} 个赞`:'';const b=$('likeBtn');b.disabled=d.n>=10;b.style.opacity=d.n>=10?.5:1}
+async function loadLike(){try{likeShow(await api('/api/dadlike'))}catch(e){toast(e.message)}}
+async function doLike(){const b=$('likeBtn');b.style.transform='scale(.88)';setTimeout(()=>b.style.transform='',140);try{const d=await api('/api/dadlike',{times:10});likeShow(d);if(d.ok){const p=$('likePop');p.textContent='+'+d.sent;p.style.opacity=1;p.style.top='-46px';setTimeout(()=>{p.style.opacity=0;p.style.top='-6px'},800);toast('赞了爸比 '+d.sent+' 下～')}else toast(d.msg||'没赞上')}catch(e){toast(e.message)}}
 // yui loop
 const LPK={think:'💭 想',tool:'🔧 工具',reply:'💬 回复',check:'🔍 自检'};
 async function loadLoop(){try{const d=await api('/api/yuiloop'),c=d.cfg;$('lpOn').checked=c.enabled;$('lpScope').value=c.scope;$('lpSteps').value=String(c.max_steps);$('lpThink').checked=c.think;$('lpCheck').checked=c.selfcheck;
