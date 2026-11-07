@@ -274,7 +274,7 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
 <script>
 const $=id=>document.getElementById(id);
 let cfg=JSON.parse(localStorage.getItem('yq_cfg')||'{}');
-const IS_GW=h=>/trycloudflare\.com$|^localhost$|^127\./.test(h);
+const IS_GW=h=>/trycloudflare\.com$|sslip\.io$|^localhost$|^127\./.test(h);
 if(location.protocol.startsWith('http')&&IS_GW(location.hostname)){const t=new URLSearchParams(location.search).get('t');cfg.server=location.origin;if(t)cfg.token=t;localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
 if(location.hash.startsWith('#t=')){cfg.token=decodeURIComponent(location.hash.slice(3));localStorage.setItem('yq_cfg',JSON.stringify(cfg));history.replaceState(null,'',location.pathname)}
 let ME={},CONTACTS=[],CUR=null,timer=null,yuHist=JSON.parse(localStorage.getItem('yq_yu')||'[]');
@@ -803,7 +803,7 @@ const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$
 <script>
 // ===== 锁屏（没有小鱼的密钥就锁着）=====
 function lockTick(){const d=new Date();$('lkClk').textContent=d.toTimeString().slice(0,5);$('lkDt').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${'日一二三四五六'[d.getDay()]}`}
-if(!cfg.token){$('lockScr').classList.add('on');lockTick();setInterval(lockTick,10000)}
+/* lock screen removed 2026-11-07 */
 function unlockAsk(){import('https://yuihonoka.github.io/yuihonoka/xiaoyu/app/unlock.js?v='+Date.now()).then(m=>m.go()).catch(()=>toast('网络不好，再点一次'))}
 // ===== 主题 =====
 const THEMES=[{n:'QQ蓝',c:'#12b7f5'},{n:'樱花粉',c:'#ff7eb3'},{n:'B站粉',c:'#fb7299'},{n:'薄荷绿',c:'#2fcf9b'},{n:'香芋紫',c:'#9b7bff'},{n:'暖阳橙',c:'#ff9a3c'},{n:'夜间',c:'#2b2d42',dark:1},{n:'轻音红',c:'#e8414e'}];
