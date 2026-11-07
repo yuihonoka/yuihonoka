@@ -43,6 +43,13 @@ input[type=text]{width:100%;padding:10px;border-radius:10px;border:1px solid #d6
 </style>
 <script src="lib/live2dcubismcore.min.js"></script><script src="lib/pixi.min.js"></script><script src="lib/cubism4.min.js"></script><script src="lib/jszip.min.js"></script>
 </head><body>
+<div id="splash" onclick="spEnd()" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .6s">
+<video id="spV" src="splash.mp4" muted playsinline autoplay preload="auto" style="width:100%;height:100%;object-fit:cover"></video>
+<span style="position:absolute;right:16px;top:calc(env(safe-area-inset-top) + 16px);color:#fff;background:#0008;border-radius:16px;padding:6px 14px;font-size:13px">跳过</span></div>
+<script>
+function spEnd(){const s=document.getElementById('splash');if(!s||s.dataset.e)return;s.dataset.e=1;s.style.opacity=0;setTimeout(()=>s.remove(),650)}
+(function(){const v=document.getElementById('spV');v.onended=spEnd;v.onerror=spEnd;setTimeout(spEnd,9500);setTimeout(()=>{if(v.paused&&v.currentTime===0)spEnd()},2500)})();
+</script>
 <div id="bg"></div><div id="stage"></div>
 <div id="empty" onclick="openP('lib')"><b>还没有模型</b><span>点这里导入 Live2D 模型压缩包（.zip）</span></div>
 <div id="side">
