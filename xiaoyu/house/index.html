@@ -22,6 +22,7 @@ main{padding:14px 14px 40px}
 .row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f3;font-size:14px}
 .row:last-child{border-bottom:0}
 .tag{font-size:12px;padding:2px 8px;border-radius:10px;background:#e8f8ee;color:#1f9d55}
+.tag.warn{background:#fff4e0;color:#d98200}
 .tag.off{background:#ffecec;color:#d33}
 .small{font-size:12px;color:#999}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -54,6 +55,7 @@ input{width:100%;border:1px solid #dde;border-radius:12px;padding:12px;font-size
  <div class="m"><div class="k">硬盘剩余</div><div class="v" id="disk">--</div><div class="bar"><i id="diskBar"></i></div></div>
  <div class="m"><div class="k">已连续运行</div><div class="v" id="up">--</div><div class="small" id="swap"></div></div>
 </div></div>
+<div class="card"><h2>🐋 DeepSeek 官方服务器</h2><div id="ds"><div class="small">查询中…</div></div><div class="small" id="dsNote" style="margin-top:6px"></div></div>
 <div class="card"><h2>🐟 小鱼的零件</h2><div id="svc"></div></div>
 <div class="card"><h2>🛠 操作</h2><div class="btns">
  <button onclick="act('restart_napcat','重启 QQ（SnowLuma）？')">重启 QQ</button>
@@ -111,5 +113,14 @@ function topup(){const u='https://usercenter2.aliyun.com/home';
  const w=window.open(u,'_blank');if(!w)location.href=u}
 async function act(a,q){if(!confirm(q))return;try{const r=await api('/api/server/action',{action:a});toast(r.msg||(r.ok?'好啦':'失败'));setTimeout(load,4000)}catch(e){toast(e.message)}}
 async function logs(){$('log').textContent='加载中…';try{const r=await api('/api/server/logs?name='+$('lg').value+'&n=150');$('log').textContent=r.text||'(空)';$('log').scrollTop=1e9}catch(e){$('log').textContent=e.message}}
-load();setInterval(load,15000);
+async function loadDs(){try{const d=await api('/api/ds_status');if(!d.ok){$('ds').innerHTML='<div class="small">'+(d.msg||'暂时查不到')+'</div>';return}
+ const L={operational:['正常',''],degraded:['变慢','warn'],partial_outage:['部分中断','off'],full_outage:['崩了','off'],maintenance:['维护中','warn']};
+ const keep=d.items.filter(x=>!/搜索API|抓取API/.test(x.name));
+ $('ds').innerHTML=keep.map(x=>{const t=L[x.status]||[x.status,''];return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0"><span style="font-size:14px">'+x.name.replace('服务','').replace('对话','网页对话')+'</span><span class="tag '+t[1]+'">'+t[0]+'</span></div>'}).join('');
+ const hm=s=>{const z=new Date((s+8*3600)*1000);return String(z.getUTCHours()).padStart(2,'0')+':'+String(z.getUTCMinutes()).padStart(2,'0')};
+ const md=s=>{const z=new Date((s+8*3600)*1000);return (z.getUTCMonth()+1)+'月'+z.getUTCDate()+'日'};
+ let n=d.today?'今天出过 '+d.today+' 次问题':'今天一直正常';
+ if(d.last&&d.last.start){n+=' · 最近一次 '+md(d.last.start)+' '+hm(d.last.start)+(d.last.end?'–'+hm(d.last.end):' 起，还没恢复')}
+ $('dsNote').textContent=n}catch(e){$('ds').innerHTML='<div class="small">暂时查不到</div>'}}
+load();setInterval(load,15000);loadDs();setInterval(loadDs,60000);
 </script></body></html>
