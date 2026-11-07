@@ -812,8 +812,8 @@ const _op=openPage;openPage=function(id){_op(id);({'p-bili':()=>{bAccTop();if(!$
 .nm-me .it{display:flex;align-items:center;gap:12px;padding:9px 16px}.nm-me .it .c{width:54px;height:54px;border-radius:10px;background:#f2f2f5 center/cover;flex:none;display:flex;align-items:center;justify-content:center;color:#999;font-size:26px}
 .nm-me .it div{flex:1;min-width:0}.nm-me .it b{font-size:16px;font-weight:600;display:block}.nm-me .it small{font-size:12.5px;color:#888}
 /* 播放页 */
-.nmp{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;color:#fff;background:#4a3a30;transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
-.nmp.on{transform:none}
+.nmp{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;color:#fff;background:#4a3a30;overflow:hidden;visibility:hidden;transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s .35s}
+.nmp.on{transform:none;visibility:visible;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .nmp-bg{position:absolute;inset:-80px;background:#5a463a center/cover;filter:blur(60px) brightness(.5) saturate(.7);transform:scale(1.3)}
 .nmp>*:not(.nmp-bg){position:relative}
 .nmp-hd{display:flex;align-items:center;padding:48px 16px 0;height:40px}.nmp-hd button{border:0;background:none;color:#fff;padding:0;width:34px;opacity:.85}.nmp-hd div{flex:1;text-align:right;padding-right:22px;font-size:14px;opacity:.6;font-weight:600}
