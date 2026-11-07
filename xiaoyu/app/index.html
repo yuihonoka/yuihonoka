@@ -171,6 +171,7 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
       <div class="row arr" onclick="openPage('p-usage')"><span>📊 Token 用量</span><span class="v" id="vUsage"></span></div>
       <div class="row arr" onclick="openPage('p-plugins')"><span>🧩 插件</span><span class="v" id="vPlug"></span></div>
       <div class="row arr" onclick="openPage('p-persona')"><span>🎭 人格配置</span><span class="v">default</span></div>
+      <div class="row arr" onclick="openPage('p-model')"><span>🧠 对话模型</span><span class="v">DeepSeek</span></div>
       <div class="row arr" onclick="openPage('p-sys')"><span>⚙️ AstrBot / NapCat</span><span class="v" id="vSys"></span></div>
       <div class="row arr" onclick="openPage('p-mem')"><span>🌌 记忆星图</span><span class="v" id="vMem"></span></div>
       <div class="row arr" onclick="openPage('p-vault')"><span>🔐 密码保险箱</span><span class="v" id="vVault"></span></div>
@@ -232,6 +233,12 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   <div id="plugList"></div>
   <button class="btn big ghost" id="mMore" style="display:none" onclick="mPage++;loadMarket(true)">加载更多</button></div></div>
 
+<div class="page" id="p-model"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>对话模型</h1></div><div class="body">
+  <div class="sec"><div class="row"><span>模型</span><span class="v">DeepSeek</span></div></div>
+  <p style="color:#999;font-size:13px;margin:10px 4px">在 DeepSeek 开放平台充值后，新建一个 API Key，粘贴到下面。Key 只保存在服务器，不会显示出来。</p>
+  <input class="ta" id="mKey" type="password" autocomplete="off" placeholder="sk-..." style="min-height:0;height:44px">
+  <button class="btn big" onclick="saveModelKey()">换上 DeepSeek</button>
+  <p id="mMsg" style="color:#999;font-size:13px;margin:10px 4px"></p></div></div>
 <div class="page" id="p-persona"><div class="top"><button class="ib" onclick="closePage()">‹</button><h1>人格配置</h1></div><div class="body">
   <div class="sec"><div class="row"><span>人格</span><select id="psel" onchange="showPersona()" style="font:inherit;border:0;color:#999"></select></div></div>
   <textarea class="ta" id="pText" style="min-height:55vh"></textarea>
@@ -367,6 +374,7 @@ async function loadMarket(more){if(!more)$('plugList').innerHTML='<div class="ti
  if(more)$('plugList').insertAdjacentHTML('beforeend',h);else $('plugList').innerHTML=`<div class="tip">共 ${d.total} 个</div>`+h;$('mMore').style.display=(mPage+1)*30<d.total?'block':'none'}catch(e){toast(e.message)}}
 async function installPlug(repo,dl,b){if(!confirm('安装这个插件？'))return;b.disabled=true;b.textContent='安装中…';const d=await api('/api/plugin/install',{repo,download_url:dl});b.textContent=d.ok?'已安装':'失败';toast(d.ok?'安装成功':'失败：'+(d.msg||''));if(!d.ok)b.disabled=false}
 // persona
+async function saveModelKey(){const k=$('mKey').value.trim();if(!k)return;$('mMsg').textContent='验证中…';try{const d=await api('/api/llm_key',{key:k});$('mMsg').textContent=d.msg||(d.ok?'已换上':'失败');if(d.ok)$('mKey').value=''}catch(e){$('mMsg').textContent='失败：'+e.message}}
 let PERS=[];async function loadPersona(){PERS=await api('/api/personas');$('psel').innerHTML=PERS.map(p=>`<option>${esc(p.id)}</option>`).join('');showPersona()}
 function showPersona(){const p=PERS.find(x=>x.id===$('psel').value)||PERS[0];$('pText').value=p?p.prompt:''}
 async function savePersona(){if(!confirm('保存人格？小鱼下一句话开始生效'))return;const d=await api('/api/persona',{id:$('psel').value,prompt:$('pText').value});toast(d.ok?'已保存':'失败：'+(d.msg||''))}
