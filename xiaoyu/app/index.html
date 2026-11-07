@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#12b7f5">
+<meta name="theme-color" content="#ffffff">
 <meta name="referrer" content="no-referrer">
 <title>小鱼yu的手机</title>
 <style>
@@ -151,8 +151,8 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   <div class="view" id="v-feed">
     <div class="qdyn"><div onclick="$('qzText').focus()"><img src="https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/zone.webp" alt=""><span>好友动态</span><b>›</b></div><div onclick="iosOpen('life')"><img src="https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/life.webp" alt=""><span>她的日记</span><b>›</b></div><div onclick="iosOpen('bili')"><img src="https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/bili.webp" alt=""><span>哔哩哔哩</span><b>›</b></div></div>
     <div class="feed"><div class="h"><img id="fAva" alt=""><div><b id="fName">小鱼yu</b><div style="font-size:12px;color:#999">发表说说到 QQ 空间</div></div></div>
-      <textarea class="ta" id="qzText" placeholder="分享新鲜事…" style="margin:12px 0 0;width:100%"></textarea>
-      <button class="btn big" style="margin:12px 0 0;width:100%" onclick="postQzone()">发表</button>
+      <textarea class="ta" id="qzText" placeholder="有什么新鲜事？" style="margin:12px 0 0;width:100%"></textarea>
+      <button class="btn big" style="margin:12px 0 0;width:100%" onclick="postQzone()">发帖</button>
     </div>
     <div id="feedList"></div>
   </div>
@@ -182,10 +182,10 @@ canvas#av{display:block;margin:14px auto;border-radius:50%;background:#eee;touch
   </div>
 
   <div class="tabs">
-    <button class="on" id="t-msg" onclick="tab('msg')"><i><svg viewBox="0 0 24 24"><path d="M12 3.2c-5 0-9 3.4-9 7.7 0 2.4 1.3 4.6 3.4 6l-.6 3.1 3.4-1.8c.9.2 1.8.3 2.8.3 5 0 9-3.4 9-7.6S17 3.2 12 3.2z"/></svg></i>消息</button>
-    <button id="t-ct" onclick="tab('ct')"><i><svg viewBox="0 0 24 24"><path d="M9.5 11.5a3.8 3.8 0 1 0 0-7.6 3.8 3.8 0 0 0 0 7.6zM2.5 19.8c.4-3.6 3.3-5.8 7-5.8s6.6 2.2 7 5.8zM16 4.2a3.6 3.6 0 0 1 0 7M18.2 14.4c2 .7 3.2 2.6 3.4 5.4h-2.8"/></svg></i>联系人</button>
-    <button id="t-feed" onclick="tab('feed')"><i><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg></i>动态</button>
-    <button id="t-me" style="display:none" onclick="tab('me')"><i><svg viewBox="0 0 24 24"><path d="M12 12.2a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8zM3.8 20.6c.5-4 4-6.4 8.2-6.4s7.7 2.4 8.2 6.4z"/></svg></i>我的</button>
+    <button class="on" id="t-msg" onclick="tab('msg')"><i><svg viewBox="0 0 24 24"><rect x="2.8" y="5" width="18.4" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6 8.5-6" fill="none"/></svg></i>私信</button>
+    <button id="t-ct" onclick="tab('ct')"><i><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.6"/><path d="M2.6 19.6c.4-3.6 3-5.7 6.4-5.7s6 2.1 6.4 5.7zM16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2c2 .6 3.1 2.6 3.4 5.4"/></svg></i>关注</button>
+    <button id="t-feed" onclick="tab('feed')"><i><svg viewBox="0 0 24 24"><path d="M3.5 10.2L12 3.5l8.5 6.7V20a.8.8 0 0 1-.8.8h-5v-6.2h-5.4v6.2h-5a.8.8 0 0 1-.8-.8z"/></svg></i>时间线</button>
+    <button id="t-me" style="display:none" onclick="tab('me')"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2"/><path d="M3.8 20.6c.5-4 4-6.4 8.2-6.4s7.7 2.4 8.2 6.4z"/></svg></i>我的</button>
   </div>
 </div>
 
@@ -326,7 +326,7 @@ function ftime(t){if(!t)return'';const d=new Date(t*1000),n=new Date();return d.
 // tabs
 let TAB='msg';
 function tab(t){TAB=t;['msg','ct','feed','me'].forEach(x=>{$('v-'+x).classList.toggle('on',x===t);$('t-'+x).classList.toggle('on',x===t)});
- $('title').firstChild.textContent=t==='msg'?(ME.nick||'小鱼yu'):{ct:'联系人',feed:'动态',me:'设置'}[t];document.body.classList.toggle('qmsg',t==='msg');$('topBtn').innerHTML=t==='msg'?PLUS:t==='ct'?ADDF:'';if(t==='ct')loadCt();if(t==='me')loadMe();if(t==='msg')loadContacts()}
+ $('title').firstChild.textContent=t==='msg'?(ME.nick||'小鱼yu'):{ct:'关注',feed:'时间线',me:'设置'}[t];document.body.classList.toggle('qmsg',t==='msg');$('topBtn').innerHTML=t==='msg'?PLUS:t==='ct'?ADDF:'';if(t==='ct')loadCt();if(t==='me')loadMe();if(t==='msg')loadContacts()}
 let CT_SEG='f',BUD=null;
 const ADDF='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10" cy="8" r="3.8"/><path d="M3 19.5c.4-3.4 3.2-5.5 7-5.5 1.3 0 2.5.3 3.5.8M18 13.5v6M15 16.5h6"/></svg>';
 async function loadCt(){if(!BUD)$('ctList').innerHTML='<div class="tip">加载中…</div>';try{BUD=await api('/api/buddies');renderCt()}catch(e){$('ctList').innerHTML=`<div class="tip">${esc(e.message)}</div>`}}
@@ -1590,6 +1590,87 @@ html,body{overscroll-behavior:none}
 .view,.msgs,.page .body,.qemo{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .chat{height:100dvh}
 .msgs{background:#f2f3f5 fixed}
+</style>
+<style id="xtheme">
+/* ===== X（推特）风格 2026-11-07 ===== */
+:root{--qq:#1d9bf0;--qq2:#1d9bf0;--me:#1d9bf0;--bg:#fff;--line:#eff3f4;--ink:#0f1419;--mute:#536471}
+html,body{font-family:"TwitterChirp",-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif;color:#0f1419;background:#fff}
+.app{background:#fff}
+.app>.top,.top{background:#ffffffd9!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#0f1419!important;border-bottom:1px solid #eff3f4;min-height:53px}
+.top .ib,.app>.top .ib{color:#0f1419!important}
+.app>.top h1{font-size:20px;font-weight:800;letter-spacing:0}
+.app>.top .sub{color:#536471}
+.app>.top .ava{width:32px;height:32px;border:0;box-shadow:none}
+.avw .od{border-color:#fff;background:#00ba7c}
+.search{background:#eff3f4;border-radius:999px;height:40px;margin:8px 16px;box-shadow:none;color:#536471;justify-content:flex-start}
+.search input{flex:1}
+.item,#v-msg .item,#v-ct .item,#v-feed .item{background:#fff;border:0;border-bottom:1px solid #eff3f4;padding:12px 16px;gap:12px}
+#v-msg .item:active,.item:active,.row:active{background:#f7f9f9}
+#v-msg .item img,.item img{width:40px;height:40px}
+#v-msg .item .nm,.item .nm{font-size:15px;font-weight:700;color:#0f1419}
+#v-msg .item .ls,.item .ls{font-size:15px;color:#536471;margin-top:2px}
+#v-msg .item .tm,.item .tm{font-size:13px;color:#536471}
+.tag,.tag.c,.tag.g{background:#1d9bf0;border-radius:4px;font-weight:700}
+.tabs{background:#fff;backdrop-filter:none;border-top:1px solid #eff3f4}
+.tabs button{font-size:0;padding:12px 0 10px;color:#0f1419}
+.tabs button i{height:28px}
+.tabs button svg{width:27px;height:27px;fill:none;stroke:#0f1419;stroke-width:1.9}
+.tabs button.on,.tabs button.on svg{color:#0f1419;stroke:#0f1419}
+.tabs button.on svg{fill:#0f1419;stroke-width:1.2}
+/* 私信（X DM 样式） */
+.chat,.msgs{background:#fff!important}
+.chat .top{background:#ffffffd9!important}
+.mr .who{color:#536471;font-size:13px}
+.bb{background:#eff3f4;color:#0f1419;border-radius:22px 22px 22px 4px;padding:12px 16px;font-size:15px;box-shadow:none}
+.mr.me .bb{background:#1d9bf0!important;color:#fff;border-radius:22px 22px 4px 22px}
+.bb img{border-radius:16px}
+.inbar,.qtools,.qemo{background:#fff;border-top:1px solid #eff3f4}
+.qtools{border-top:0}
+.qtools svg{stroke:#1d9bf0}
+.inbar input[type=text]{background:#eff3f4;border-radius:16px;padding:11px 14px}
+.inbar .send{background:#1d9bf0;border-radius:999px;font-weight:700;padding:8px 16px}
+/* 按钮、表单 */
+.btn{background:#0f1419;color:#fff;border-radius:999px;font-weight:700;padding:7px 16px}
+.btn.ghost{background:#fff;color:#0f1419;border:1px solid #cfd9de}
+.btn.big{border-radius:999px;padding:12px;font-size:16px}
+.btn.red{background:#f4212e}
+textarea.ta,input.f{border:1px solid #cfd9de;border-radius:6px}
+textarea.ta:focus,input.f:focus{border-color:#1d9bf0;box-shadow:0 0 0 1px #1d9bf0}
+.seg{background:#fff;border-bottom:1px solid #eff3f4;border-radius:0;margin:0;padding:0}
+.seg button{border-radius:0;padding:14px 6px;color:#536471;font-weight:500}
+.seg button.on{background:none;box-shadow:none;color:#0f1419;font-weight:700;box-shadow:inset 0 -4px 0 -0px #1d9bf0}
+.ctseg{border-bottom:1px solid #eff3f4;padding:0 20px;gap:0;justify-content:space-around}
+.ctseg button{padding:14px 0;color:#536471;font-weight:500}
+.ctseg button.on{color:#0f1419;font-weight:700}
+.ctseg button.on::after{background:#1d9bf0;height:4px;left:0;right:0;bottom:0;border-radius:2px}
+.ctnav,.qdyn{background:#fff;margin:0;border-radius:0;border-bottom:1px solid #eff3f4}
+.ctnav div,.qdyn div{border-bottom:1px solid #eff3f4;font-weight:700;font-size:15px}
+.qst button.on{background:#e8f5fd;border-color:#1d9bf0;color:#1d9bf0}
+.sw input:checked+span{background:#1d9bf0}
+/* 时间线（发帖框 + 帖子） */
+.feed{margin:0;border-bottom:1px solid #eff3f4;padding:12px 16px}
+.feed .h img{width:40px;height:40px}
+.feed .h b{font-weight:700}
+.feed .c{font-size:15px;line-height:1.45}
+#v-feed .feed textarea.ta{border:0;font-size:19px;padding:6px 0;min-height:90px}
+#v-feed .feed .btn.big{width:auto!important;display:inline-block;margin:8px 0 0!important;float:right;padding:9px 18px;background:#1d9bf0}
+#v-feed .feed::after{content:"";display:block;clear:both}
+/* 设置 / 个人主页 */
+.prof{background:#fff!important;color:#0f1419;flex-direction:column;align-items:flex-start;gap:8px;padding:0 16px 14px;border-bottom:1px solid #eff3f4;position:relative}
+.prof::before{content:"";display:block;height:110px;margin:0 -16px;width:calc(100% + 32px);background:linear-gradient(135deg,#1d9bf0,#7856ff)}
+.prof img{width:76px;height:76px;border:4px solid #fff;margin-top:-44px;background:#fff}
+.prof .n{font-size:20px;font-weight:800}
+.prof .s{color:#536471;opacity:1;font-size:15px}
+#v-me .sec,.sec{border-radius:0;margin:0;border-bottom:1px solid #eff3f4}
+.sec h3{background:#fff;color:#0f1419;font-weight:800;font-size:20px;padding:14px 16px 6px}
+.row,#v-me .row{border-bottom:1px solid #eff3f4;padding:15px 16px}
+.grid div{background:#f7f9f9}.grid b{color:#0f1419}
+.bars div{background:#1d9bf0}
+.page,.page .body{background:#fff}
+.qmenu{border-radius:16px;box-shadow:0 0 15px #65778633,0 0 3px 1px #65778626}
+.qmenu div{font-weight:700}
+.toast{background:#1d9bf0;border-radius:6px}
+.empty,.tip{color:#536471}
 </style>
 <div class="page" id="p-house"><div class="top"><button class="ib" onclick="closeOne('p-house')">‹</button><h1>小鱼yu的小屋</h1></div><div class="body" style="padding:0"><iframe id="houseF" style="border:0;width:100%;height:calc(100vh - 60px)" referrerpolicy="no-referrer"></iframe></div></div>
 <script>

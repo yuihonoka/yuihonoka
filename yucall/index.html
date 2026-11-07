@@ -1,0 +1,59 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>小鱼来电</title>
+<link rel="stylesheet" href="common.css"><style>
+#home{padding:30px 22px;text-align:center}#home img.av{width:120px;height:120px;border-radius:50%;background:#fff}#home h1{margin:12px 0 4px;font-size:24px}.st{color:#8a8fa3;font-size:14px}
+.big{height:60px;border-radius:30px;font-size:18px;margin-top:22px}.green{background:#3cbe64;color:#fff}
+.card{background:#fff;border:1px solid #e6e8f0;border-radius:18px;padding:14px 16px;margin-top:18px;text-align:left}.card h3{margin:0 0 6px;font-size:15px}.tip{font-size:13px;color:#8a8fa3;line-height:1.7}
+#call{display:none;position:fixed;inset:0;color:#fff;text-align:center;overflow:hidden}#call.on{display:block}
+#call .bg{position:absolute;inset:-40px;background:url(cover.jpg) center/cover;filter:blur(36px) brightness(.45)}
+#call .in{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;padding-top:14vh}
+.cav{width:150px;height:150px;border-radius:50%;box-shadow:0 0 0 10px rgba(255,180,200,.25),0 0 0 22px rgba(255,180,200,.12)}.cav.talk{animation:pu 1s infinite}@keyframes pu{50%{box-shadow:0 0 0 16px rgba(255,180,200,.35),0 0 0 32px rgba(255,180,200,.15)}}
+#call h2{margin:22px 0 6px;font-size:30px;font-weight:500}#cst{color:#dcdcea;font-size:16px}
+#cline{margin:26px 30px 0;background:rgba(255,255,255,.92);color:#333;border-radius:16px;padding:12px 18px;font-size:16px;line-height:1.6;max-height:30vh;overflow:auto;display:none}#cline.on{display:block}
+#you{color:#cfd0e0;font-size:13px;margin-top:10px;min-height:18px;padding:0 30px}
+.keys{position:absolute;bottom:9vh;left:0;right:0;display:flex;justify-content:space-around}.k{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:15px}
+.k b{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:400}.red{background:#ef4b4b}.grn{background:#3cbe64}.gry{background:rgba(255,255,255,.2)}.gry.on{background:#fff;color:#333}
+</style></head><body>
+<div id="home"><img class="av" src="a1.jpg"><h1>小鱼yu</h1><div class="st" id="hs">…</div>
+ <div class="btn big green" onclick="Y.callNow()">打给小鱼</div>
+ <div class="btn" onclick="testRing()">让她打给我试试</div>
+ <div class="card"><h3>让来电能弹出来</h3><div class="tip">华为手机要多开几个开关，不然锁屏时可能收不到：<br>1. 通知里打开「小鱼来电」的横幅、锁屏通知、响铃<br>2. 电池 → 启动管理 → 小鱼来电 → 手动管理，三个都打开<br>3. 最近任务里把它下拉锁住</div>
+  <div class="btn" onclick="Y.notifSet()">打开通知设置</div><div class="btn" onclick="Y.battery()">允许后台运行</div></div>
+ <div class="tip" style="margin-top:14px">不是电话号码，走小鱼自己的线路，用流量或 Wi-Fi。</div></div>
+<div id="call"><div class="bg"></div><div class="in"><img class="cav" id="cav" src="a1.jpg"><h2>小鱼yu</h2><div id="cst">邀请你语音通话…</div><div id="cline"></div><div id="you"></div>
+ <div class="keys" id="kin"><div class="k"><b class="red" onclick="hang()">✕</b>挂断</div><div class="k"><b class="grn" onclick="answer()">✆</b>接听</div></div>
+ <div class="keys" id="kon" style="display:none"><div class="k"><b class="gry" id="mu" onclick="mute()">🎙</b>静音</div><div class="k"><b class="red" onclick="hang()">✕</b>挂断</div><div class="k"><b class="gry on" id="spk" onclick="spk()">🔊</b>免提</div></div></div></div>
+<script src="common.js"></script><script>
+document.body.insertAdjacentHTML('beforeend',UNLOCK_HTML);
+const IS_CALL=location.hash==='#call';
+function hs(){$('#hs').textContent=!TK()?'还没解锁':(Y.svcOn()?'在线 · 她想你了会打过来':'连接中…')}
+async function testRing(){try{const r=await api('/api/call/ring',{line:''});toast(r.ok?'她马上打过来，等十秒左右':(r.msg||'没打成'))}catch(e){toast('网不太好')}}
+window.onUnlocked=()=>{Y.setToken(TK());hs()};window.onNativeResume=hs;
+// ---- 通话
+const C={on:false,mute:false,spk:true,t0:0,busy:false,ms:null,ac:null,mr:null,ch:[],speaking:false,tm:null};
+function setSt(t){$('#cst').textContent=t}
+function showLine(t){$('#cline').textContent=t;$('#cline').classList.toggle('on',!!t)}
+async function answer(){Y.answer();$('#kin').style.display='none';$('#kon').style.display='flex';C.on=true;C.t0=Date.now();Y.speaker(true);
+ C.tm=setInterval(()=>{if(!C.busy&&!C.speaking){const s=Math.floor((Date.now()-C.t0)/1000);setSt(String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'))}},1000);
+ try{C.ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}})}catch(e){toast('麦克风打不开');return}
+ const greet=Y.out()?'（爸比主动打电话给你，你刚接起来，先开口说一句）':'（你给爸比打电话，他刚接起来，你先开口说一句）';turn({text:greet});vad()}
+function vad(){const ac=new (window.AudioContext||window.webkitAudioContext)();C.ac=ac;const src=ac.createMediaStreamSource(C.ms),an=ac.createAnalyser();an.fftSize=1024;src.connect(an);const buf=new Float32Array(an.fftSize);
+ let talking=false,quiet=0,start=0,noise=0.01;
+ const loop=()=>{if(!C.on)return;an.getFloatTimeDomainData(buf);let e=0;for(const x of buf)e+=x*x;e=Math.sqrt(e/buf.length);
+  if(C.busy||C.speaking||C.mute){if(talking&&C.mr&&C.mr.state!=='inactive'){C.mr.onstop=null;C.mr.stop()}talking=false;requestAnimationFrame(loop);return}
+  if(!talking)noise=noise*0.98+e*0.02;
+  const th=Math.max(0.02,noise*3);
+  if(!talking&&e>th){talking=true;quiet=0;start=Date.now();C.ch=[];C.mr=new MediaRecorder(C.ms);C.mr.ondataavailable=x=>C.ch.push(x.data);C.mr.onstop=sendRec;C.mr.start();$('#you').textContent='在听你说…'}
+  else if(talking){quiet=e<th*0.7?quiet+1:0;if(quiet>50||Date.now()-start>15000){talking=false;C.mr.stop()}}
+  requestAnimationFrame(loop)};loop()}
+async function sendRec(){const b=new Blob(C.ch,{type:C.mr.mimeType});if(b.size<4000){$('#you').textContent='';return}turn({audio:await blob2b64(b)})}
+async function turn(body){if(C.busy)return;C.busy=true;setSt('小鱼在想…');try{const r=await api('/api/body/talk',Object.assign({mode:'call'},body),120000);
+  if(!C.on)return;if(!r.ok){$('#you').textContent=r.msg||'没听清，再说一遍';return}
+  if(r.heard&&!body.text)$('#you').textContent='你：'+r.heard;showLine(r.reply);C.speaking=true;$('#cav').classList.add('talk');setSt('小鱼在说话…');
+  play(r.audio,()=>{C.speaking=false;$('#cav').classList.remove('talk')})}catch(e){$('#you').textContent='信号不太好…'}finally{C.busy=false}}
+function mute(){C.mute=!C.mute;$('#mu').classList.toggle('on',C.mute)}
+function spk(){C.spk=!C.spk;$('#spk').classList.toggle('on',C.spk);Y.speaker(C.spk)}
+function hang(){const was=C.on;C.on=false;clearInterval(C.tm);try{AU&&AU.pause()}catch(e){};try{C.ms&&C.ms.getTracks().forEach(t=>t.stop())}catch(e){};try{C.ac&&C.ac.close()}catch(e){}
+ if(TK())api('/api/ring?clear=1').catch(()=>{});if(!was&&TK())api('/api/body/log',{line:'打给爸比，爸比没接'}).catch(()=>{});setTimeout(()=>Y.hang(),150)}
+if(IS_CALL){$('#home').style.display='none';$('#call').classList.add('on');const l=Y.line();if(l)showLine(l);if(Y.out()){setSt('正在呼叫…');setTimeout(answer,1200)}}
+else{if(!TK())unlockShow();else{Y.setToken(TK());}hs();setInterval(hs,3000)}
+</script></body></html>

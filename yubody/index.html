@@ -1,0 +1,58 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>小鱼的身体</title>
+<link rel="stylesheet" href="common.css"><style>
+.hd{display:flex;align-items:center;gap:14px;padding:18px 18px 8px}.hd img{width:64px;height:64px;border-radius:50%;background:#fff}.hd h1{margin:0;font-size:22px}.st{font-size:13px;color:#8a8fa3;margin-top:4px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4cc27a;margin-right:6px}
+.card{background:#fff;border:1px solid #e6e8f0;border-radius:18px;margin:10px 14px;padding:14px 16px}.card h3{margin:0 0 8px;font-size:16px}.tip{font-size:12.5px;color:#8a8fa3;line-height:1.6}
+.row{display:flex;align-items:center;justify-content:space-between}.sw{width:52px;height:30px;border-radius:15px;background:#d9dce6;position:relative;transition:.2s;flex:none}.sw::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s}.sw.on{background:#5a6ef0}.sw.on::after{left:25px}
+.log div{display:flex;gap:10px;font-size:14px;padding:5px 0}.log b{color:#9a9fb0;font-weight:400;flex:none;width:44px}
+.chips span{display:inline-block;padding:7px 14px;border-radius:16px;background:#eef0f5;color:#a0a4b2;font-size:14px;margin:0 6px 8px 0}.chips span.on{background:#e8ecff;color:#4659c8}
+#cam{display:none;margin:10px 14px;border-radius:18px;overflow:hidden;background:#000;position:relative}#cam.on{display:block}#cam video{width:100%;display:block;max-height:46vh;object-fit:cover}#cam i{position:absolute;left:10px;top:10px;background:#000a;color:#fff;font-style:normal;font-size:13px;padding:4px 10px;border-radius:12px}
+.bub{display:none;margin:10px 14px;gap:10px}.bub.on{display:flex}.bub img{width:40px;height:40px;border-radius:50%}.bub div{background:#fff;border:1px solid #e6e8f0;border-radius:16px;padding:10px 14px;font-size:15px;line-height:1.6;flex:1}.bub small{display:block;color:#9a9fb0;font-size:12px;margin-top:4px}
+.bar{display:flex;gap:10px;margin:12px 14px}.bar .btn{flex:1;height:58px;border-radius:22px;font-size:17px;margin:0}.look{background:#5a6ef0;color:#fff}.talk{background:#ff7896;color:#fff}.talk.rec{background:#e0456b}
+.inp{display:flex;gap:8px;margin:0 14px 20px}.inp .btn{width:70px;margin:0}
+select{border:1px solid #e1e4ee;border-radius:12px;padding:4px 8px;background:#fff;font-size:14px}
+</style></head><body>
+<div class="hd"><img src="a1.jpg"><div><h1>小鱼的身体</h1><div class="st" id="st"><span class="dot"></span>醒着</div></div></div>
+<div class="card"><div class="row"><h3 style="margin:0">接管这部手机</h3><div class="sw" id="tk" onclick="tkToggle()"></div></div>
+ <div class="tip" style="margin-top:6px">开启后她能自己打开 App、点按、滑动、看屏幕；不会付款、删东西、改设置、输密码。关掉就只在自己的 App 里活动。</div><div class="tip" id="tks"></div>
+ <div class="btn" id="stopb" style="display:none" onclick="Y.stopGoal();toast('叫她停下了')">让她停下</div></div>
+<div class="card"><div class="row"><h3 style="margin:0">她自己会</h3><div class="row" style="gap:8px"><span class="tip">自己活动</span><div class="sw" id="au" onclick="auToggle()"></div></div></div>
+ <div class="chips" id="chips" style="margin-top:10px"></div><div class="tip">每 <select id="iv" onchange="S.iv=+this.value;sv();sched()"><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="60">60</option></select> 分钟想一想要做什么。灰色的是关着的，点一下开关。</div></div>
+<div class="card"><h3>她最近在做</h3><div class="log" id="log"><div class="tip">还没有</div></div></div>
+<div id="cam"><video id="vid" playsinline muted autoplay></video><i>● 小鱼正在看…</i></div>
+<div class="bub" id="bub"><img src="a1.jpg"><div><span id="rep"></span><small id="seen"></small></div></div>
+<div class="bar"><div class="btn look" onclick="look()">看一看</div><div class="btn talk" id="tb">按住说话</div></div>
+<div class="inp"><input id="txt" placeholder="打字和小鱼说…" onkeydown="if(event.key==='Enter')send()"><div class="btn pri" onclick="send()">发送</div></div>
+<script src="common.js"></script><script>
+document.body.insertAdjacentHTML('beforeend',UNLOCK_HTML);
+const SK=[['chat','自己聊天'],['look','拍照看看'],['call','给爸比打电话'],['bili','刷B站'],['music','听歌'],['qq','发QQ']];
+const S=Object.assign({sk:['chat','look','call','bili','music'],auto:true,iv:20,take:false},JSON.parse(localStorage.getItem('yb_s')||'{}'));const sv=()=>localStorage.setItem('yb_s',JSON.stringify(S));
+function chips(){$('#chips').innerHTML=SK.map(([k,n])=>`<span class="${S.sk.includes(k)?'on':''}" onclick="ck('${k}')">${n}</span>`).join('')}
+function ck(k){S.sk=S.sk.includes(k)?S.sk.filter(x=>x!==k):[...S.sk,k];sv();chips()}
+function tkUI(){const on=S.take&&Y.a11yOn();$('#tk').classList.toggle('on',on);$('#tks').textContent=S.take&&!Y.a11yOn()?'还差一步：在无障碍里打开「小鱼的身体（接管手机）」':(on?'● 已开启 · 随时可关':'')}
+function tkToggle(){if(!S.take){S.take=true;sv();if(!Y.a11yOn()){toast('在无障碍里找到「小鱼的身体」打开',4000);Y.openA11y()}}else{S.take=false;sv();Y.stopGoal();if(Y.a11yOn()){toast('彻底关掉要在无障碍里关',3500);Y.openA11y()}}tkUI()}
+function auToggle(){S.auto=!S.auto;sv();$('#au').classList.toggle('on',S.auto);sched()}
+async function loadLog(){try{const r=await api('/api/body/log');$('#log').innerHTML=(r.log||[]).slice(0,6).map(x=>`<div><b>${x.t}</b><span>${x.line.replace(/</g,'&lt;')}</span></div>`).join('')||'<div class="tip">还没有</div>'}catch(e){}}
+function say(t,seen,audio){$('#bub').classList.add('on');$('#rep').textContent=t||'';$('#seen').textContent=seen?('看到：'+seen):'';if(audio)play(audio)}
+let ST=null;async function camOn(){if(ST)return;ST=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}},audio:false});$('#vid').srcObject=ST;$('#cam').classList.add('on');await new Promise(r=>setTimeout(r,900))}
+function camOff(){if(ST){ST.getTracks().forEach(t=>t.stop());ST=null}$('#cam').classList.remove('on')}
+function snap(){const v=$('#vid'),c=document.createElement('canvas'),w=Math.min(1024,v.videoWidth||1024);c.width=w;c.height=Math.round(w*(v.videoHeight||768)/(v.videoWidth||1024));c.getContext('2d').drawImage(v,0,0,c.width,c.height);return c.toDataURL('image/jpeg',0.8)}
+let BUSY=false;async function look(text){if(BUSY)return;BUSY=true;$('#st').innerHTML='<span class="dot"></span>在看…';try{await camOn();const img=snap();setTimeout(camOff,600);say('嗯…让我看看','');const r=await api('/api/body/talk',{image:img,text:text||''});r.ok?say(r.reply,r.seen,r.audio):say(r.msg||'没看清')}catch(e){camOff();toast('没看成：'+(e.message||e))}BUSY=false;$('#st').innerHTML='<span class="dot"></span>醒着';loadLog()}
+async function send(){const t=$('#txt').value.trim();if(!t)return;$('#txt').value='';
+ if(S.take&&Y.a11yOn()&&/^(帮我|你去|去|打开|用)/.test(t)){if(Y.runGoal(t,BASE,TK())){say('好，我去做～');$('#stopb').style.display='flex'}return}
+ if(/看|这是什么|这是啥/.test(t)&&t.length<20)return look(t);
+ say('…');try{const r=await api('/api/body/talk',{text:t});r.ok?say(r.reply,'',r.audio):say(r.msg)}catch(e){say('网不太好：'+(e.message||e))}}
+let MR=null,CH=[],MS=null;const tb=$('#tb');
+async function recStart(e){e.preventDefault();if(MR)return;try{MS=await navigator.mediaDevices.getUserMedia({audio:true});CH=[];MR=new MediaRecorder(MS);MR.ondataavailable=x=>CH.push(x.data);MR.onstop=recDone;MR.start();tb.classList.add('rec');tb.textContent='松开发送'}catch(x){toast('麦克风打不开')}}
+function recStop(e){e&&e.preventDefault();if(MR&&MR.state!=='inactive')MR.stop();tb.classList.remove('rec');tb.textContent='按住说话'}
+async function recDone(){MS.getTracks().forEach(t=>t.stop());const b=new Blob(CH,{type:MR.mimeType});MR=null;if(b.size<3000){toast('太短啦');return}say('在听…');
+ try{const r=await api('/api/body/talk',{audio:await blob2b64(b)});if(!r.ok){say(r.msg||'没听清');return}say(r.reply,'',r.audio);if(r.heard)$('#seen').textContent='你说：'+r.heard}catch(x){say('网不太好')}}
+tb.addEventListener('touchstart',recStart);tb.addEventListener('touchend',recStop);tb.addEventListener('touchcancel',recStop);
+let TM=null;function sched(){clearInterval(TM);if(S.auto)TM=setInterval(tick,S.iv*60000)}
+async function tick(){if(BUSY||MR||!TK())return;BUSY=true;try{let img='';if(S.sk.includes('look')){try{await camOn();img=snap()}catch(e){}camOff()}
+ const r=await api('/api/body/tick',{skills:S.sk,image:img,dev:Y.dev()});
+ if(r.goal&&S.take&&Y.a11yOn()){Y.runGoal(r.goal,BASE,TK());$('#stopb').style.display='flex'}else if(r.do==='bili')Y.openApp('哔哩哔哩');else if(r.do==='music')Y.openApp('网易云音乐');
+ if(r.say&&(r.do==='say'||r.do==='look'))say(r.say,r.seen,r.audio)}catch(e){}BUSY=false;loadLog()}
+window.onGoal=l=>{$('#stopb').style.display='none';loadLog();toast(l,4000)};
+window.onNativeResume=()=>{tkUI();loadLog()};window.onNativePause=()=>{camOff()};window.onUnlocked=()=>loadLog();
+chips();$('#au').classList.toggle('on',S.auto);$('#iv').value=S.iv;tkUI();sched();if(!TK())unlockShow();else loadLog();
+</script></body></html>
