@@ -126,7 +126,7 @@ $('#fz').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)re
   const id='m'+Date.now();await putModel({id,name,file:'model.zip',size:blob.size,blob,added:Date.now(),kind:'zip'});
   S.cur=id;save();toast('导入成功：'+name);renderLib();launch()}catch(err){console.error(err);toast('导入失败：'+(err.message||err),4000)}};
 
-const CDNS=['https://fastly.jsdelivr.net/gh/','https://cdn.jsdelivr.net/gh/','https://gcore.jsdelivr.net/gh/'];
+const CDNS=['https://47-76-159-111.sslip.io/l2dcdn/gh/','https://fastly.jsdelivr.net/gh/','https://cdn.jsdelivr.net/gh/','https://gcore.jsdelivr.net/gh/'];
 const OFF='Live2D/CubismWebSamples@develop/Samples/Resources/';
 const OL_OFF=[['Hiyori','日和','校服女孩，动作最全',''],['Haru','春','长发少女，表情丰富',''],['Mao','真绯','魔法少女，会挥魔杖',''],['Natori','名取','西装少年',''],['Rice','莱斯','小魔女',''],['Ren','莲','短发女孩',''],['Mark','马克','极简小人',''],['Wanko','汪子','碗里的小狗','']].map(a=>({name:a[1]+' '+a[0],desc:a[2],repo:OFF.split('/Samples')[0],path:'Samples/Resources/'+a[0]+'/'+a[0]+'.model3.json',off:1}));
 let OL_CUR=[];
@@ -135,11 +135,11 @@ async function cdnFetch(repo,path,as){let e;for(const c of CDNS){try{const r=awa
 function olRender(a,msg){OL_CUR=a;const el=$('#ol');if(!el)return;el.innerHTML=(msg?'<div class="tip">'+msg+'</div>':'')+a.map((o,i)=>`<div class="mi"><div class="n">${o.off?'⭐':'🌐'} ${o.name.replace(/</g,'&lt;')}<div style="font-size:12px;color:#8a92a3">${(o.desc||'').replace(/</g,'&lt;')}</div></div><span class="x" style="color:#3b7cff" onclick="olTry(${i})">试看</span><span class="x" style="color:#22a35a" onclick="olGet(${i})">下载</span></div>`).join('')}
 async function olSearch(){const q=($('#oq').value||'').trim();const loc=OL_OFF.filter(o=>!q||(o.name+o.desc).toLowerCase().includes(q.toLowerCase()));
  olRender(loc,'正在联网搜索…');if(!q){olRender(OL_OFF);return}
- try{const r=await fetch('https://api.github.com/search/repositories?per_page=8&q='+encodeURIComponent(q+' live2d model3 in:name,description,readme'));const d=await r.json();
+ try{const r=await fetch('https://47-76-159-111.sslip.io/l2dcdn/search?q='+encodeURIComponent(q)).catch(()=>fetch('https://api.github.com/search/repositories?per_page=8&q='+encodeURIComponent(q+' live2d model3 in:name,description,readme')));const d=await r.json();
   if(!d.items){olRender(loc,d.message&&/rate/i.test(d.message)?'搜得太快了，等一分钟再搜':'没搜到');return}
   const out=[...loc];
   await Promise.all(d.items.filter(x=>!BAD.test(x.full_name+' '+(x.description||''))&&!x.private).slice(0,6).map(async x=>{try{
-   const j=await (await fetch('https://data.jsdelivr.com/v1/packages/gh/'+x.full_name+'@'+x.default_branch+'?structure=flat')).json();
+   const j=await (await fetch('https://47-76-159-111.sslip.io/l2dcdn/ls/'+encodeURIComponent(x.full_name+'@'+x.default_branch)).catch(()=>fetch('https://data.jsdelivr.com/v1/packages/gh/'+x.full_name+'@'+x.default_branch+'?structure=flat'))).json();
    (j.files||[]).map(f=>f.name).filter(p=>/\.model3\.json$/i.test(p)&&!BAD.test(p)).slice(0,12).forEach(p=>{p=p.replace(/^\//,'');
     out.push({name:p.split('/').pop().replace(/\.model3\.json$/i,''),desc:x.full_name+(x.stargazers_count?' · ★'+x.stargazers_count:''),repo:x.full_name+'@'+x.default_branch,path:p})})}catch(_){}}));
   olRender(out,out.length?'找到 '+out.length+' 个，可以直接用的都在这里':'没找到能直接用的模型，换个词试试')}catch(e){olRender(loc,'联网搜索失败，先看看官方模型')}}
