@@ -14,7 +14,7 @@ font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sa
 .wrap{max-width:520px;margin:0 auto;padding:0 16px calc(28px + env(safe-area-inset-bottom))}
 .hero{position:relative;margin:0 -16px;height:190px;background:#9cc3ff url(yu.webp) center 30%/cover no-repeat;border-radius:0 0 28px 28px;overflow:hidden}
 .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,58,138,0) 40%,rgba(30,58,138,.55))}
-.hero h1{position:absolute;left:18px;bottom:14px;margin:0;color:#fff;font-size:22px;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+.hero h1{position:absolute;left:18px;bottom:38px;margin:0;color:#fff;font-size:22px;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.25)}
 .hero h1 small{display:block;font-size:12px;font-weight:400;opacity:.9;margin-top:2px}
 .card{background:#fff;border-radius:22px;box-shadow:0 8px 24px rgba(59,108,255,.12);padding:20px;margin-top:-26px;position:relative;z-index:2}
 .state{display:flex;align-items:center;gap:14px}
@@ -70,13 +70,13 @@ var API = "https://47-76-159-111.sslip.io";
 var MAP = {
   running: ["运行中", "✨", "小屋开着，随时可以翻唱～"],
   booting: ["启动中", "⏳", "正在准备模型，稍等一下下"],
-  busy: ["忙碌中", "🎤", "页面在，但状态接口没回话，可能正在翻唱"],
-  sleeping: ["休眠", "💤", "小屋睡着啦，可以点唤醒"],
+  busy: ["忙碌中", "🎤", "小屋醒着，但状态接口没回话，可能正在翻唱"],
+  sleeping: ["休眠", "💤", "小屋没在运行（睡着了或停了），点唤醒试试；一直不行就去魔搭重启"],
   error: ["出错", "⚠️", "启动出了问题，看下面的错误信息"],
   offline: ["连不上", "📡", "连不上小鱼的服务器，检查一下网络"]
 };
 var $ = function (i) { return document.getElementById(i) };
-var left = 30, timer = null, busy = false;
+var left = 30, busy = false, fails = 0;
 function toast(t) { var e = $("toast"); e.textContent = t; e.classList.add("on"); clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove("on") }, 2600) }
 function dur(s) { if (s == null) return "-"; s = Math.round(s); if (s < 60) return s + " 秒"; if (s < 3600) return Math.floor(s / 60) + " 分"; var h = Math.floor(s / 3600); return h < 48 ? h + " 时 " + Math.floor(s % 3600 / 60) + " 分" : Math.floor(h / 24) + " 天" }
 function hm(t) { if (!t) return "-"; var d = new Date(t * 1000); var p = function (n) { return (n < 10 ? "0" : "") + n }; return p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds()) }
@@ -90,17 +90,17 @@ function show(d) {
   $("up").textContent = d ? dur(d.uptime_s) : "-";
   $("bt").textContent = d && d.boot_at ? hm(d.boot_at) : "-";
   $("ck").textContent = d && d.checked_at ? hm(d.checked_at) : hm(Date.now() / 1000);
-  var e = d && d.state === "error" ? d.last_error : (d && d.last_error && k !== "busy" ? d.last_error : "");
+  var e = d && d.state === "error" ? d.last_error : "";
   if (k === "offline") e = "服务器没有响应";
   $("er").style.display = e ? "block" : "none"; $("er").textContent = e ? "错误：" + e : "";
 }
 function load(manual) {
   if (busy) return; busy = true; $("rf").disabled = true;
-  var ctl = window.AbortController ? new AbortController() : null, to = setTimeout(function () { ctl && ctl.abort() }, 45000);
+  var ctl = window.AbortController ? new AbortController() : null, to = setTimeout(function () { ctl && ctl.abort() }, 60000);
   fetch(API + "/pub/cover_status?_=" + Date.now(), { cache: "no-store", signal: ctl && ctl.signal })
     .then(function (r) { return r.json() })
-    .then(function (d) { show(d); if (manual) toast("刷新好啦") })
-    .catch(function () { show(null); if (manual) toast("连不上服务器") })
+    .then(function (d) { fails = 0; show(d); if (manual) toast("刷新好啦") })
+    .catch(function () { fails++; if (fails >= 2) show(null); else setTimeout(function () { load(manual) }, 3000); if (manual && fails >= 2) toast("连不上服务器") })
     .then(function () { clearTimeout(to); busy = false; $("rf").disabled = false; left = 30 });
 }
 function wake() {
