@@ -1271,13 +1271,27 @@ body.iosm .top{padding-top:50px!important}
  <video id="camV" autoplay playsinline muted></video><canvas id="camC" hidden></canvas>
  <div class="cam-bar"><img class="cam-thumb" id="camTh" onclick="camStop();closeOne('p-cam');iosOpen('gal')"><button class="cam-shot" onclick="camShot()"></button><label style="color:#fff;font-size:26px">🖼️<input type="file" accept="image/*" hidden onchange="galAddFile(this)"></label></div>
 </div></div>
+<!-- Author: yuihonoka · 翻唱状态 App -->
+<div class="page" id="p-cover"><div class="top"><button class="ib" onclick="coverClose()">‹</button><h1>翻唱状态</h1><button class="ib" onclick="coverLoad(1)">⟳</button></div><div class="body" style="padding:18px 16px;background:#f2f2f7">
+ <div style="background:#fff;border-radius:16px;padding:22px 16px;text-align:center">
+  <img src="https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/cover.webp" style="width:64px;height:64px;border-radius:14px">
+  <div style="font-size:13px;color:#8e8e93;margin-top:8px">小鱼翻唱工作室</div>
+  <div id="cvState" style="font-size:40px;font-weight:700;margin:6px 0 4px">…</div>
+  <div id="cvStage" style="font-size:14px;color:#6e6e73;min-height:18px"></div>
+ </div>
+ <div style="background:#fff;border-radius:16px;margin-top:14px;padding:4px 16px;font-size:15px" id="cvRows"></div>
+ <div id="cvErr" style="display:none;background:#fff1f0;color:#c0392b;border-radius:12px;margin-top:14px;padding:10px 14px;font-size:13px;word-break:break-all"></div>
+ <div style="display:flex;gap:12px;margin-top:18px"><button onclick="coverLoad(1)" style="flex:1;height:46px;border:0;border-radius:12px;background:#e5e5ea;font-size:16px">刷新</button><button id="cvWakeB" onclick="coverWake()" style="flex:1;height:46px;border:0;border-radius:12px;background:#007aff;color:#fff;font-size:16px">唤醒</button></div>
+ <div id="cvMsg" style="text-align:center;font-size:13px;color:#6e6e73;margin-top:12px;min-height:16px"></div>
+ <div style="text-align:center;font-size:12px;color:#aeaeb2;margin-top:6px">打开时每 30 秒自动刷新</div>
+</div></div>
 <div class="page" id="p-gal"><div class="top"><button class="ib" onclick="closeOne('p-gal')">‹</button><h1>相册</h1><label class="ib">＋<input type="file" accept="image/*" hidden onchange="galAddFile(this)"></label></div><div class="body"><div class="gal" id="galG"></div></div></div>
 <script>
 const ICB='https://yuihonoka.github.io/yuihonoka/xiaoyu/app/ic/';
 const GEAR=`<svg viewBox="0 0 24 24" width="40" height="40" fill="#d8d8dc"><path d="M19.4 13a7.5 7.5 0 000-2l2-1.6-2-3.4-2.4 1a7.4 7.4 0 00-1.7-1L15 3.4h-4l-.4 2.6a7.4 7.4 0 00-1.7 1l-2.4-1-2 3.4 2 1.6a7.5 7.5 0 000 2l-2 1.6 2 3.4 2.4-1a7.4 7.4 0 001.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 001.7-1l2.4 1 2-3.4zM13 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" transform="translate(-1 0)"/></svg>`;
 const IOS_APPS={call:['img','电话'],qq:['img','QQ'],music:['img','网易云音乐'],bili:['img','哔哩哔哩'],cam:['img','相机'],gal:['img','照片'],life:['img','她的日记'],zone:['img','QQ空间'],
  mem:['img','记忆'],vault:['img','钱包'],prof:['img','资料卡'],usage:['img','用量'],plug:['img','插件'],persona:['img','人格'],bilitv:['img','B站国际版'],web:['img','浏览器'],x:['img','X'],ig:['img','Instagram'],fb:['img','Facebook'],tg:['img','Telegram'],tt:['img','TikTok'],yt:['img','YouTube'],spotify:['img','Spotify'],
- yu:['yu','小鱼yu'],set:[GEAR,'设置','linear-gradient(#8e8e93,#5a5a5f)'],theme:['🎨','个性装扮','linear-gradient(135deg,#ff6fd8,#7d5fff 55%,#3ec6ff)'],house:['<span style="font-size:34px">🏠</span>','小鱼的小屋','linear-gradient(135deg,#3b6cff,#62b6ff)'],astrbot:['img','AstrBot'],snowluma:['img','SnowLuma']};
+ yu:['yu','小鱼yu'],set:[GEAR,'设置','linear-gradient(#8e8e93,#5a5a5f)'],theme:['🎨','个性装扮','linear-gradient(135deg,#ff6fd8,#7d5fff 55%,#3ec6ff)'],house:['<span style="font-size:34px">🏠</span>','小鱼的小屋','linear-gradient(135deg,#3b6cff,#62b6ff)'],astrbot:['img','AstrBot'],snowluma:['img','SnowLuma'],cover:['img','翻唱状态']};
 const IOS_DOCK=['call','qq','music','bili'];
 function iosIcon(k){const a=IOS_APPS[k];let inner;
  if(a[0]==='img')inner=`<img src="${ICB}${k}.webp" alt="">`;else if(a[0]==='yu')inner='';else inner=a[0];
@@ -1286,7 +1300,7 @@ function iosIcon(k){const a=IOS_APPS[k];let inner;
 function iosRender(){
  $('iosP1').innerHTML=`<div class="ios-w s wcal" data-k="life"><div class="wd" id="iosWd">星期五</div><div class="dn" id="iosDn">6</div><div class="ev" id="iosEv">她今天还没有动态</div></div>
   <div class="ios-w s wyu" data-k="yu"><small id="iosNowK">她正在</small><b id="iosNowT">…</b></div>`+['yu','cam','gal','life','zone','prof','theme','set'].map(iosIcon).join('');
- $('iosP2').innerHTML=`<div class="ios-w l wtl" data-k="life"><small>她最近</small><div id="iosTl"></div></div>`+['web','bilitv','yt','spotify','x','ig','fb','tg','tt','mem','vault','usage','plug','persona','house','astrbot','snowluma'].map(iosIcon).join('');
+ $('iosP2').innerHTML=`<div class="ios-w l wtl" data-k="life"><small>她最近</small><div id="iosTl"></div></div>`+['web','bilitv','yt','spotify','x','ig','fb','tg','tt','mem','vault','usage','plug','persona','house','astrbot','snowluma','cover'].map(iosIcon).join('');
  $('iosToday').innerHTML=`<div class="tsrch"><svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="5" cy="5" r="4"/><path d="M8 8l3 3"/></svg>搜索</div>
   <div class="ios-w wyu" data-k="yu" style="height:170px"><small id="iosTdK">她正在</small><b id="iosTdT">…</b></div>
   <div class="ios-w" data-k="call" style="display:flex;align-items:center;gap:12px"><img src="${ICB}call.webp" style="width:44px;height:44px;border-radius:11px"><div><small>快速拨号</small><div style="font-size:16px;font-weight:600">给小鱼yu打电话</div></div></div>
@@ -1311,7 +1325,23 @@ function wbReload(){const u=WB.hist.pop();if(u)wbGo(u)}
 function wbClose(){$('wbBody').innerHTML='';closePage()}
 function iosOpen(k){if($('ios').classList.contains('jig'))return;const m={call:()=>{openPage('p-call');callInit()},music:()=>openPage('p-music'),bili:()=>openPage('p-bili'),cam:()=>{openPage('p-cam');camStart()},gal:()=>{openPage('p-gal');galRender()},
  life:()=>{openPage('p-life');loadLife()},mem:()=>openPage('p-mem'),theme:()=>openPage('p-theme'),house:()=>houseOpen(),astrbot:()=>window.open('https://astrbot.47-76-159-111.sslip.io/','_blank'),snowluma:()=>window.open('https://snowluma.47-76-159-111.sslip.io/','_blank'),vault:()=>openPage('p-vault'),set:()=>openPage('p-run'),prof:()=>openPage('p-prof'),usage:()=>openPage('p-usage'),plug:()=>openPage('p-plugins'),persona:()=>openPage('p-persona'),
- yu:()=>yuOpen(),x:()=>iosWeb('https://x.com','X'),ig:()=>iosWeb('https://www.instagram.com','Instagram'),fb:()=>iosWeb('https://www.facebook.com','Facebook'),tg:()=>iosWeb('https://web.telegram.org/k/','Telegram'),tt:()=>iosWeb('https://www.tiktok.com','TikTok'),yt:()=>iosWeb('https://m.youtube.com','YouTube'),spotify:()=>iosWeb('https://open.spotify.com','Spotify'),bilitv:()=>iosWeb('https://m.bilibili.com/','B站国际版'),web:()=>{WB.hist=[];WB.name='';if(window.YuNative&&YuNative.open){YuNative.open('https://www.bing.com','');return}openPage('p-web');wbHome()},qq:()=>{iosShow(false);tab('msg')},zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
+ yu:()=>yuOpen(),x:()=>iosWeb('https://x.com','X'),ig:()=>iosWeb('https://www.instagram.com','Instagram'),fb:()=>iosWeb('https://www.facebook.com','Facebook'),tg:()=>iosWeb('https://web.telegram.org/k/','Telegram'),tt:()=>iosWeb('https://www.tiktok.com','TikTok'),yt:()=>iosWeb('https://m.youtube.com','YouTube'),spotify:()=>iosWeb('https://open.spotify.com','Spotify'),bilitv:()=>iosWeb('https://m.bilibili.com/','B站国际版'),web:()=>{WB.hist=[];WB.name='';if(window.YuNative&&YuNative.open){YuNative.open('https://www.bing.com','');return}openPage('p-web');wbHome()},qq:()=>{iosShow(false);tab('msg')},cover:()=>coverOpen(),zone:()=>{iosShow(false);tab('feed')}};(m[k]||(()=>{}))()}
+/* Author: yuihonoka · 翻唱状态 App */
+const CV_API='https://47-76-159-111.sslip.io/pub/';let CV_T=null;
+const CV_ST={running:['运行中','#34c759'],booting:['启动中','#ff9500'],busy:['忙碌中','#007aff'],sleeping:['休眠','#8e8e93'],error:['出错','#ff3b30'],offline:['连不上','#8e8e93']};
+function cvDur(x){x=Number(x);if(!isFinite(x)||x<=0)return'—';x=Math.round(x);const d=Math.floor(x/86400),h=Math.floor(x%86400/3600),m=Math.floor(x%3600/60),s=x%60;return d?`${d}天${h}小时`:h?`${h}小时${m}分`:m?`${m}分${s}秒`:`${s}秒`}
+function coverOpen(){openPage('p-cover');coverLoad();clearInterval(CV_T);CV_T=setInterval(()=>{if(!$('p-cover').classList.contains('on')){clearInterval(CV_T);CV_T=null;return}coverLoad()},30000)}
+function coverClose(){clearInterval(CV_T);CV_T=null;closeOne('p-cover')}
+async function coverLoad(manual){if(manual)$('cvMsg').textContent='刷新中…';let d;
+ try{const r=await fetch(CV_API+'cover_status',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);d=await r.json()}catch(e){d={state:'offline',last_error:e.message}}
+ const st=CV_ST[d.state]||[d.state||'未知','#8e8e93'];$('cvState').textContent=st[0];$('cvState').style.color=st[1];$('cvStage').textContent=d.stage||'';
+ const row=(k,v)=>`<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:.5px solid #e5e5ea"><span style="color:#6e6e73">${k}</span><span>${esc(v)}</span></div>`;
+ $('cvRows').innerHTML=row('在线',d.online==null?'—':d.online?'是':'否')+row('就绪',d.ready==null?'—':d.ready?'是':'否')+row('已翻唱',d.covers==null?'—':d.covers+' 首')+row('运行时长',cvDur(d.uptime_s))+row('启动耗时',cvDur(d.boot_s))+row('启动于',d.boot_at?(typeof d.boot_at==='number'?new Date(d.boot_at*1000).toLocaleString('zh-CN',{hour12:false}):d.boot_at):'—')+row('最后检查',d.checked_at_text||new Date().toLocaleTimeString());
+ const e=$('cvErr');if(d.last_error){e.style.display='';e.textContent='最近错误：'+d.last_error}else e.style.display='none';
+ if(manual)$('cvMsg').textContent='已刷新'}
+async function coverWake(){const b=$('cvWakeB');b.disabled=true;$('cvMsg').textContent='正在唤醒…';
+ try{const r=await fetch(CV_API+'cover_wake',{method:'POST'});let d={};try{d=await r.json()}catch(e){}$('cvMsg').textContent=d.msg||(r.ok?'已发送唤醒':'唤醒失败 HTTP '+r.status)}catch(e){$('cvMsg').textContent='唤醒失败：'+e.message}
+ b.disabled=false;setTimeout(()=>coverLoad(),3000)}
 // 点击 / 长按抖动
 (function(){const R=$('ios');let lp=null,moved=false,sx=0,sy=0,pan=null;
  R.addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;moved=false;e.stopPropagation();
