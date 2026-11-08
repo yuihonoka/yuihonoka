@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!-- Author: yuihonoka -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#3b6cff">
+<title>小鱼翻唱状态</title>
+<style>
+:root{--blue:#3b6cff;--deep:#1e3a8a;--sky:#eaf2ff;--ink:#1f2a44;--sub:#6b7a99;--ok:#18b26b;--warn:#ff9f1a;--bad:#ff5a5f;--sleep:#8a94b8;--busy:#7b61ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:linear-gradient(180deg,#cfe3ff 0%,#eef5ff 45%,#fff 100%);color:var(--ink);
+font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:520px;margin:0 auto;padding:0 16px calc(28px + env(safe-area-inset-bottom))}
+.hero{position:relative;margin:0 -16px;height:190px;background:#9cc3ff url(yu.webp) center 30%/cover no-repeat;border-radius:0 0 28px 28px;overflow:hidden}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,58,138,0) 40%,rgba(30,58,138,.55))}
+.hero h1{position:absolute;left:18px;bottom:14px;margin:0;color:#fff;font-size:22px;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+.hero h1 small{display:block;font-size:12px;font-weight:400;opacity:.9;margin-top:2px}
+.card{background:#fff;border-radius:22px;box-shadow:0 8px 24px rgba(59,108,255,.12);padding:20px;margin-top:-26px;position:relative;z-index:2}
+.state{display:flex;align-items:center;gap:14px}
+.dot{width:58px;height:58px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:30px;background:var(--sky);transition:.3s}
+.st{font-size:34px;font-weight:800;letter-spacing:1px;line-height:1.1}
+.hint{color:var(--sub);font-size:13px;margin-top:4px}
+.s-running .dot{background:#dff7ec}.s-running .st{color:var(--ok)}
+.s-booting .dot{background:#fff2dc}.s-booting .st{color:var(--warn)}
+.s-busy .dot{background:#ece8ff}.s-busy .st{color:var(--busy)}
+.s-sleeping .dot{background:#eef0f7}.s-sleeping .st{color:var(--sleep)}
+.s-error .dot{background:#ffe6e7}.s-error .st{color:var(--bad)}
+.pulse .dot{animation:p 1.6s ease-in-out infinite}@keyframes p{50%{transform:scale(.92)}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.it{background:#f5f8ff;border-radius:16px;padding:12px 14px}
+.it b{display:block;font-size:22px;color:var(--deep)}
+.it span{font-size:12px;color:var(--sub)}
+.err{display:none;margin-top:12px;background:#fff1f1;color:#b4232a;border-radius:14px;padding:10px 12px;font-size:13px;word-break:break-all}
+.btns{display:flex;gap:10px;margin-top:16px}
+button{flex:1;border:0;border-radius:16px;padding:14px 0;font-size:16px;font-weight:700;font-family:inherit}
+#rf{background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(59,108,255,.3)}
+#wk{background:#eaf2ff;color:var(--blue)}
+button:active{transform:scale(.97)}button:disabled{opacity:.55}
+.foot{text-align:center;color:var(--sub);font-size:12px;margin-top:16px;line-height:1.7}
+.bar{height:4px;background:#e3ebff;border-radius:4px;overflow:hidden;margin-top:14px}
+.bar i{display:block;height:100%;width:0;background:var(--blue);transition:width 1s linear}
+.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:rgba(30,42,68,.92);color:#fff;
+padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;max-width:86%;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero"><h1>小鱼翻唱状态<small>魔搭创空间 · xiaoyu-cover</small></h1></div>
+  <div class="card s-booting pulse" id="card">
+    <div class="state"><div class="dot" id="ic">🐟</div>
+      <div><div class="st" id="st">查询中…</div><div class="hint" id="hint">本鲸去看看翻唱小屋～</div></div></div>
+    <div class="grid">
+      <div class="it"><b id="cv">-</b><span>本次启动翻唱数</span></div>
+      <div class="it"><b id="up">-</b><span>已运行</span></div>
+      <div class="it"><b id="bt">-</b><span>启动于</span></div>
+      <div class="it"><b id="ck">-</b><span>上次检查</span></div>
+    </div>
+    <div class="err" id="er"></div>
+    <div class="bar"><i id="pg"></i></div>
+    <div class="btns"><button id="rf">刷新</button><button id="wk">唤醒</button></div>
+  </div>
+  <div class="foot">每 30 秒自动刷新 · 服务器缓存 30 秒<br>休眠时点「唤醒」，启动大约要几分钟哦</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// Author: yuihonoka
+var API = "https://47-76-159-111.sslip.io";
+var MAP = {
+  running: ["运行中", "✨", "小屋开着，随时可以翻唱～"],
+  booting: ["启动中", "⏳", "正在准备模型，稍等一下下"],
+  busy: ["忙碌中", "🎤", "页面在，但状态接口没回话，可能正在翻唱"],
+  sleeping: ["休眠", "💤", "小屋睡着啦，可以点唤醒"],
+  error: ["出错", "⚠️", "启动出了问题，看下面的错误信息"],
+  offline: ["连不上", "📡", "连不上小鱼的服务器，检查一下网络"]
+};
+var $ = function (i) { return document.getElementById(i) };
+var left = 30, timer = null, busy = false;
+function toast(t) { var e = $("toast"); e.textContent = t; e.classList.add("on"); clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove("on") }, 2600) }
+function dur(s) { if (s == null) return "-"; s = Math.round(s); if (s < 60) return s + " 秒"; if (s < 3600) return Math.floor(s / 60) + " 分"; var h = Math.floor(s / 3600); return h < 48 ? h + " 时 " + Math.floor(s % 3600 / 60) + " 分" : Math.floor(h / 24) + " 天" }
+function hm(t) { if (!t) return "-"; var d = new Date(t * 1000); var p = function (n) { return (n < 10 ? "0" : "") + n }; return p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds()) }
+function show(d) {
+  var k = d && MAP[d.state] ? d.state : "offline", m = MAP[k];
+  $("card").className = "card s-" + (k === "offline" ? "error" : k) + (k === "booting" || k === "busy" ? " pulse" : "");
+  $("st").textContent = m[0]; $("ic").textContent = m[1];
+  var h = m[2]; if (k === "booting" && d.stage) h = "正在：" + d.stage;
+  $("hint").textContent = h;
+  $("cv").textContent = d && d.covers != null ? d.covers : "-";
+  $("up").textContent = d ? dur(d.uptime_s) : "-";
+  $("bt").textContent = d && d.boot_at ? hm(d.boot_at) : "-";
+  $("ck").textContent = d && d.checked_at ? hm(d.checked_at) : hm(Date.now() / 1000);
+  var e = d && d.state === "error" ? d.last_error : (d && d.last_error && k !== "busy" ? d.last_error : "");
+  if (k === "offline") e = "服务器没有响应";
+  $("er").style.display = e ? "block" : "none"; $("er").textContent = e ? "错误：" + e : "";
+}
+function load(manual) {
+  if (busy) return; busy = true; $("rf").disabled = true;
+  var ctl = window.AbortController ? new AbortController() : null, to = setTimeout(function () { ctl && ctl.abort() }, 45000);
+  fetch(API + "/pub/cover_status?_=" + Date.now(), { cache: "no-store", signal: ctl && ctl.signal })
+    .then(function (r) { return r.json() })
+    .then(function (d) { show(d); if (manual) toast("刷新好啦") })
+    .catch(function () { show(null); if (manual) toast("连不上服务器") })
+    .then(function () { clearTimeout(to); busy = false; $("rf").disabled = false; left = 30 });
+}
+function wake() {
+  var b = $("wk"); b.disabled = true; b.textContent = "敲门中…";
+  fetch(API + "/pub/cover_wake", { method: "POST" }).then(function (r) { return r.json() })
+    .then(function (d) { toast(d.msg || (d.ok ? "已唤醒" : "没成功")); setTimeout(function () { load() }, 1500) })
+    .catch(function () { toast("连不上服务器") })
+    .then(function () { b.textContent = "唤醒"; setTimeout(function () { b.disabled = false }, 3000) });
+}
+$("rf").onclick = function () { load(true) };
+$("wk").onclick = wake;
+setInterval(function () { if (busy) return; left--; $("pg").style.width = ((30 - left) / 30 * 100) + "%"; if (left <= 0) load() }, 1000);
+document.addEventListener("visibilitychange", function () { if (!document.hidden) load() });
+load();
+</script>
+</body>
+</html>
