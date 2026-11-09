@@ -63,10 +63,38 @@ padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:.25s;po
   </div>
   <div class="foot">每 30 秒自动刷新 · 服务器缓存 30 秒<br>休眠时点「唤醒」，启动大约要几分钟哦</div>
 </div>
+<div id="lk" style="display:none;position:fixed;inset:0;background:rgba(20,30,60,.55);align-items:center;justify-content:center;z-index:9"><div style="background:#fff;border-radius:18px;padding:22px;width:82%;max-width:340px;text-align:center"><div style="font-size:30px">🔒</div><b>输入小屋密钥</b><p id="lkm" style="color:#c55;font-size:13px;min-height:16px;margin:6px 0"></p><input id="lki" type="password" autocomplete="off" placeholder="和小屋 App 用的是同一个密钥" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd;border-radius:10px;font:inherit"><button onclick="saveKey()" style="margin-top:12px;width:100%;padding:10px;border:0;border-radius:10px;background:#4a7cf0;color:#fff;font:inherit">进入</button></div></div>
 <div class="toast" id="toast"></div>
 <script>
 // Author: yuihonoka
-var API = "https://47-76-159-111.sslip.io";
+var SRV_URLS = ["https://yuihonoka.github.io/yuihonoka/xiaoyu/app/srv.json", "https://raw.githubusercontent.com/yuihonoka/yuihonoka/main/xiaoyu/app/srv.json"];
+var cfg = {}; try { cfg = JSON.parse(localStorage.getItem("yq_cover") || localStorage.getItem("yq_srvcfg") || localStorage.getItem("yq_cfg") || "{}") } catch (e) {}
+if (location.hash.indexOf("#t=") === 0) { cfg.token = decodeURIComponent(location.hash.slice(3)); history.replaceState(null, "", location.pathname) }
+function saveCfg() { localStorage.setItem("yq_cover", JSON.stringify({ token: cfg.token, server: cfg.server })) }
+function hex2u8(h) { return new Uint8Array(h.match(/../g).map(function (x) { return parseInt(x, 16) })) }
+async function findServer() {
+  if (!cfg.token) return false;
+  try {
+    var best = null;
+    for (var i = 0; i < SRV_URLS.length; i++) { try { var j = await (await fetch(SRV_URLS[i] + "?_=" + Date.now(), { cache: "no-store" })).json(); if (!best || (j.ts || 0) > (best.ts || 0)) best = j } catch (e) {} }
+    var kb = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("yq-srv|" + cfg.token));
+    var key = await crypto.subtle.importKey("raw", new Uint8Array(kb), "AES-CBC", false, ["decrypt"]);
+    var ct = Uint8Array.from(atob(best.ct), function (c) { return c.charCodeAt(0) });
+    var u = new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-CBC", iv: hex2u8(best.iv) }, key, ct));
+    if (!/^https:\/\//.test(u)) return false; cfg.server = u.replace(/\/$/, ""); saveCfg(); return true;
+  } catch (e) { return false }
+}
+function needKey(msg) { $("lk").style.display = "flex"; $("lkm").textContent = msg || "" }
+function saveKey() { cfg.token = $("lki").value.trim(); cfg.server = ""; saveCfg(); $("lk").style.display = "none"; load(true) }
+async function api(path, opt) {
+  if (!cfg.token) { needKey(); throw new Error("nokey") }
+  if (!cfg.server && !(await findServer())) { needKey("密钥不对，或者找不到小鱼的服务器"); throw new Error("nokey") }
+  opt = opt || {}; opt.headers = { "X-App-Token": cfg.token }; opt.cache = "no-store";
+  var r = await fetch(cfg.server + path + (path.indexOf("?") < 0 ? "?" : "&") + "_=" + Date.now(), opt);
+  if (r.status === 401) { needKey("密钥不对"); throw new Error("nokey") }
+  if (r.status >= 500 || r.status === 404) { if (await findServer()) r = await fetch(cfg.server + path, opt) }
+  return r.json();
+}
 var MAP = {
   running: ["运行中", "✨", "小屋开着，随时可以翻唱～"],
   booting: ["启动中", "⏳", "正在准备模型，稍等一下下"],
@@ -97,15 +125,14 @@ function show(d) {
 function load(manual) {
   if (busy) return; busy = true; $("rf").disabled = true;
   var ctl = window.AbortController ? new AbortController() : null, to = setTimeout(function () { ctl && ctl.abort() }, 60000);
-  fetch(API + "/pub/cover_status?_=" + Date.now(), { cache: "no-store", signal: ctl && ctl.signal })
-    .then(function (r) { return r.json() })
+  api("/pub/cover_status", { signal: ctl && ctl.signal })
     .then(function (d) { fails = 0; show(d); if (manual) toast("刷新好啦") })
-    .catch(function () { fails++; if (fails >= 2) show(null); else setTimeout(function () { load(manual) }, 3000); if (manual && fails >= 2) toast("连不上服务器") })
+    .catch(function (e) { if (e && e.message === "nokey") return; fails++; if (fails >= 2) show(null); else setTimeout(function () { load(manual) }, 3000); if (manual && fails >= 2) toast("连不上服务器") })
     .then(function () { clearTimeout(to); busy = false; $("rf").disabled = false; left = 30 });
 }
 function wake() {
   var b = $("wk"); b.disabled = true; b.textContent = "敲门中…";
-  fetch(API + "/pub/cover_wake", { method: "POST" }).then(function (r) { return r.json() })
+  api("/pub/cover_wake", { method: "POST" })
     .then(function (d) { toast(d.msg || (d.ok ? "已唤醒" : "没成功")); setTimeout(function () { load() }, 1500) })
     .catch(function () { toast("连不上服务器") })
     .then(function () { b.textContent = "唤醒"; setTimeout(function () { b.disabled = false }, 3000) });
