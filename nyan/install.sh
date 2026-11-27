@@ -435,7 +435,8 @@ cat <<'TXT' | sed -e "s/^【\(.*\)】$/$(printf "$C")【\1】$(printf "$N")/" -e
   nyan 取消激活          告诉你怎么撤销
   nyan 无线adb           把 adb 端口设成 5555
   nyan shell             进 Shizuku 权限的 shell
-  nyan 系统              猫猫图案 + 安卓、EMUI、补丁、内核
+  nyan 系统              猫猫图案 + 机型、鸿蒙、处理器、内存、存储、屏幕
+  nyan 比例 <图片> 16:9  改图片比例（末尾加 补=补白边，拉=拉伸），壁纸用 1:2
 【小工具（要 Shizuku）】
   nyan 电量              电量、温度
   nyan 动画 0.5          动画速度（0 关，1 原速）
