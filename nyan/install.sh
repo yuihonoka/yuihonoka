@@ -471,6 +471,10 @@ cat <<'TXT' | sed -e "s/^【\(.*\)】$/$(printf "$C")【\1】$(printf "$N")/" -e
 【Python 打包 APK】
   nyan 打包py <脚本.py> [App名]   传到 GitHub 云端打包
   nyan 取apk                       打包好后下载到 下载 文件夹并安装
+【Java、模块和 QQ 脚本】
+  nyan java              Java 11 课，nyan java 3 看第 3 课并运行
+  nyan 模块 新 <名字>    建 Shizuku 桥模块，nyan 模块 试/改/包 <名字>
+  nyan qq 新 <名字>      建 QEdge(QQ) Java 脚本，nyan qq 改/包 <名字>
 【小提示】
   粘贴命令前看一眼开头，别多出 / 或 -
   输 nyan 教程 随时再看这页
@@ -708,6 +712,252 @@ rm -rf ~/pyapk/out && gh run download "$1" -R "$R" -n apk -D ~/pyapk/out || exit
 a=$(ls ~/pyapk/out/*.apk | head -1); cp "$a" /sdcard/Download/ && pink "APK 放到 下载 文件夹啦" && termux-open "/sdcard/Download/$(basename "$a")"
 NEKOEOF
 chmod +x $B/nyan-getapk
+cat > $B/nyan-java <<'NEKOEOF'
+#!/data/data/com.termux/files/usr/bin/bash
+# Author: yuihonoka
+# nyan java：Java 从零到会，11 课
+pink() { printf '\033[38;5;211m%s\033[0m\n' "$*"; }
+D="$HOME/java"; mkdir -p "$D"
+install_lessons() {
+cat > "$D/L01.java" <<'LESSON'
+// 第1课：你好世界
+// 每个 Java 程序从 main 开始，System.out.println 打印一行。
+public class L01 {
+    public static void main(String[] args) {
+        System.out.println("喵～ 你好 Java！");
+    }
+}
+LESSON
+cat > "$D/L02.java" <<'LESSON'
+// 第2课：变量和类型
+// int 整数，double 小数，String 文字，boolean 真假。
+public class L02 {
+    public static void main(String[] args) {
+        int age = 18; double h = 1.62; String name = "小汐"; boolean cat = true;
+        System.out.println(name + " " + age + " 岁，身高 " + h + "，是猫娘：" + cat);
+    }
+}
+LESSON
+cat > "$D/L03.java" <<'LESSON'
+// 第3课：判断 if
+// if / else if / else 按条件走不同的路。
+public class L03 {
+    public static void main(String[] args) {
+        int score = 85;
+        if (score >= 90) System.out.println("优秀喵");
+        else if (score >= 60) System.out.println("及格啦");
+        else System.out.println("要加油哦");
+    }
+}
+LESSON
+cat > "$D/L04.java" <<'LESSON'
+// 第4课：循环 for / while
+// for 适合数次数，while 适合等条件。
+public class L04 {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 5; i++) System.out.println("第 " + i + " 声：喵");
+        int n = 3;
+        while (n > 0) { System.out.println("倒数 " + n); n--; }
+    }
+}
+LESSON
+cat > "$D/L05.java" <<'LESSON'
+// 第5课：数组
+// 一排同类型的数据，下标从 0 开始。
+public class L05 {
+    public static void main(String[] args) {
+        String[] cats = {"橘猫", "黑猫", "三花"};
+        for (String c : cats) System.out.println(c);
+        System.out.println("一共 " + cats.length + " 只");
+    }
+}
+LESSON
+cat > "$D/L06.java" <<'LESSON'
+// 第6课：方法
+// 把一段代码起个名字，需要时调用，可以有参数和返回值。
+public class L06 {
+    static int add(int a, int b) { return a + b; }
+    static void meow(int times) { for (int i = 0; i < times; i++) System.out.print("喵"); System.out.println(); }
+    public static void main(String[] args) {
+        System.out.println("3 + 4 = " + add(3, 4));
+        meow(5);
+    }
+}
+LESSON
+cat > "$D/L07.java" <<'LESSON'
+// 第7课：类和对象
+// class 是图纸，new 出来的是对象，每个对象有自己的属性。
+public class L07 {
+    static class Cat {
+        String name; int age;
+        Cat(String n, int a) { name = n; age = a; }
+        void say() { System.out.println(name + "（" + age + " 岁）：喵～"); }
+    }
+    public static void main(String[] args) {
+        new Cat("小汐", 2).say();
+        new Cat("团子", 1).say();
+    }
+}
+LESSON
+cat > "$D/L08.java" <<'LESSON'
+// 第8课：输入 Scanner
+// Scanner 读你在键盘上打的字。
+import java.util.Scanner;
+public class L08 {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        System.out.print("你叫什么名字？");
+        String name = in.nextLine();
+        System.out.println("你好 " + name + "，喵～");
+    }
+}
+LESSON
+cat > "$D/L09.java" <<'LESSON'
+// 第9课：集合 ArrayList 和 HashMap
+// ArrayList 能变长的列表，HashMap 用名字查东西。
+import java.util.*;
+public class L09 {
+    public static void main(String[] args) {
+        List<String> food = new ArrayList<>(List.of("小鱼干", "猫条"));
+        food.add("牛奶");
+        Map<String, Integer> price = new HashMap<>();
+        price.put("小鱼干", 15); price.put("猫条", 8);
+        System.out.println(food + "，猫条 " + price.get("猫条") + " 元");
+    }
+}
+LESSON
+cat > "$D/L10.java" <<'LESSON'
+// 第10课：异常 try/catch
+// 出错时不闪退，接住错误自己处理。
+public class L10 {
+    public static void main(String[] args) {
+        try {
+            int x = Integer.parseInt("喵");
+        } catch (NumberFormatException e) {
+            System.out.println("这不是数字喵：" + e.getMessage());
+        }
+    }
+}
+LESSON
+cat > "$D/L11.java" <<'LESSON'
+// 第11课：小游戏：猜数字
+// 把前面学的合起来：随机数、循环、判断、输入。
+import java.util.*;
+public class L11 {
+    public static void main(String[] args) {
+        int ans = new Random().nextInt(100) + 1, n = 0;
+        Scanner in = new Scanner(System.in);
+        System.out.println("我想了一个 1~100 的数，猜猜看喵");
+        while (true) {
+            System.out.print("> "); int g = in.nextInt(); n++;
+            if (g < ans) System.out.println("小了"); else if (g > ans) System.out.println("大了");
+            else { System.out.println("猜对啦！用了 " + n + " 次"); break; }
+        }
+    }
+}
+LESSON
+}
+[ -f "$D/L11.java" ] || install_lessons
+list() {
+  pink "☕ Java 教程（代码在 ~/java）"
+  echo "  01  你好世界"
+  echo "  02  变量和类型"
+  echo "  03  判断 if"
+  echo "  04  循环 for / while"
+  echo "  05  数组"
+  echo "  06  方法"
+  echo "  07  类和对象"
+  echo "  08  输入 Scanner"
+  echo "  09  集合 ArrayList 和 HashMap"
+  echo "  10  异常 try/catch"
+  echo "  11  小游戏：猜数字"
+  pink "nyan java 3      看第 3 课讲解和代码，然后运行"
+  pink "nyan java 改 3   用 nano 改第 3 课"
+  pink "nyan java 跑 文件.java   运行你自己写的"
+  pink "nyan java 重置   恢复课程"
+}
+command -v java >/dev/null || { pink "先装 Java（只装一次）"; pkg install -y openjdk-17 || exit 1; }
+n=$(printf '%02d' "${2:-$1}" 2>/dev/null)
+case "$1" in
+  ""|列表) list ;;
+  重置) install_lessons; pink "课程恢复好啦" ;;
+  改) [ -f "$D/L$n.java" ] && nano "$D/L$n.java" || pink "没有第 $2 课" ;;
+  跑) [ -f "$2" ] && java "$2" || pink "找不到 $2" ;;
+  *) f="$D/L$n.java"; [ -f "$f" ] || { pink "没有第 $1 课"; list; exit 1; }
+     printf '\033[38;5;117m'; sed -n '1,2p' "$f"; printf '\033[0m'; sed '1,2d' "$f"; echo
+     pink "▶ 运行结果："; java "$f" ;;
+esac
+NEKOEOF
+chmod +x $B/nyan-java
+cat > $B/nyan-make <<'NEKOEOF'
+#!/data/data/com.termux/files/usr/bin/bash
+# Author: yuihonoka
+# nyan 模块 / nyan qq：一键建 Shizuku 桥模块、QEdge(QQ) Java 脚本模板，试跑并打包
+pink() { printf '\033[38;5;211m%s\033[0m\n' "$*"; }
+kind="$1"; act="$2"; name="$3"; id="${4:-neko_$(date +%s)}"
+case "$kind" in 模块) base="$HOME/mods" ;; qq) base="$HOME/qq" ;; *) exit 1 ;; esac
+d="$base/$name"
+usage() { pink "nyan $kind 新 <名字> [id]   建模板"; pink "nyan $kind 改 <名字>        用 nano 改"; [ "$kind" = 模块 ] && pink "nyan 模块 试 <名字>        用 rish 试跑 action.sh"; pink "nyan $kind 包 <名字>        打包到 下载 文件夹"; pink "nyan $kind 列表"; }
+[ "$act" = 列表 ] && { ls "$base" 2>/dev/null || pink "还没有"; exit; }
+[ -n "$name" ] || { usage; exit; }
+case "$kind:$act" in
+  模块:新)
+    mkdir -p "$d/webui"
+    printf 'id=%s\nname=%s\nversion=1.0\nversionCode=1\nauthor=yuihonoka\ndescription=%s · by yuihonoka\n' "$id" "$name" "$name" > "$d/module.prop"
+    cat > "$d/action.sh" <<'SH'
+#!/system/bin/sh
+# Author: yuihonoka
+echo "喵～模块在线"
+id | cut -d' ' -f1
+dumpsys battery | grep -E " level| temperature"
+SH
+    cat > "$d/webui/index.html" <<'HTML'
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Author: yuihonoka -->
+<style>body{font-family:sans-serif;background:#fff0f5;color:#c2185b;padding:16px}button{background:#ff6f9f;color:#fff;border:0;border-radius:12px;padding:12px 18px;margin:6px;font-size:16px}pre{background:#fff;border-radius:12px;padding:12px;white-space:pre-wrap}</style></head>
+<body><h2>喵～我的模块</h2>
+<button onclick="run('dumpsys battery | grep -E \' level| temperature\'')">电量温度</button>
+<button onclick="run('settings get global animator_duration_scale')">动画速度</button>
+<pre id="o">点按钮试试</pre>
+<script>
+var Z=window.Shizuku;
+function run(c){var o=document.getElementById('o');if(!Z){o.textContent='没有 window.Shizuku：长按模块选 Trust 或开 Full 模式';return}
+try{var r=JSON.parse(Z.exec(c));o.textContent=r.stderr?('出错了：'+r.stderr):r.stdout}catch(e){o.textContent=String(e)}}
+</script></body></html>
+HTML
+    pink "建好啦：$d（改 action.sh 和 webui/index.html）" ;;
+  模块:改) nano "$d/action.sh" ;;
+  模块:试) command -v rish >/dev/null || { pink "没有 rish，先 nyan 开机"; exit 1; }; rish -c "$(cat "$d/action.sh")" ;;
+  qq:新)
+    mkdir -p "$d"
+    printf 'id=%s_yuihonoka\npluginName=%s\nauthor=yuihonoka\nversionCode=1.0\n' "$id" "$name" > "$d/info.prop"
+    printf '%s · 喵～\nAuthor: yuihonoka\n' "$name" > "$d/desc.txt"
+    echo "Author: yuihonoka" > "$d/AUTHOR.txt"
+    cat > "$d/main.java" <<'JAVA'
+// Author: yuihonoka
+// QEdge 脚本模板：在 QQ 里运行，菜单里会出现下面两个按钮
+addItem("喵一下", "onMeow");
+addItem("看日志", "onShow");
+int count = 0;
+
+void onMeow(int chatType, String peerUin, String name) {
+    count++;
+    toast("喵～这是第 " + count + " 次");
+    log("neko.log", "喵了一下，第 " + count + " 次\n");
+}
+
+void onShow(int chatType, String peerUin, String name) {
+    toast("一共喵了 " + count + " 次");
+}
+JAVA
+    pink "建好啦：$d（改 main.java）" ;;
+  qq:改) nano "$d/main.java" ;;
+  *:包) [ -d "$d" ] || { pink "没有 $name"; exit 1; }; command -v zip >/dev/null || pkg install -y zip
+       out="/sdcard/Download/$name-1.0.zip"; rm -f "$out"; (cd "$d" && zip -qr "$out" .) && pink "打包好啦：$out" ;;
+  *) usage ;;
+esac
+NEKOEOF
+chmod +x $B/nyan-make
 cp $B/nyan $B/nyan.bak.$(date +%s)
 sed -i '/# >>> nyan-routes >>>/,/# <<< nyan-routes <<</d' $B/nyan
 cat > $PREFIX/tmp/nyan_routes <<'NEKOEOF'
@@ -726,12 +976,14 @@ cat > $PREFIX/tmp/nyan_routes <<'NEKOEOF'
   停画) exec nyan-draw 停 ;;
   打包py) shift; exec nyan-pyapk "$@" ;;
   取apk) shift; exec nyan-getapk "$@" ;;
+  java|Java) shift; exec nyan-java "$@" ;;
+  模块|qq|QQ) k=$1; [ "$k" = QQ ] && k=qq; shift; exec nyan-make "$k" "$@" ;;
   # <<< nyan-routes <<<
 NEKOEOF
 if ! python3 - "$B/nyan" "$PREFIX/tmp/nyan_routes" <<'PY' 2>/dev/null
 import sys,re
 p=sys.argv[1]; s=open(p,encoding="utf-8").read(); r=open(sys.argv[2],encoding="utf-8").read()
-keys=["nyan-x","nyan-app","nyan-media","nyan-bili","nyan-util","nyan-net","nyan-sys","nyan-ds","nyan-vnc","nyan-turtle","nyan-draw","nyan-pyapk","nyan-getapk"]
+keys=["nyan-java","nyan-make","nyan-x","nyan-app","nyan-media","nyan-bili","nyan-util","nyan-net","nyan-sys","nyan-ds","nyan-vnc","nyan-turtle","nyan-draw","nyan-pyapk","nyan-getapk"]
 s="\n".join(l for l in s.split("\n") if not (re.search(r"exec ("+"|".join(map(re.escape,keys))+r")\b",l)))
 s=s.replace("  shell)\n", r+"  shell)\n",1)
 open(p,"w",encoding="utf-8").write(s)
