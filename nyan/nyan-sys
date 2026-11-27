@@ -1,0 +1,42 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Author: yuihonoka
+# nyan 系统：猫猫图案 + 手机系统版本
+g() { getprop "$1" 2>/dev/null; }
+name=$(g ro.config.marketing_name); [ -n "$name" ] || name=$(g ro.product.marketname); [ -n "$name" ] || name="$(g ro.product.brand) $(g ro.product.model)"
+hos=$(g hw_sc.build.platform.version)
+cpu=$(g ro.config.cpu_info_display); [ -n "$cpu" ] || cpu=$(g ro.hardware)
+case "$cpu" in kirin970) cpu="HiSilicon Kirin 970";; esac
+ram=$(awk '/MemTotal/{printf "%.1f GB", $2/1048576}' /proc/meminfo)
+sto=$(df -h /data 2>/dev/null | awk 'NR==2{print "可用 "$4" / 共 "$2}')
+scr=$(command -v rish >/dev/null && rish -c "wm size" 2>/dev/null | awk -F': ' '/Physical/{print $2}')
+emui=$(g ro.build.version.emui)
+art=(
+"     /\\_____/\\     "
+"    /  o   o  \\    "
+"   ( ==  ^  == )   "
+"    )         (    "
+"   (           )   "
+"  ( (  )   (  ) )  "
+" (__(__)___(__)__) "
+"        喵～       "
+"                   "
+"                   "
+"                   "
+)
+info=(
+"$(whoami)@$(g ro.product.model)"
+"────────────────"
+"机型：$name"
+"安卓：Android $(g ro.build.version.release)（API $(g ro.build.version.sdk)）"
+"$( [ -n "$hos" ] && echo "鸿蒙：HarmonyOS $hos" || echo "${emui:+EMUI：$emui}")"
+"版本：$(g ro.build.display.id)"
+"补丁：$(g ro.build.version.security_patch)"
+"内核：$(uname -r)"
+"处理器：$cpu（$(g ro.product.cpu.abi)）"
+"内存：$ram  存储：$sto"
+"屏幕：${scr:-未知}"
+)
+for i in "${!art[@]}"; do
+  printf '\033[38;5;211m%s\033[0m  \033[38;5;117m%s\033[0m\n' "${art[$i]}" "${info[$i]}"
+done
+printf '%21s' ''; for c in 211 218 225 159 117 147 183; do printf '\033[48;5;%sm   \033[0m' $c; done; echo
