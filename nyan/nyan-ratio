@@ -1,0 +1,18 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Author: yuihonoka
+# nyan 比例：改图片比例。nyan 比例 <图片> <宽:高> [裁|补|拉]
+pink() { printf '\033[38;5;211m%s\033[0m\n' "$*"; }
+f="$1"; r="$2"; m="${3:-裁}"
+[ -f "$f" ] && [[ "$r" =~ ^[0-9]+:[0-9]+$ ]] || { pink "用法：nyan 比例 <图片> <宽:高> [裁|补|拉]"; pink "裁=居中裁掉多的（默认）  补=四周补白边  拉=直接拉伸"; pink "例：nyan 比例 /sdcard/Download/a.jpg 16:9"; exit 1; }
+command -v magick >/dev/null || pkg install -y imagemagick
+a=${r%:*}; b=${r#*:}
+read W H < <(magick identify -format "%w %h" "$f[0]")
+if [ $((W * b)) -gt $((H * a)) ]; then nh=$H; nw=$((H * a / b)); else nw=$W; nh=$((W * b / a)); fi
+ext="${f##*.}"; out="${f%.*}_${a}x${b}.${ext}"
+case "$m" in
+  裁) magick "$f" -gravity center -crop ${nw}x${nh}+0+0 +repage "$out" ;;
+  补) if [ $((W * b)) -gt $((H * a)) ]; then cw=$W; ch=$((W * b / a)); else ch=$H; cw=$((H * a / b)); fi
+      magick "$f" -background white -gravity center -extent ${cw}x${ch} "$out" ;;
+  拉) magick "$f" -resize ${nw}x${nh}! "$out" ;;
+  *) pink "方式只有 裁 / 补 / 拉"; exit 1 ;;
+esac && pink "好啦：$out（$(magick identify -format '%wx%h' "$out[0]")）"
