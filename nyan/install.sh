@@ -349,7 +349,13 @@ cat > $B/nyan-sys <<'NEKOEOF'
 # Author: yuihonoka
 # nyan 系统：猫猫图案 + 手机系统版本
 g() { getprop "$1" 2>/dev/null; }
-name=$(g ro.product.marketname); [ -n "$name" ] || name="$(g ro.product.brand) $(g ro.product.model)"
+name=$(g ro.config.marketing_name); [ -n "$name" ] || name=$(g ro.product.marketname); [ -n "$name" ] || name="$(g ro.product.brand) $(g ro.product.model)"
+hos=$(g hw_sc.build.platform.version)
+cpu=$(g ro.config.cpu_info_display); [ -n "$cpu" ] || cpu=$(g ro.hardware)
+case "$cpu" in kirin970) cpu="HiSilicon Kirin 970";; esac
+ram=$(awk '/MemTotal/{printf "%.1f GB", $2/1048576}' /proc/meminfo)
+sto=$(df -h /data 2>/dev/null | awk 'NR==2{print "可用 "$4" / 共 "$2}')
+scr=$(command -v rish >/dev/null && rish -c "wm size" 2>/dev/null | awk -F': ' '/Physical/{print $2}')
 emui=$(g ro.build.version.emui)
 art=(
 "     /\\_____/\\     "
@@ -361,17 +367,21 @@ art=(
 " (__(__)___(__)__) "
 "        喵～       "
 "                   "
+"                   "
+"                   "
 )
 info=(
 "$(whoami)@$(g ro.product.model)"
 "────────────────"
 "机型：$name"
 "安卓：Android $(g ro.build.version.release)（API $(g ro.build.version.sdk)）"
-"${emui:+EMUI：$emui}"
+"$( [ -n "$hos" ] && echo "鸿蒙：HarmonyOS $hos" || echo "${emui:+EMUI：$emui}")"
 "版本：$(g ro.build.display.id)"
 "补丁：$(g ro.build.version.security_patch)"
 "内核：$(uname -r)"
-"架构：$(g ro.product.cpu.abi)"
+"处理器：$cpu（$(g ro.product.cpu.abi)）"
+"内存：$ram  存储：$sto"
+"屏幕：${scr:-未知}"
 )
 for i in "${!art[@]}"; do
   printf '\033[38;5;211m%s\033[0m  \033[38;5;117m%s\033[0m\n' "${art[$i]}" "${info[$i]}"
@@ -958,6 +968,27 @@ JAVA
 esac
 NEKOEOF
 chmod +x $B/nyan-make
+cat > $B/nyan-ratio <<'NEKOEOF'
+#!/data/data/com.termux/files/usr/bin/bash
+# Author: yuihonoka
+# nyan 比例：改图片比例。nyan 比例 <图片> <宽:高> [裁|补|拉]
+pink() { printf '\033[38;5;211m%s\033[0m\n' "$*"; }
+f="$1"; r="$2"; m="${3:-裁}"
+[ -f "$f" ] && [[ "$r" =~ ^[0-9]+:[0-9]+$ ]] || { pink "用法：nyan 比例 <图片> <宽:高> [裁|补|拉]"; pink "裁=居中裁掉多的（默认）  补=四周补白边  拉=直接拉伸"; pink "例：nyan 比例 /sdcard/Download/a.jpg 16:9"; exit 1; }
+command -v magick >/dev/null || pkg install -y imagemagick
+a=${r%:*}; b=${r#*:}
+read W H < <(magick identify -format "%w %h" "$f[0]")
+if [ $((W * b)) -gt $((H * a)) ]; then nh=$H; nw=$((H * a / b)); else nw=$W; nh=$((W * b / a)); fi
+ext="${f##*.}"; out="${f%.*}_${a}x${b}.${ext}"
+case "$m" in
+  裁) magick "$f" -gravity center -crop ${nw}x${nh}+0+0 +repage "$out" ;;
+  补) if [ $((W * b)) -gt $((H * a)) ]; then cw=$W; ch=$((W * b / a)); else ch=$H; cw=$((H * a / b)); fi
+      magick "$f" -background white -gravity center -extent ${cw}x${ch} "$out" ;;
+  拉) magick "$f" -resize ${nw}x${nh}! "$out" ;;
+  *) pink "方式只有 裁 / 补 / 拉"; exit 1 ;;
+esac && pink "好啦：$out（$(magick identify -format '%wx%h' "$out[0]")）"
+NEKOEOF
+chmod +x $B/nyan-ratio
 cp $B/nyan $B/nyan.bak.$(date +%s)
 sed -i '/# >>> nyan-routes >>>/,/# <<< nyan-routes <<</d' $B/nyan
 cat > $PREFIX/tmp/nyan_routes <<'NEKOEOF'
@@ -977,13 +1008,14 @@ cat > $PREFIX/tmp/nyan_routes <<'NEKOEOF'
   打包py) shift; exec nyan-pyapk "$@" ;;
   取apk) shift; exec nyan-getapk "$@" ;;
   java|Java) shift; exec nyan-java "$@" ;;
+  比例) shift; exec nyan-ratio "$@" ;;
   模块|qq|QQ) k=$1; [ "$k" = QQ ] && k=qq; shift; exec nyan-make "$k" "$@" ;;
   # <<< nyan-routes <<<
 NEKOEOF
 if ! python3 - "$B/nyan" "$PREFIX/tmp/nyan_routes" <<'PY' 2>/dev/null
 import sys,re
 p=sys.argv[1]; s=open(p,encoding="utf-8").read(); r=open(sys.argv[2],encoding="utf-8").read()
-keys=["nyan-java","nyan-make","nyan-x","nyan-app","nyan-media","nyan-bili","nyan-util","nyan-net","nyan-sys","nyan-ds","nyan-vnc","nyan-turtle","nyan-draw","nyan-pyapk","nyan-getapk"]
+keys=["nyan-ratio","nyan-java","nyan-make","nyan-x","nyan-app","nyan-media","nyan-bili","nyan-util","nyan-net","nyan-sys","nyan-ds","nyan-vnc","nyan-turtle","nyan-draw","nyan-pyapk","nyan-getapk"]
 s="\n".join(l for l in s.split("\n") if not (re.search(r"exec ("+"|".join(map(re.escape,keys))+r")\b",l)))
 s=s.replace("  shell)\n", r+"  shell)\n",1)
 open(p,"w",encoding="utf-8").write(s)
