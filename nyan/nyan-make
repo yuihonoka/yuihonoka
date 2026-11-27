@@ -46,11 +46,10 @@ HTML
 // QEdge 脚本模板：在 QQ 里运行，菜单里会出现下面两个按钮
 addItem("喵一下", "onMeow");
 addItem("看日志", "onShow");
-int count = getInt("cfg", "count", 0);
+int count = 0;
 
 void onMeow(int chatType, String peerUin, String name) {
     count++;
-    putInt("cfg", "count", count);
     toast("喵～这是第 " + count + " 次");
     log("neko.log", "喵了一下，第 " + count + " 次\n");
 }
@@ -59,7 +58,7 @@ void onShow(int chatType, String peerUin, String name) {
     toast("一共喵了 " + count + " 次");
 }
 JAVA
-    pink "建好啦：$d（改 main.java）。getInt/putInt 是按 getBoolean 的写法猜的，报错就换回 getBoolean" ;;
+    pink "建好啦：$d（改 main.java）" ;;
   qq:改) nano "$d/main.java" ;;
   *:包) [ -d "$d" ] || { pink "没有 $name"; exit 1; }; command -v zip >/dev/null || pkg install -y zip
        out="/sdcard/Download/$name-1.0.zip"; rm -f "$out"; (cd "$d" && zip -qr "$out" .) && pink "打包好啦：$out" ;;
