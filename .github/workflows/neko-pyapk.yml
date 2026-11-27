@@ -1,0 +1,50 @@
+# Author: yuihonoka —— 猫娘 Python 打包 APK：往 pyapk/ 放 py 文件就会自动打包
+name: neko-pyapk
+on:
+  push:
+    paths: ["pyapk/**"]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: pyapk }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - name: prepare
+        run: |
+          mkdir -p build && cp -r pyapk/* build/
+          cd build
+          NAME=$(cat name.txt 2>/dev/null | tr -cd 'a-zA-Z0-9'); [ -n "$NAME" ] || NAME=nekoapp
+          if ! grep -q kivy user_script.py; then
+          cat > main.py <<'PY'
+          import io, contextlib, traceback
+          from kivy.app import App
+          from kivy.uix.scrollview import ScrollView
+          from kivy.uix.label import Label
+          class NekoApp(App):
+              def build(self):
+                  buf = io.StringIO()
+                  with contextlib.redirect_stdout(buf):
+                      try:
+                          exec(open("user_script.py", encoding="utf-8").read(), {"__name__": "__main__"})
+                      except Exception:
+                          traceback.print_exc(file=buf)
+                  lab = Label(text=buf.getvalue() or "(no output)", size_hint_y=None, halign="left", valign="top", font_size="16sp")
+                  lab.bind(width=lambda w, v: setattr(w, "text_size", (v, None)), texture_size=lambda w, v: setattr(w, "height", v[1]))
+                  sv = ScrollView(); sv.add_widget(lab); return sv
+          NekoApp().run()
+          PY
+          else cp user_script.py main.py; fi
+          printf '[app]\ntitle = %s\npackage.name = %s\npackage.domain = com.yuihonoka\nsource.dir = .\nsource.include_exts = py,png,jpg,kv,txt,json\nversion = 1.0\nrequirements = python3,kivy\norientation = portrait\nandroid.archs = arm64-v8a, armeabi-v7a\nandroid.api = 34\nandroid.minapi = 24\nandroid.accept_sdk_license = True\n[buildozer]\nlog_level = 2\n' "$NAME" "$NAME" > buildozer.spec
+      - name: deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libffi-dev libssl-dev
+          pip install buildozer cython==0.29.37
+      - run: cd build && yes | buildozer android debug
+      - uses: actions/upload-artifact@v4
+        with: { name: apk, path: build/bin/*.apk }
