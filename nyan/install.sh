@@ -353,7 +353,7 @@ name=$(g ro.config.marketing_name); [ -n "$name" ] || name=$(g ro.product.market
 hos=$(g hw_sc.build.platform.version)
 cpu=$(g ro.config.cpu_info_display); [ -n "$cpu" ] || cpu=$(g ro.hardware)
 case "$cpu" in kirin970) cpu="HiSilicon Kirin 970";; esac
-ram=$(awk '/MemTotal/{printf "%.1f GB", $2/1048576}' /proc/meminfo)
+ram=$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{printf "已用 %.1f / 共 %.1f GB（%d%%）", (t-a)/1048576, t/1048576, (t-a)*100/t}' /proc/meminfo)
 sto=$(df -h /data 2>/dev/null | awk 'NR==2{print "可用 "$4" / 共 "$2}')
 scr=$(command -v rish >/dev/null && rish -c "wm size" 2>/dev/null | awk -F': ' '/Physical/{print $2}')
 emui=$(g ro.build.version.emui)
@@ -369,6 +369,7 @@ art=(
 "                   "
 "                   "
 "                   "
+"                   "
 )
 info=(
 "$(whoami)@$(g ro.product.model)"
@@ -380,7 +381,8 @@ info=(
 "补丁：$(g ro.build.version.security_patch)"
 "内核：$(uname -r)"
 "处理器：$cpu（$(g ro.product.cpu.abi)）"
-"内存：$ram  存储：$sto"
+"内存：$ram"
+"存储：$sto"
 "屏幕：${scr:-未知}"
 )
 for i in "${!art[@]}"; do
