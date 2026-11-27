@@ -1,0 +1,67 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Author: yuihonoka
+# nyan 模块 / nyan qq：一键建 Shizuku 桥模块、QEdge(QQ) Java 脚本模板，试跑并打包
+pink() { printf '\033[38;5;211m%s\033[0m\n' "$*"; }
+kind="$1"; act="$2"; name="$3"; id="${4:-neko_$(date +%s)}"
+case "$kind" in 模块) base="$HOME/mods" ;; qq) base="$HOME/qq" ;; *) exit 1 ;; esac
+d="$base/$name"
+usage() { pink "nyan $kind 新 <名字> [id]   建模板"; pink "nyan $kind 改 <名字>        用 nano 改"; [ "$kind" = 模块 ] && pink "nyan 模块 试 <名字>        用 rish 试跑 action.sh"; pink "nyan $kind 包 <名字>        打包到 下载 文件夹"; pink "nyan $kind 列表"; }
+[ "$act" = 列表 ] && { ls "$base" 2>/dev/null || pink "还没有"; exit; }
+[ -n "$name" ] || { usage; exit; }
+case "$kind:$act" in
+  模块:新)
+    mkdir -p "$d/webui"
+    printf 'id=%s\nname=%s\nversion=1.0\nversionCode=1\nauthor=yuihonoka\ndescription=%s · by yuihonoka\n' "$id" "$name" "$name" > "$d/module.prop"
+    cat > "$d/action.sh" <<'SH'
+#!/system/bin/sh
+# Author: yuihonoka
+echo "喵～模块在线"
+id | cut -d' ' -f1
+dumpsys battery | grep -E " level| temperature"
+SH
+    cat > "$d/webui/index.html" <<'HTML'
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Author: yuihonoka -->
+<style>body{font-family:sans-serif;background:#fff0f5;color:#c2185b;padding:16px}button{background:#ff6f9f;color:#fff;border:0;border-radius:12px;padding:12px 18px;margin:6px;font-size:16px}pre{background:#fff;border-radius:12px;padding:12px;white-space:pre-wrap}</style></head>
+<body><h2>喵～我的模块</h2>
+<button onclick="run('dumpsys battery | grep -E \' level| temperature\'')">电量温度</button>
+<button onclick="run('settings get global animator_duration_scale')">动画速度</button>
+<pre id="o">点按钮试试</pre>
+<script>
+var Z=window.Shizuku;
+function run(c){var o=document.getElementById('o');if(!Z){o.textContent='没有 window.Shizuku：长按模块选 Trust 或开 Full 模式';return}
+try{var r=JSON.parse(Z.exec(c));o.textContent=r.stderr?('出错了：'+r.stderr):r.stdout}catch(e){o.textContent=String(e)}}
+</script></body></html>
+HTML
+    pink "建好啦：$d（改 action.sh 和 webui/index.html）" ;;
+  模块:改) nano "$d/action.sh" ;;
+  模块:试) command -v rish >/dev/null || { pink "没有 rish，先 nyan 开机"; exit 1; }; rish -c "$(cat "$d/action.sh")" ;;
+  qq:新)
+    mkdir -p "$d"
+    printf 'id=%s_yuihonoka\npluginName=%s\nauthor=yuihonoka\nversionCode=1.0\n' "$id" "$name" > "$d/info.prop"
+    printf '%s · 喵～\nAuthor: yuihonoka\n' "$name" > "$d/desc.txt"
+    echo "Author: yuihonoka" > "$d/AUTHOR.txt"
+    cat > "$d/main.java" <<'JAVA'
+// Author: yuihonoka
+// QEdge 脚本模板：在 QQ 里运行，菜单里会出现下面两个按钮
+addItem("喵一下", "onMeow");
+addItem("看日志", "onShow");
+int count = getInt("cfg", "count", 0);
+
+void onMeow(int chatType, String peerUin, String name) {
+    count++;
+    putInt("cfg", "count", count);
+    toast("喵～这是第 " + count + " 次");
+    log("neko.log", "喵了一下，第 " + count + " 次\n");
+}
+
+void onShow(int chatType, String peerUin, String name) {
+    toast("一共喵了 " + count + " 次");
+}
+JAVA
+    pink "建好啦：$d（改 main.java）。getInt/putInt 是按 getBoolean 的写法猜的，报错就换回 getBoolean" ;;
+  qq:改) nano "$d/main.java" ;;
+  *:包) [ -d "$d" ] || { pink "没有 $name"; exit 1; }; command -v zip >/dev/null || pkg install -y zip
+       out="/sdcard/Download/$name-1.0.zip"; rm -f "$out"; (cd "$d" && zip -qr "$out" .) && pink "打包好啦：$out" ;;
+  *) usage ;;
+esac
