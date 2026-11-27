@@ -690,8 +690,8 @@ f="$1"; [ -f "$f" ] || { pink "用法：nyan 打包py <脚本.py> [App名]"; exi
 name="${2:-$(basename "$f" .py)}"
 gh auth status >/dev/null 2>&1 || { pink "先连 GitHub：gh auth login"; exit 1; }
 put() { sha=$(gh api "repos/$R/contents/$1" -q .sha 2>/dev/null); gh api -X PUT "repos/$R/contents/$1" -f message="nyan 打包 $name" -f content="$(base64 -w0 "$2")" ${sha:+-f sha=$sha} >/dev/null; }
-printf '%s' "$name" > /tmp/nyan_name.txt
-put pyapk/name.txt /tmp/nyan_name.txt && put pyapk/user_script.py "$f" || { pink "上传失败"; exit 1; }
+printf '%s' "$name" > $PREFIX/tmp/nyan_name.txt
+put pyapk/name.txt $PREFIX/tmp/nyan_name.txt && put pyapk/user_script.py "$f" || { pink "上传失败"; exit 1; }
 pink "传上去啦，云端开始打包（第一次大约 20 分钟），好了运行：nyan 取apk"
 NEKOEOF
 chmod +x $B/nyan-pyapk
@@ -710,7 +710,7 @@ NEKOEOF
 chmod +x $B/nyan-getapk
 cp $B/nyan $B/nyan.bak.$(date +%s)
 sed -i '/# >>> nyan-routes >>>/,/# <<< nyan-routes <<</d' $B/nyan
-cat > /tmp/nyan_routes <<'NEKOEOF'
+cat > $PREFIX/tmp/nyan_routes <<'NEKOEOF'
   # >>> nyan-routes >>>
   电量|动画|清后台|冻结|解冻|冻结列表|禁后台|放后台|截屏|包名|工具) exec nyan-x "$@" ;;
   制作APP|制作App|做App|做APP|新App|编译|App列表|APP列表) exec nyan-app "$@" ;;
@@ -728,15 +728,15 @@ cat > /tmp/nyan_routes <<'NEKOEOF'
   取apk) shift; exec nyan-getapk "$@" ;;
   # <<< nyan-routes <<<
 NEKOEOF
-if ! python3 - "$B/nyan" <<'PY' 2>/dev/null
+if ! python3 - "$B/nyan" "$PREFIX/tmp/nyan_routes" <<'PY' 2>/dev/null
 import sys,re
-p=sys.argv[1]; s=open(p,encoding="utf-8").read(); r=open("/tmp/nyan_routes",encoding="utf-8").read()
+p=sys.argv[1]; s=open(p,encoding="utf-8").read(); r=open(sys.argv[2],encoding="utf-8").read()
 keys=["nyan-x","nyan-app","nyan-media","nyan-bili","nyan-util","nyan-net","nyan-sys","nyan-ds","nyan-vnc","nyan-turtle","nyan-draw","nyan-pyapk","nyan-getapk"]
 s="\n".join(l for l in s.split("\n") if not (re.search(r"exec ("+"|".join(map(re.escape,keys))+r")\b",l)))
 s=s.replace("  shell)\n", r+"  shell)\n",1)
 open(p,"w",encoding="utf-8").write(s)
 PY
-then awk -v r="$(cat /tmp/nyan_routes)" '/^  shell\)$/ && !d {print r; d=1} {print}' "$B/nyan" > "$B/nyan.new" && mv "$B/nyan.new" "$B/nyan"; fi
+then awk -v r="$(cat $PREFIX/tmp/nyan_routes)" '/^  shell\)$/ && !d {print r; d=1} {print}' "$B/nyan" > "$B/nyan.new" && mv "$B/nyan.new" "$B/nyan"; fi
 chmod +x $B/nyan
 grep -q '^  ""|help|帮助|教程)' $B/nyan || sed -i 's/^  ""|help|帮助)$/  ""|help|帮助|教程)\n    exec nyan-help ;;\n  旧帮助)/' $B/nyan
 grep -q '^nyan-cat$' ~/.bashrc || echo nyan-cat >> ~/.bashrc
