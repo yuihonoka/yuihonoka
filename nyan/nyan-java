@@ -1,0 +1,174 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Author: yuihonoka
+# nyan java：Java 从零到会，11 课
+pink() { printf '\033[38;5;211m%s\033[0m\n' "$*"; }
+D="$HOME/java"; mkdir -p "$D"
+install_lessons() {
+cat > "$D/L01.java" <<'LESSON'
+// 第1课：你好世界
+// 每个 Java 程序从 main 开始，System.out.println 打印一行。
+public class L01 {
+    public static void main(String[] args) {
+        System.out.println("喵～ 你好 Java！");
+    }
+}
+LESSON
+cat > "$D/L02.java" <<'LESSON'
+// 第2课：变量和类型
+// int 整数，double 小数，String 文字，boolean 真假。
+public class L02 {
+    public static void main(String[] args) {
+        int age = 18; double h = 1.62; String name = "小汐"; boolean cat = true;
+        System.out.println(name + " " + age + " 岁，身高 " + h + "，是猫娘：" + cat);
+    }
+}
+LESSON
+cat > "$D/L03.java" <<'LESSON'
+// 第3课：判断 if
+// if / else if / else 按条件走不同的路。
+public class L03 {
+    public static void main(String[] args) {
+        int score = 85;
+        if (score >= 90) System.out.println("优秀喵");
+        else if (score >= 60) System.out.println("及格啦");
+        else System.out.println("要加油哦");
+    }
+}
+LESSON
+cat > "$D/L04.java" <<'LESSON'
+// 第4课：循环 for / while
+// for 适合数次数，while 适合等条件。
+public class L04 {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 5; i++) System.out.println("第 " + i + " 声：喵");
+        int n = 3;
+        while (n > 0) { System.out.println("倒数 " + n); n--; }
+    }
+}
+LESSON
+cat > "$D/L05.java" <<'LESSON'
+// 第5课：数组
+// 一排同类型的数据，下标从 0 开始。
+public class L05 {
+    public static void main(String[] args) {
+        String[] cats = {"橘猫", "黑猫", "三花"};
+        for (String c : cats) System.out.println(c);
+        System.out.println("一共 " + cats.length + " 只");
+    }
+}
+LESSON
+cat > "$D/L06.java" <<'LESSON'
+// 第6课：方法
+// 把一段代码起个名字，需要时调用，可以有参数和返回值。
+public class L06 {
+    static int add(int a, int b) { return a + b; }
+    static void meow(int times) { for (int i = 0; i < times; i++) System.out.print("喵"); System.out.println(); }
+    public static void main(String[] args) {
+        System.out.println("3 + 4 = " + add(3, 4));
+        meow(5);
+    }
+}
+LESSON
+cat > "$D/L07.java" <<'LESSON'
+// 第7课：类和对象
+// class 是图纸，new 出来的是对象，每个对象有自己的属性。
+public class L07 {
+    static class Cat {
+        String name; int age;
+        Cat(String n, int a) { name = n; age = a; }
+        void say() { System.out.println(name + "（" + age + " 岁）：喵～"); }
+    }
+    public static void main(String[] args) {
+        new Cat("小汐", 2).say();
+        new Cat("团子", 1).say();
+    }
+}
+LESSON
+cat > "$D/L08.java" <<'LESSON'
+// 第8课：输入 Scanner
+// Scanner 读你在键盘上打的字。
+import java.util.Scanner;
+public class L08 {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        System.out.print("你叫什么名字？");
+        String name = in.nextLine();
+        System.out.println("你好 " + name + "，喵～");
+    }
+}
+LESSON
+cat > "$D/L09.java" <<'LESSON'
+// 第9课：集合 ArrayList 和 HashMap
+// ArrayList 能变长的列表，HashMap 用名字查东西。
+import java.util.*;
+public class L09 {
+    public static void main(String[] args) {
+        List<String> food = new ArrayList<>(List.of("小鱼干", "猫条"));
+        food.add("牛奶");
+        Map<String, Integer> price = new HashMap<>();
+        price.put("小鱼干", 15); price.put("猫条", 8);
+        System.out.println(food + "，猫条 " + price.get("猫条") + " 元");
+    }
+}
+LESSON
+cat > "$D/L10.java" <<'LESSON'
+// 第10课：异常 try/catch
+// 出错时不闪退，接住错误自己处理。
+public class L10 {
+    public static void main(String[] args) {
+        try {
+            int x = Integer.parseInt("喵");
+        } catch (NumberFormatException e) {
+            System.out.println("这不是数字喵：" + e.getMessage());
+        }
+    }
+}
+LESSON
+cat > "$D/L11.java" <<'LESSON'
+// 第11课：小游戏：猜数字
+// 把前面学的合起来：随机数、循环、判断、输入。
+import java.util.*;
+public class L11 {
+    public static void main(String[] args) {
+        int ans = new Random().nextInt(100) + 1, n = 0;
+        Scanner in = new Scanner(System.in);
+        System.out.println("我想了一个 1~100 的数，猜猜看喵");
+        while (true) {
+            System.out.print("> "); int g = in.nextInt(); n++;
+            if (g < ans) System.out.println("小了"); else if (g > ans) System.out.println("大了");
+            else { System.out.println("猜对啦！用了 " + n + " 次"); break; }
+        }
+    }
+}
+LESSON
+}
+[ -f "$D/L11.java" ] || install_lessons
+list() {
+  pink "☕ Java 教程（代码在 ~/java）"
+  echo "  01  你好世界"
+  echo "  02  变量和类型"
+  echo "  03  判断 if"
+  echo "  04  循环 for / while"
+  echo "  05  数组"
+  echo "  06  方法"
+  echo "  07  类和对象"
+  echo "  08  输入 Scanner"
+  echo "  09  集合 ArrayList 和 HashMap"
+  echo "  10  异常 try/catch"
+  echo "  11  小游戏：猜数字"
+  pink "nyan java 3      看第 3 课讲解和代码，然后运行"
+  pink "nyan java 改 3   用 nano 改第 3 课"
+  pink "nyan java 跑 文件.java   运行你自己写的"
+  pink "nyan java 重置   恢复课程"
+}
+command -v java >/dev/null || { pink "先装 Java（只装一次）"; pkg install -y openjdk-17 || exit 1; }
+n=$(printf '%02d' "${2:-$1}" 2>/dev/null)
+case "$1" in
+  ""|列表) list ;;
+  重置) install_lessons; pink "课程恢复好啦" ;;
+  改) [ -f "$D/L$n.java" ] && nano "$D/L$n.java" || pink "没有第 $2 课" ;;
+  跑) [ -f "$2" ] && java "$2" || pink "找不到 $2" ;;
+  *) f="$D/L$n.java"; [ -f "$f" ] || { pink "没有第 $1 课"; list; exit 1; }
+     printf '\033[38;5;117m'; sed -n '1,2p' "$f"; printf '\033[0m'; sed '1,2d' "$f"; echo
+     pink "▶ 运行结果："; java "$f" ;;
+esac
